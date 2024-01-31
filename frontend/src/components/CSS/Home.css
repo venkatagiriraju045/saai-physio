@@ -1,0 +1,466 @@
+html {
+    font-size: 14px;
+    overflow-y: auto;
+}
+
+.home-container {
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#clinic-name{
+    font-size: calc(1rem + 1vw);
+    color: rgb(255, 255, 255);
+}
+#clinic-address{
+    font-size: calc(1rem + 0.5vw);
+    color: rgb(255, 255, 255);
+}
+
+
+.home-page-right-container {
+    justify-content: center;
+    min-height: 100vh;
+    width: 40vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+
+.home-page-left-container {
+    position: relative; /* Make the container relative */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5%;
+    padding-top: 5%;
+    width: 100%;
+    min-height: 100vh;
+    justify-content: center;
+}
+
+.home-page-left-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 255, 255, 0.2);
+    background-size: cover;
+    background-position: center;
+    filter: blur(5px)brightness(85%);/* Adjust the blur radius as needed */
+    z-index: -1; /* Place the pseudo-element behind the content */
+}
+
+
+
+.home-page-main-logo-container {
+    width: 30%;
+    min-width: 100px;
+    padding-top: 1.2vw;
+    display: flex;
+    justify-content: center;
+}
+
+#home-page-main-logo {
+    width: 90%;
+}
+
+
+.login-page-logo-container {
+    display: flex;
+    width: 80%;
+    justify-content: center;
+    padding-top: 3vh;
+}
+
+#login-page-logo {
+    width: 80%;
+    opacity: 90%;
+
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5vw;
+    padding-top: 0;
+}
+
+#login-person {
+    color: rgb(51, 123, 130);
+    font-size: calc(1rem + 1vw);
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-top: 0.5vw;
+}
+
+.form-group {
+    margin-top: 1.5vw;
+}
+
+
+#about-company-container {
+    display: flex;
+    color: rgb(255, 255, 255);
+    padding: 2%;
+    width: 90%;
+    font-size: calc(1rem + 0.75vw);
+    border-radius: 1vw;
+    background-color: #4caf50;
+    box-shadow: 2vh 2vh 4vh rgba(0, 0, 0, 0.68);
+    opacity: 90%;
+    margin-top: 0.4vw;
+}
+
+
+
+.form-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: 0.5vw;
+    margin-top: 4.5vw;
+
+}
+
+#login-as {
+    text-align: center;
+    color: rgb(111, 139, 142);
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Add this CSS code to your existing styles */
+
+.loading-symbol {
+    position: fixed;
+    width: 2vw;
+    /* Adjust the size of the loading symbol */
+    height: 2vw;
+    /* Adjust the size of the loading symbol */
+    background-color: #333;
+    /* Background color of the loading symbol */
+    border-radius: 50%;
+    /* Makes the symbol a circle */
+    animation: spin 1s linear infinite;
+    /* Create a spinning animation */
+
+    /* Position the loading symbol at the cursor */
+    top: calc(50% - 1vw);
+    /* Half the height of the symbol to center it */
+    left: calc(50% - 1vw);
+    /* Half the width of the symbol to center it */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#home-page-footer {
+    color: #000000;
+    text-align: center;
+    clear: both;
+    font-size: calc(0.1rem + 1vw);
+    display: flex;
+    justify-content: flex-end;
+}
+
+#login-page-line {
+    height: 3vw;
+    margin-left: 1vw;
+    opacity: 80%;
+
+}
+
+
+.login-error {
+    color: #ff0000;
+}
+
+.login-success {
+    color: #00a000;
+    margin-bottom: 1vw;
+}
+
+
+.form-group label {
+    font-size: 1rem;
+    color: rgb(61, 79, 88);
+    height: 1.5vw;
+    font-weight: bold;
+    line-height: 1.5vw;
+    letter-spacing: 0.02em;
+
+}
+
+.form-group input {
+    margin-top: 1vh;
+    position: relative;
+    -webkit-box-align: center;
+    align-items: center;
+    font-size: 1rem;
+    line-height: 1.2vh;
+    background: rgb(255, 255, 255);
+    border: 1px solid rgb(136, 147, 151);
+    -webkit-text-fill-color: rgb(0, 30, 43);
+    border-radius: 0.4vw;
+    width: 100%;
+    font-family: "Euclid Circular A", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    z-index: 1;
+    color: rgb(0, 30, 43);
+    height: 5vh;
+    min-height: 15px;
+    padding-left: 1vw;
+    outline: none;
+    transition: border-color 150ms ease-in-out 0s, box-shadow;
+    background: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(136, 147, 151);
+    border-image: initial;
+}
+
+.form-group input:hover {
+    box-shadow: rgb(192, 217, 250) 0 0 0 0.3vw;
+}
+
+.form-group input:focus {
+    box-shadow: rgb(255, 255, 255) 0 0 0 10vh inset, rgb(4, 152, 236) 0 0 0 0.3vw;
+    border-color: rgb(255, 255, 255);
+}
+
+.login-button {
+    padding: 1vh 2vh;
+    background-color: rgb(0, 104, 74);
+    border: none;
+    height: 5vh;
+    width: 15vh;
+    font-family: "Euclid Circular A", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 1rem;
+    border-radius: 0.4vw;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.login-button:focus:active {
+    box-shadow: rgb(0, 255, 140) 0 0 0 0.3vw;
+    border: 1px solid rgb(255, 255, 255);
+    transition: all 150ms ease-in-out 0s;
+    z-index: 0;
+    background-color: rgb(0, 104, 74);
+    color: rgb(0, 249, 29);
+    font-weight: bold;
+}
+
+.back-button:focus:active {
+    box-shadow: rgb(0, 255, 140) 0 0 0 0.3vw;
+    border: 1px solid rgb(255, 255, 255);
+    transition: all 150ms ease-in-out 0s;
+    z-index: 0;
+    background-color: rgb(0, 104, 74);
+    color: rgb(0, 249, 29);
+    font-weight: bold;
+}
+
+
+.login-button:hover {
+    box-shadow: rgb(192, 250, 224) 0 0 0 0.3vw;
+
+}
+
+.back-button:hover {
+    box-shadow: rgb(192, 250, 224) 0 0 0 0.3vw;
+
+}
+
+.back-button {
+    padding: 1vh 2vh;
+    background-color: rgb(0, 104, 74);
+    border: none;
+    height: 5vh;
+    width: 15vh;
+    font-family: "Euclid Circular A", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 1rem;
+    border-radius: 0.4vw;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.login-person {
+    margin-bottom: 1vw;
+    color: rgb(19, 76, 114);
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: block;
+    text-align: start;
+}
+
+@media (max-width:870px) {
+
+
+    #home-page-footer {
+
+        font-size: calc(1rem + 0.5vw);
+    }
+
+    .spinner {
+        position: relative;
+        width: 40vw;
+        /* Adjust the size of the spinner */
+        height: 40vw;
+        /* Adjust the size of the spinner */
+        animation: spin 1s linear infinite;
+    }
+
+    #loading-brand-title {
+        width: 60vw;
+        height: 25vw;
+        margin-top: 2vh;
+    }
+
+    #loading-brand-logo {
+        position: absolute;
+        width: 40vw;
+        height: 40vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+
+}
+@media (max-width:500px) {
+.home-container {
+    display: flex;
+    flex-direction: column;
+}
+}
+@media (max-width:700px) {
+
+    .home-page-left-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5%;
+        padding-top: 5%;
+        width: 100%;
+        min-height: 60vh;
+
+    }
+
+    .spinner {
+        position: relative;
+        width: 40vw;
+        /* Adjust the size of the spinner */
+        height: 40vw;
+        /* Adjust the size of the spinner */
+        animation: spin 1s linear infinite;
+    }
+
+    #loading-brand-title {
+        width: 60vw;
+        height: 25vw;
+        margin-top: 2vh;
+    }
+
+    #loading-brand-logo {
+        position: absolute;
+        width: 24vw;
+        height: 24vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+}
+
+/* LoadingOverlay.css */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-overlay.visible {
+    opacity: 1;
+    /* Opacity when visible */
+}
+
+.spinner {
+    position: relative;
+    width: 12vw;
+    /* Adjust the size of the spinner */
+    height: 12vw;
+    /* Adjust the size of the spinner */
+    animation: spin 1s linear infinite;
+}
+
+#loading-brand-title {
+    width: 20vw;
+    height: 7vw;
+    margin-top: 2vh;
+}
+
+#loading-brand-logo {
+    position: absolute;
+    width: 12vw;
+    height: 12vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

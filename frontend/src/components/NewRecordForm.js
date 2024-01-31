@@ -298,7 +298,7 @@ const NewRecordForm = () => {
         console.log('Patient Object:', patient);
 
         try {
-            await axios.post('http://localhost:3000/api/create_record', {
+            await axios.post('https://saai-physio-api.vercel.app/api/create_record', {
                 patient: {
                     ...patient,
                     dateAndTime,

@@ -20,7 +20,7 @@ const InPatientBill = () => {
         console.log('Patient Object:', patient);
     
         try {
-            const response = await axios.post('http://localhost:3000/api/create_new_inpatient_bill', {
+            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
                 patient: {
                     ...patient,
                     dateAndTime,

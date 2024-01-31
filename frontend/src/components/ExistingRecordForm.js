@@ -30,7 +30,7 @@ const ExistingRecordForm = ({ onClose }) => {
         setCloseDetails(false);
         try {
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`http://localhost:3000/api/find_record?mobileNumber=${mobileNumber}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNumber=${mobileNumber}`);
 
             // Assuming the backend returns the patient record
             const foundPatientRecord = response.data;

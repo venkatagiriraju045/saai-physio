@@ -1755,7 +1755,7 @@ const NewRecordForm = () => {
                     </tbody>
                 </table>
 
-                <img className='chest-shapes-img' src="./uploads/chest-shapes.png" />
+                <img className='chest-shapes-img' src="./uploads/chest-shapes.PNG" />
                 <table className="chest-observation-table">
                     <thead>
                         <tr>
@@ -1839,7 +1839,7 @@ const NewRecordForm = () => {
                         </tr>
                     </tbody>
                 </table>
-                <img className='lobe-img' src="./uploads/lobe.png" />
+                <img className='lobe-img' src="./uploads/lobe.PNG" />
 
             </div>
             <div className="barthel-index-container">

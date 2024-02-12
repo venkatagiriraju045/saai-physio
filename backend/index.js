@@ -510,7 +510,7 @@ app.post('/api/create_new_outpatient_bill', async (req, res) => {
         // Save the updated patient record
         await foundPatient.save();
 
-        res.status(201).json({ message: 'In-Patient Bill created successfully' });
+        res.status(201).json({ message: 'Out-Patient Bill created successfully' });
     } catch (error) {
         console.error('Error creating in-patient bill:', error);
         res.status(500).json({ message: 'Internal Server Error' });

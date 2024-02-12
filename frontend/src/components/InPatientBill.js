@@ -4,6 +4,7 @@ import './CSS/InPatientBill.css';
 
 const InPatientBill = () => {
     const [loading, setLoading] = useState(false);
+    const [mobileNo, setMobileNo] = useState(false);
     const [appMessage, setAppMessage] = useState('');
     const [patient, setPatient] = useState({
         mobileNumber: '',
@@ -15,39 +16,59 @@ const InPatientBill = () => {
         paymentMode: '',
         billAmount: '',
     });
-    const createInPatientBill = async () => {
-        const dateAndTime = new Date().toLocaleString();
-        console.log('Patient Object:', patient);
-    
-        try {
-            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
-                patient: {
-                    ...patient,
-                    dateAndTime,
-                },
-            });
-    
-            const { message, inPatientBill } = response.data;
-    
-            setAppMessage(message);
-    
-            // If the in-patient bill was created successfully, you can access details from inPatientBill
-            if (inPatientBill) {
-                console.log('In-Patient Bill Details:', inPatientBill);
-                // Additional actions or state updates can be performed based on the in-patient bill details
-            }
-    
-            setTimeout(() => {
-                setAppMessage('');
-            }, 5000);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error creating in-patient bill:', error);
-            setAppMessage('An error occurred while creating the in-patient bill');
-            setLoading(false);
+    console.log(patient);
+
+    const validateMobileNumber = (number) => {
+        const digitCount = number.replace(/\D/g, '').length; // Count only digits
+
+        // Check if the number of digits is between 6 and 11
+        if (digitCount > 5 && digitCount < 12) {
+            setMobileNo(true);
+        } else {
+            setMobileNo(false);
+            alert("Please enter the valid mobile number and create record.");
+
         }
     };
-    
+
+    const createInPatientBill = async () => {
+        setTimeout(() => {
+            validateMobileNumber(patient.mobileNumber);
+        }, 2000);
+        if (mobileNo) {
+            const dateAndTime = new Date().toLocaleString();
+            console.log('Patient Object:', patient);
+
+            try {
+                const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
+                    patient: {
+                        ...patient,
+                        dateAndTime,
+                    },
+                });
+
+                const { message, inPatientBill } = response.data;
+
+                setAppMessage(message);
+
+                // If the in-patient bill was created successfully, you can access details from inPatientBill
+                if (inPatientBill) {
+                    console.log('In-Patient Bill Details:', inPatientBill);
+                    // Additional actions or state updates can be performed based on the in-patient bill details
+                }
+
+                setTimeout(() => {
+                    setAppMessage('');
+                }, 5000);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error creating in-patient bill:', error);
+                setAppMessage('An error occurred while creating the in-patient bill');
+                setLoading(false);
+            }
+        }
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -59,6 +80,28 @@ const InPatientBill = () => {
                 [name]: value,
             };
 
+            if (name === 'mobileNumber') {
+                if (/^\d{0,12}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                }
+
+            }
+            if (name === 'roomNumber') {
+                if (/^\d{0,5}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid room number.");
+                }
+
+            }
             // Dynamically update billAmount if totalDays or amountPerDay changes
             if (name === 'totalDays' || name === 'amountPerDay') {
                 const totalDays = parseInt(updatedPatient.totalDays) || 0;
@@ -85,15 +128,6 @@ const InPatientBill = () => {
                 }
             }
 
-            // Dynamically update billAmount if totalDays or amountPerDay changes
-            if (name === 'totalDays' || name === 'amountPerDay') {
-                const totalDays = parseInt(updatedPatient.totalDays) || 0;
-                const amountPerDay = parseFloat(updatedPatient.amountPerDay) || 0;
-                updatedPatient = {
-                    ...updatedPatient,
-                    billAmount: (totalDays * amountPerDay).toFixed(2),
-                };
-            }
             return updatedPatient;
         });
     };
@@ -106,25 +140,25 @@ const InPatientBill = () => {
 
                 {/* In-Patient Specific Information */}
                 <div className="in-patient-info">
-                <div className="patient-details">
-                    <label>
-                        Mobile Number:
-                        <input type="text" name="mobileNumber" value={patient.mobileNumber} onChange={handleInputChange} />
-                    </label>
-                </div>
+                    <div className="patient-details">
+                        <label>
+                            Mobile Number:
+                            <input type="text" name="mobileNumber" value={patient.mobileNumber} onChange={handleInputChange} />
+                        </label>
+                    </div>
                     <label>
                         Room Number:
                         <input type="text" name="roomNumber" value={patient.roomNumber} onChange={handleInputChange} />
                     </label>
                     <div className="billing-info">
-                    <label>
-                        Admission Date:
-                        <input type="date" name="admissionDate" value={patient.admissionDate} onChange={handleInputChange} />
-                    </label>
-                    <label>
-                        Discharge Date:
-                        <input type="date" name="dischargeDate" value={patient.dischargeDate} onChange={handleInputChange} />
-                    </label>
+                        <label>
+                            Admission Date:
+                            <input type="date" name="admissionDate" value={patient.admissionDate} onChange={handleInputChange} />
+                        </label>
+                        <label>
+                            Discharge Date:
+                            <input type="date" name="dischargeDate" value={patient.dischargeDate} onChange={handleInputChange} />
+                        </label>
                     </div>
                     <label>
                         Total Days:

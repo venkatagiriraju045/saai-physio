@@ -8,9 +8,16 @@ const ExistingRecordForm = ({ onClose }) => {
     const [patientRecord, setPatientRecord] = useState(null);
     const [error, setError] = useState('');
     const [closeDetails, setCloseDetails] = useState(false);
-
     const handleMobileNumberChange = (event) => {
-        setMobileNumber(event.target.value);
+        // Validate if the entered value is a number
+        const value = event.target.value;
+        if (/^\d*$/.test(value)) {
+            // Only set the mobile number if it contains only numbers
+            setMobileNumber(value);
+        } else {
+            // If the entered value contains non-numeric characters, alert the user
+            alert('Please enter numbers only for the mobile number.');
+        }
     };
     const rangeOfMotionItems = [
         { label: "FLEXION", name: "flexion" },
@@ -31,10 +38,8 @@ const ExistingRecordForm = ({ onClose }) => {
         try {
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
             const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNumber=${mobileNumber}`);
-
             // Assuming the backend returns the patient record
             const foundPatientRecord = response.data;
-
             setPatientRecord(foundPatientRecord);
             setError('');
         } catch (error) {
@@ -170,6 +175,7 @@ const ExistingRecordForm = ({ onClose }) => {
         { label: 'Mobility', name: 'mobility', range: '0 = immobile, 5 = wheelchair independent, 10 = walks with help, 15 = independent' },
         { label: 'Stairs', name: 'stairs', range: '0 = unable, 5 = needs help, 10 = independent' },
     ];
+
     const chestShapeObservationItems = [
         { label: 'Normal', name: 'normal' },
         { label: 'Barrel Chest', name: 'barrelChest' },
@@ -215,12 +221,10 @@ const ExistingRecordForm = ({ onClose }) => {
                                 <li key={region}><strong>{region}: </strong>{value ? 'Yes' : 'No'}</li>
                             ))}
                         </div>
-
                         <h4>Pain Assessment Before Treatment:</h4>
                         <div className='about-patient'>
                             <p><strong>Pain Level: </strong>{patientRecord.painAssessment.beforeTreatment.level}</p>
                         </div>
-
                         <h4>History and Onset:</h4>
                         <div className='about-patient'>
                             <p><strong>Aggrivating Factor: </strong>{patientRecord.aggFactor}</p>
@@ -228,14 +232,12 @@ const ExistingRecordForm = ({ onClose }) => {
                             <p><strong>Duration: </strong>{patientRecord.duration}</p>
                             <p><strong>Onset: </strong>{patientRecord.onset}</p>
                         </div>
-
                         <h4>Post medical history:</h4>
                         <div className='about-patient'>
                             {Object.entries(patientRecord.postMedicalHistory).map(([region, value]) => (
                                 <li key={region}><strong>{region}: </strong>{value ? 'Yes' : 'No'}</li>
                             ))}
                         </div>
-
                         <h4>Vital Sign:</h4>
                         <div className='about-patient'>
                             <p><strong>BP: </strong>{patientRecord.vitalSign.BP}</p>
@@ -244,10 +246,8 @@ const ExistingRecordForm = ({ onClose }) => {
                             <p><strong>SPO2: </strong>{patientRecord.vitalSign.SPO2}</p>
                             <p><strong>TEMP: </strong>{patientRecord.vitalSign.TEMP}</p>
                         </div>
-
                         <h4>Observation:</h4>
                         <div className='about-patient'>
-
                             <p><strong>Skin Color: </strong>{patientRecord.observation.onObservation.SkinColor ? 'Yes' : 'No'}</p>
                             <p><strong>Deformity: </strong>{patientRecord.observation.onObservation.Deformity ? 'Yes' : 'No'}</p>
                             <p><strong>Redness: </strong>{patientRecord.observation.onObservation.Redness ? 'Yes' : 'No'}</p>
@@ -416,8 +416,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="hand-function-table">
                             <caption>HAND FUNCTION</caption>
                             <thead>
@@ -446,8 +444,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="prehension-table">
                             <caption>PREHENSION</caption>
                             <thead>
@@ -476,11 +472,8 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="subjective-assessment-table">
                             <caption>SUBJECTIVE ASSESSMENT</caption>
-
                             <thead>
                                 <tr>
                                     <th></th>
@@ -509,11 +502,8 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-
-                        {/* ... Existing code ... */}
                         <table className="rpe-table">
                             <caption>RATE OF PERCEIVED EXERTION</caption>
-
                             <thead>
                                 <tr>
                                     <th>Point</th>
@@ -537,11 +527,8 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="brpe-table">
                             <caption>BORD RATE OF PERCEIVED EXERTION (BRPE SCALE)</caption>
-
                             <thead>
                                 <tr>
                                     <th>Rating</th>
@@ -563,8 +550,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="general-observation-table">
                             <caption>General Observation</caption>
                             <thead>
@@ -592,8 +577,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="chest-observation-table">
                             <caption>Observation of Chest</caption>
                             <thead>
@@ -621,8 +604,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="chest-observation-table">
                             <caption>CHEST SHAPE</caption>
                             <thead>
@@ -644,8 +625,6 @@ const ExistingRecordForm = ({ onClose }) => {
                                 </tr>
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="chest-motion-observation-table">
                             <caption>Observation of Chest Motion</caption>
                             <thead>
@@ -683,11 +662,8 @@ const ExistingRecordForm = ({ onClose }) => {
                                 </tr>
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
-                        {/* ... Existing code ... */}
                         <table className="barthel-index-table">
                             <caption>The Barthel Index</caption>
-
                             <thead>
                                 <tr>
                                     <th>Activity</th>
@@ -714,21 +690,16 @@ const ExistingRecordForm = ({ onClose }) => {
                                 </tr>
                             </tbody>
                         </table>
-                        {/* ... Existing code ... */}
                         <h4>Plan Of Treatment</h4>
                         <div className='about-patient'>
-
                             {patientRecord.planOfTreatment}
                         </div>
-
                         <div>
                             <BillDetails record={patientRecord} />
                         </div>
-
                         <button onClick={handleClose}>Close</button>
                     </div>
                 )}
-
             </div>
         </div>
     );

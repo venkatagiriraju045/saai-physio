@@ -32,30 +32,30 @@ const AdminMenu = () => {
 
 
   /* useEffect(() => {
-     const fetchStudentData = async () => {
-       try {
-         const response = await axios.get('https://eduleaves-api.vercel.app/api/students_data', {
-           params: {
-             role: 'student', // Filter by role
-             department: departmentName, // Filter by department
-             instituteName: instituteName, // Filter by institute_name
-           }
-         });
-         setInstitute(instituteName);
-         setDepartment(departmentName);
-         const studentData = response.data;
-         setStudents(studentData); // Set the students state variable
-         setLoading(false);
-       } catch (error) {
-         console.error('Error fetching student data:', error);
-         setError(error);
-         setLoading(false);
-       }
-     };
+    const fetchStudentData = async () => {
+      try {
+        const response = await axios.get('https://eduleaves-api.vercel.app/api/students_data', {
+          params: {
+            role: 'student', // Filter by role
+            department: departmentName, // Filter by department
+            instituteName: instituteName, // Filter by institute_name
+          }
+        });
+        setInstitute(instituteName);
+        setDepartment(departmentName);
+        const studentData = response.data;
+        setStudents(studentData); // Set the students state variable
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching student data:', error);
+        setError(error);
+        setLoading(false);
+      }
+    };
  
-     fetchStudentData();
-   }, []);
-   */
+    fetchStudentData();
+  }, []);
+  */
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -67,59 +67,104 @@ const AdminMenu = () => {
     return <p>Error fetching student data: {error.message}</p>;
   }
 
-  const handleHomeButtonClick = () => {
+  /**
+ * Handles the click event for the home button.
+ * 
+ * This function resets various states and displays elements with the class 'body'.
+ * It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
+ * 
+ * @returns {void}
+ */
+const handleHomeButtonClick = () => {
+  // Hide record forms and bills
+  setShowExistingRecordForm(false);
+  setShowNewRecordForm(false);
+  setShowInPatientBill(false);
+  setShowOutPatientBill(false);
+  
+  // Set home button state
+  setIsHomeButtonClicked(true);
+  
+  // Hide navigation bar
+  setShowNavBar(false);
+  
+  // Set loading state
+  setIsLoading(true);
+
+  // Display elements with class 'body'
+  document.querySelectorAll('.body').forEach((element) => {
+    element.style.display = 'block';
+  });
+
+  // After 1000 milliseconds, reset states and loading state
+  setTimeout(() => {
+    setIsLoading(false);
     setShowExistingRecordForm(false);
     setShowNewRecordForm(false);
     setIsHomeButtonClicked(true);
     setShowInPatientBill(false);
-    setShowOutPatientBill(false);
     setShowNavBar(false);
-    setIsLoading(true);
-
-    document.querySelectorAll('.body').forEach((element) => {
-      element.style.display = 'block';
-    });
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowExistingRecordForm(false);
-      setShowNewRecordForm(false);
-      setIsHomeButtonClicked(true);
-      setShowInPatientBill(false);
-      setShowNavBar(false);
-      setShowOutPatientBill(false);
-
-    }, 1000);
-  };
-
-
-  const handleShowNav = () => {
-    setShowNavBar((prevShowNavBar) => !prevShowNavBar);
-  };
-
-  const handleNewRecordClick = () => {
-    setShowNewRecordForm(true);
-    setShowExistingRecordForm(false);
-    setShowNavBar(false);
-    setShowInPatientBill(false);
     setShowOutPatientBill(false);
-    setIsLoading(true);
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-      element.style.display = 'none';
-    });
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
-    setTimeout(() => {
-      setIsLoading(false);
-      messageElement.remove();
-      setShowNewRecordForm(true);
-      setShowExistingRecordForm(false);
-      setShowNavBar(false);
-      setIsHomeButtonClicked(false);
-      setShowInPatientBill(false);
-      setShowOutPatientBill(false);
-    }, 1000);
+  }, 1000);
+};
+
+
+
+/**
+
+Toggles the visibility state of the navigation bar.
+This function toggles the visibility state of the navigation bar by flipping the value of prevShowNavBar.
+@returns {void}
+*/
+const handleShowNav = () => {
+  setShowNavBar((prevShowNavBar) => !prevShowNavBar);
   };
+
+  
+/**
+
+Handles the click event to create a new record.
+
+This function initializes the creation of a new record by setting various states and displaying elements.
+
+It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
+
+@returns {void}
+*/
+const handleNewRecordClick = () => {
+  // Show new record form and hide other elements
+  setShowNewRecordForm(true);
+  setShowExistingRecordForm(false);
+  setShowNavBar(false);
+  setShowInPatientBill(false);
+  setShowOutPatientBill(false);
+  
+  // Set loading state
+  setIsLoading(true);
+  
+  // Hide elements with class 'admin-chart-container'
+  document.querySelectorAll('.admin-chart-container').forEach((element) => {
+  element.style.display = 'none';
+  });
+  
+  // Create a message element
+  const messageElement = document.createElement('div');
+  messageElement.style.color = 'black';
+  document.querySelector('.profile-right-content-container').appendChild(messageElement);
+  
+  // After 1000 milliseconds, reset states and loading state
+  setTimeout(() => {
+  setIsLoading(false);
+  messageElement.remove();
+  setShowNewRecordForm(true);
+  setShowExistingRecordForm(false);
+  setShowNavBar(false);
+  setIsHomeButtonClicked(false);
+  setShowInPatientBill(false);
+  setShowOutPatientBill(false);
+  }, 1000);
+  };
+
   const handleExistingRecordClick = () => {
     setShowNewRecordForm(false);
     setShowExistingRecordForm(true);
@@ -134,7 +179,7 @@ const AdminMenu = () => {
     messageElement.style.color = 'black';
     document.querySelector('.profile-right-content-container').appendChild(messageElement);
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false);  
       messageElement.remove();
       setShowNewRecordForm(false);
       setShowExistingRecordForm(true);
@@ -242,7 +287,7 @@ const AdminMenu = () => {
             <br />
             <li>
               <a href="#" className="test-score-button" onClick={handleInPatientBillClick} title="Send Messages">
-              In-Patient Bill
+                In-Patient Bill
               </a>
             </li>
             <br />
@@ -294,11 +339,11 @@ const AdminMenu = () => {
             }`}>
           <div>
             {/*(loading || isLoading) && <div className={overlayClass}>
-                    <div className="spinner">
-                        <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
-                    </div>
-                    <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
-          </div>*/}
+                      <div className="spinner">
+                          <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
+                      </div>
+                      <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
+            </div>*/}
           </div>
           {showExistingRecordForm ? (
             <ExistingRecordForm />

@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     name: { type: String },
     gender: { type: String },
     age: { type: String }, // Assuming age is stored as a string
-    dateOfBirth: { type: Date },
     mobileNo: { type: String },
     occupation: { type: String },
     address: { type: String },

@@ -55,11 +55,29 @@ const OutPatientBill = () => {
                 ...prevPatient,
                 [name]: value,
             };
-
+            if (name === 'mobileNumber') {
+                if (/^\d{0,12}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                }
+            }
+            if (name === 'serviceName') {
+            if (/^[a-zA-Z ]*$/.test(value)) {
+                setPatient((prevPatient) => ({
+                    ...prevPatient,
+                    [name]: value,
+                }));
+            } else {
+                alert("Please enter only alphabets for the name field.");
+            }
+        }
             return updatedPatient;
         });
     };
-
     return (
         <div>
             <div className="in-patient-bill-container">

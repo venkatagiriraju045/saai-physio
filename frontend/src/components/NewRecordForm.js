@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './CSS/NewRecord.css';
 
 const NewRecordForm = () => {
+    const [mobileNo, setMobileNo] = useState(false);
+
     const [loading, setLoading] = useState(true);
     const [appMessage, setAppMessage] = useState('');
-
     const [patient, setPatient] = useState({
         name: '',
         gender: '',
@@ -292,41 +293,42 @@ const NewRecordForm = () => {
         },
         planOfTreatment: '',
     });
-
     const createPatientRecord = async () => {
-        const dateAndTime = new Date().toLocaleString();
-        console.log('Patient Object:', patient);
+        setTimeout(() => {
+            validateMobileNumber(patient.mobileNo);
+        }, 1000);
+        if (mobileNo) {
+            const dateAndTime = new Date().toLocaleString();
+            console.log('Patient Object:', patient);
 
-        try {
-            await axios.post('https://saai-physio-api.vercel.app/api/create_record', {
-                patient: {
-                    ...patient,
-                    dateAndTime,
-                    painAssessment: {
-                        beforeTreatment: {
-                            level: patient.painAssessment.beforeTreatment.level,
+            try {
+                await axios.post('https://saai-physio-api.vercel.app/api/create_record', {
+                    patient: {
+                        ...patient,
+                        dateAndTime,
+                        painAssessment: {
+                            beforeTreatment: {
+                                level: patient.painAssessment.beforeTreatment.level,
+                            },
                         },
                     },
-                },
-            });
-
-            setAppMessage('Record updated successfully!');
-            setTimeout(() => {
-                setAppMessage('');
-            }, 5000);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error creating patient record:', error);
-            setAppMessage('An error occurred while creating the patient record');
-            setLoading(false);
+                });
+                alert("Record created successfully!");
+                setAppMessage('Record updated successfully!');
+                setTimeout(() => {
+                    setAppMessage('');
+                }, 5000);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error creating patient record:', error);
+                setAppMessage('An error occurred while creating the patient record');
+                setLoading(false);
+            }
         }
     };
-
     const rangeOfMotionJoints = ['cervical', 'shoulder', 'elbow', 'wrist', 'hip', 'knee', 'ankle'];
     const severityOptions = ['Critical', 'High', 'Medium', 'Low'];
     const hemoptysisOptions = ['Red: Blood', 'Rust: Pneumonia', 'Purple: Neoplasm', 'Yellow: Infected', 'Green: Pus', 'Pink: Pulmonary Oedema'];
-
-    // Range of Motion Items
     const rangeOfMotionItems = [
         { label: "FLEXION", name: "flexion" },
         { label: "EXTENSION", name: "extension" },
@@ -339,7 +341,6 @@ const NewRecordForm = () => {
         { label: "DORSI FLEXION", name: "dorsiFlexion" },
         { label: "PLANTAR FLEXION", name: "plantarFlexion" },
     ];
-    // Muscle Power Items
     const musclePowerItems = [
         { label: "C1-C2 – CERVICAL FLEXION", name: "cervicalC1C2Flexion" },
         { label: "C3 – CERVICAL SIDE FLEXION", name: "cervicalC3SideFlexion" },
@@ -407,7 +408,6 @@ const NewRecordForm = () => {
         { point: 16, effort: '', description: '', maxHRPercentage: '85%' },
         { point: 17, effort: 'Very Hard', description: 'Can keep a fast pace for a short', maxHRPercentage: '90%' },
     ];
-
     const brpeData = [
         { rating: 6, description: 'Very, Very Light (REST)', effortPercentage: '20%' },
         { rating: 7, description: '', effortPercentage: '30%' },
@@ -425,8 +425,6 @@ const NewRecordForm = () => {
         { rating: 19, description: 'Very, Very Hard', effortPercentage: '100%' },
         { rating: 20, description: 'EXHAUSTION', effortPercentage: '' },
     ];
-
-
     const generalObservationItems = [
         { label: 'Body built', name: 'bodyBuilt' },
         { label: 'Hands and fingertips', name: 'handsAndFingertips' },
@@ -435,8 +433,6 @@ const NewRecordForm = () => {
         { label: 'Jugular venous pressure', name: 'jugularVenousPressure' },
         // ... other items
     ];
-
-
     const chestObservationItems = [
         { label: 'Breathing pattern', name: 'breathingPattern' },
         { label: 'Chest movement', name: 'chestMovement' },
@@ -444,7 +440,6 @@ const NewRecordForm = () => {
         { label: 'Chest expansion', name: 'chestExpansion' },
         // ... other items
     ];
-
     const barthelIndexItems = [
         { label: 'Feeding', name: 'feeding', range: '0 = unable, 5 = needs help, 10 = independent' },
         { label: 'Bathing', name: 'bathing', range: '0 = dependent, 5 = independent (or in shower)' },
@@ -464,27 +459,92 @@ const NewRecordForm = () => {
         { label: 'Pectus Excavatum', name: 'pectusExcavatum' },
         { label: 'Pectus Carinatum', name: 'pectusCarinatum' },
     ];
-
     const chestMotionItems = [
         { label: 'A', name: 'a' },
         { label: 'B', name: 'b' },
     ];
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        setPatient((prevPatient) => ({
-            ...prevPatient,
-            [name]: value,
-        }));
-    };
-    const handleDOBChange = (e) => {
-        const { name, value } = e.target;
+        // Specific validation based on the field name
+        switch (name) {
+            case "name":
+                if (/^[a-zA-Z ]*$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter only alphabets for the name field.");
+                }
+                break;
 
-        setPatient((prevPatient) => ({
-            ...prevPatient,
-            [name]: value,
-        }));
+            case "occupation":
+                if (/^[a-zA-Z]*$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter only alphabets for the occupation field.");
+                }
+                break;
+            case "uhid":
+            case "complaint":
+            case "address":
+                if (/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter only alphanumeric characters and special characters for the field.");
+                }
+                break;
+
+            case "age":
+                // Allow only numeric values within a specific range or empty string
+                if (value.trim() === "" || !isNaN(value)) {
+                    const age = value.trim() === "" ? "" : parseInt(value, 10);
+                    if (age === "" || (age >= 0 && age <= 150)) {
+                        setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            [name]: age,
+                        }));
+                    } else {
+                        alert("Please enter a valid age between 0 and 150.");
+                    }
+                } else {
+                    alert("Please enter a valid numeric age.");
+                }
+                break;
+
+            case "mobileNo":
+                // Allow only numeric values with a maximum length of 13
+                if (/^\d{0,12}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                }
+                break;
+            // Add more cases for additional fields with specific validation requirements
+
+        }
+    };
+    const validateMobileNumber = (number) => {
+        const digitCount = number.replace(/\D/g, '').length; // Count only digits
+
+        // Check if the number of digits is between 6 and 11
+        if (digitCount > 5 && digitCount < 12) {
+            setMobileNo(true);
+        } else {
+            setMobileNo(false);
+            alert("Please enter the valid mobile number and create record.");
+
+        }
     };
     const handleObservationCheckboxChange = (observationType, value) => {
         setPatient((prevPatient) => {
@@ -496,7 +556,6 @@ const NewRecordForm = () => {
             return updatedPatient;
         });
     };
-
     const handlePainLevelChange = (event) => {
         const level = parseInt(event.target.value, 10);
 
@@ -514,7 +573,6 @@ const NewRecordForm = () => {
         // Additional logic if needed
         // For example, you can update the state or perform other actions based on the pain level.
     };
-
     const handleCheckboxChange = (area) => {
         setPatient((prevPatient) => ({
             ...prevPatient,
@@ -561,8 +619,6 @@ const NewRecordForm = () => {
             };
         });
     };
-
-
     const handleMusclePowerChange = (muscleType, side, category, value) => {
         setPatient((prevPatient) => ({
             ...prevPatient,
@@ -578,8 +634,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
-
     const handleCoordinationCheckboxChange = (coordinationType, column) => {
         setPatient((prevPatient) => ({
             ...prevPatient,
@@ -594,18 +648,28 @@ const NewRecordForm = () => {
     };
     const handleRemarksChange = (coordinationType, event) => {
         const remarksValue = event.target.value;
-        setPatient((prevPatient) => ({
-            ...prevPatient,
-            coordination: {
-                ...prevPatient.coordination,
-                [coordinationType]: {
-                    ...prevPatient.coordination[coordinationType],
-                    remarks: remarksValue,
+    
+        // Regular expression to allow only alphabets and numbers
+        const isValidInput = /^[a-zA-Z0-9\s]*$/.test(remarksValue);
+    
+        // If the input is valid, update the state
+        if (isValidInput) {
+            setPatient((prevPatient) => ({
+                ...prevPatient,
+                coordination: {
+                    ...prevPatient.coordination,
+                    [coordinationType]: {
+                        ...prevPatient.coordination[coordinationType],
+                        remarks: remarksValue,
+                    },
                 },
-            },
-        }));
+            }));
+        } else {
+            // If the input is invalid, you can display an error message or handle it as needed
+            alert("Please enter only alphabets and numbers for the remarks.");
+        }
     };
-
+    
     const handleVitalInputChange = (event) => {
         const { name, value } = event.target;
         setPatient((prevPatient) => ({
@@ -628,7 +692,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleEquilibriumRemarksChange = (standingWalkingType, event) => {
         const remarksValue = event.target.value;
         setPatient((prevPatient) => ({
@@ -654,7 +717,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleBalanceRemarksChange = (balanceType, event) => {
         const remarksValue = event.target.value;
         setPatient((prevPatient) => ({
@@ -680,7 +742,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleHandFunctionRemarksChange = (functionType, event) => {
         const remarksValue = event.target.value;
         setPatient((prevPatient) => ({
@@ -706,7 +767,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handlePrehensionRemarksChange = (prehensionType, event) => {
         const remarksValue = event.target.value;
         setPatient((prevPatient) => ({
@@ -733,7 +793,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleSeverityChange = (symptom, event) => {
         const value = event.target.value;
         setPatient((prevPatient) => ({
@@ -747,7 +806,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleHemoptysisTypeChange = (symptom, event) => {
         const value = event.target.value;
         setPatient((prevPatient) => ({
@@ -769,7 +827,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleBordRatingCheckboxChange = (rating) => {
         setPatient((prevPatient) => ({
             ...prevPatient,
@@ -778,7 +835,6 @@ const NewRecordForm = () => {
             },
         }));
     };
-
     const handleGeneralObservationCheckboxChange = (observation, category) => {
         setPatient((prevPatient) => ({
             ...prevPatient,
@@ -836,36 +892,14 @@ const NewRecordForm = () => {
             },
         }));
     };
-    /*
-        console.log(patient.musclePower);
-        console.log(patient.coordination);
-        console.log(patient.standingWalking);
-        console.log(patient.balance);
-        console.log(patient.handFunction);
-        console.log(patient.prehension);
-        console.log(patient.subjectiveAssessment);
-    
-        console.log(patient.rpe);
-    
-        console.log(patient.brpe);
-        console.log(patient.generalObservation);
-        console.log(patient.chestObservation);
-        console.log(patient.barthelIndex);
-        console.log(patient.chestShapeObservation);
-        console.log(patient.chestMotionObservation);
-    
-    */
-    console.log(patient.rangeOfMotion);
-    console.log(patient.musclePower);
-
 
     return (
         <div className='new-record-main-container'>
             <div className="container">
                 <div className="registration-container">
                     <div className="title">User Registration Details</div>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     <form action="#">
                         <div className="user-details">
                             <div className="input-box">
@@ -902,16 +936,6 @@ const NewRecordForm = () => {
                                     placeholder="Enter your age"
                                     value={patient.age}
                                     onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="input-box">
-                                <span className="details">Date of Birth</span>
-                                <input
-                                    type="date"
-                                    name="dateOfBirth"
-                                    value={patient.dateOfBirth}
-                                    onChange={handleDOBChange}
                                     required
                                 />
                             </div>
@@ -971,14 +995,13 @@ const NewRecordForm = () => {
                                     required
                                 />
                             </div>
-
                         </div>
                     </form>
                 </div>
             </div>
             <div className="post-medical-history">
                 <div className="title">Post Medical History</div>
-                <br/><br/>
+                <br /><br />
                 <div className="checkbox-grid">
                     {Object.keys(patient.postMedicalHistory).map((area) => (
                         <label key={area} className="checkbox">
@@ -1056,8 +1079,8 @@ const NewRecordForm = () => {
             </div>
             <div className="painregion">
                 <div className="title">Pain Region</div>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <div className="checkbox-grid">
                     {Object.keys(patient.painRegion).map((area) => (
@@ -1073,8 +1096,8 @@ const NewRecordForm = () => {
                         </label>
                     ))}
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <div className="container-history">
                     <form action="#">
@@ -1193,9 +1216,9 @@ const NewRecordForm = () => {
                 </form>
             </div>
             <div className="observation-palpation-container">
-            <div className="title">On Observation</div>
-            <br/>
-            <br/>
+                <div className="title">On Observation</div>
+                <br />
+                <br />
 
                 <div className="column-one">
                     {["SkinColor", "Deformity", "Redness", "ShinySkin", "OpenWounds"].map((observationItem) => (
@@ -1211,13 +1234,13 @@ const NewRecordForm = () => {
                         </label>
                     ))}
                 </div>
-                <br/>
-                <br/>
-                <br/>
+                <br />
+                <br />
+                <br />
 
                 <div className="title">On Palpation</div>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <div className="column-two">
                     {["Tenderness", "Warmth", "Swelling", "Odema"].map((palpationItem) => (
@@ -1271,8 +1294,8 @@ const NewRecordForm = () => {
                                                             type="number"
                                                             name={joint + '-' + motion + '-' + side}
                                                             onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
-                                                            placeholder="0" 
-                                                            />
+                                                            placeholder="0"
+                                                        />
                                                     </td>
                                                 </React.Fragment>
                                             ))}
@@ -1310,8 +1333,8 @@ const NewRecordForm = () => {
                                                         type="number"
                                                         name={item.name + "-" + side + "-" + category}
                                                         onChange={(e) => handleMusclePowerChange(item.name, side, category, parseInt(e.target.value))}
-                                                        placeholder="0" 
-                                                        />
+                                                        placeholder="0"
+                                                    />
                                                 </td>
                                             </React.Fragment>
                                         ))
@@ -1324,7 +1347,7 @@ const NewRecordForm = () => {
             </div>
             <div className="coordination-container">
                 <table className="coordination-table">
-                    
+
                     <caption>COORDINATION</caption>
                     <thead>
                         <tr>
@@ -1403,7 +1426,6 @@ const NewRecordForm = () => {
                     </tbody>
                 </table>
             </div>
-
             <div className="balance-container">
                 <div className="title">ON CHECKING</div>
 
@@ -1840,7 +1862,6 @@ const NewRecordForm = () => {
                     </tbody>
                 </table>
                 <img className='lobe-img' src="./uploads/lobe.PNG" />
-
             </div>
             <div className="barthel-index-container">
                 <div className="title">The Barthel Index</div>
@@ -1887,23 +1908,22 @@ const NewRecordForm = () => {
             </div>
             <div className="plan-of-treatment-container">
                 <div className="title">Plan of Treatment :</div>
-                <br/>
-                <br/>
-                <div class="input-container">
+                <br />
+                <br />
+                <div className="input-container">
 
-                <input
-                    type="text"
-                    name="planOfTreatment"
-                    placeholder="Enter the treatment plan"
-                    value={patient.planOfTreatment}
-                    onChange={handleInputChange}
-                />
-                <button onClick={createPatientRecord}>Create record</button>
+                    <input
+                        type="text"
+                        name="planOfTreatment"
+                        placeholder="Enter the treatment plan"
+                        value={patient.planOfTreatment}
+                        onChange={handleInputChange}
+                    />
+                    <button onClick={createPatientRecord}>Create record</button>
                 </div>
 
             </div>
-<p>{appMessage}</p>
-
+            <p>{appMessage}</p>
         </div>
     );
 

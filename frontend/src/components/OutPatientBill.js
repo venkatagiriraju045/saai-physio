@@ -65,6 +65,16 @@ const OutPatientBill = () => {
                     alert("Please enter a valid mobile number with maximum 13 digits.");
                 }
             }
+            if (name === 'billAmount') {
+                if (/^\d{0,12}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                }
+            }
             if (name === 'serviceName') {
             if (/^[a-zA-Z ]*$/.test(value)) {
                 setPatient((prevPatient) => ({

@@ -91,6 +91,17 @@ const InPatientBill = () => {
                 }
 
             }
+            if (name === 'amountPerDay') {
+                if (/^\d{0,12}$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter a valid amount in number.");
+                }
+
+            }
             if (name === 'roomNumber') {
                 if (/^\d{0,5}$/.test(value)) {
                     setPatient((prevPatient) => ({

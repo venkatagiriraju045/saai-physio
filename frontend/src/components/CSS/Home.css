@@ -243,7 +243,7 @@ html {
     box-shadow: rgb(255, 255, 255) 0 0 0 10vh inset, rgb(4, 152, 236) 0 0 0 0.3vw;
     border-color: rgb(255, 255, 255);
 }
-
+/*
 .login-button {
     padding: 1vh 2vh;
     background-color: rgb(0, 104, 74);
@@ -256,8 +256,9 @@ html {
     border-radius: 0.4vw;
     cursor: pointer;
     font-weight: 700;
-}
+}*/
 
+/*
 .login-button:focus:active {
     box-shadow: rgb(0, 255, 140) 0 0 0 0.3vw;
     border: 1px solid rgb(255, 255, 255);
@@ -267,6 +268,44 @@ html {
     color: rgb(0, 249, 29);
     font-weight: bold;
 }
+*/
+.login-button:hover {
+    box-shadow: rgb(192, 250, 224) 0 0 0 0.3vw;
+    background-color: rgb(118, 198, 232);
+}
+
+.login-button {
+   
+    background-color: rgb(118, 198, 232);
+    padding: 10px 20px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.login-button:active {
+    transform: scale(0.9) translateX(-10%);
+}
+
+.login-button.clicked {
+    animation: buttonClickAnimation 0.5s forwards;
+}
+
+@keyframes buttonClickAnimation {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+
 
 .back-button:focus:active {
     box-shadow: rgb(0, 255, 140) 0 0 0 0.3vw;
@@ -278,11 +317,6 @@ html {
     font-weight: bold;
 }
 
-
-.login-button:hover {
-    box-shadow: rgb(192, 250, 224) 0 0 0 0.3vw;
-
-}
 
 .back-button:hover {
     box-shadow: rgb(192, 250, 224) 0 0 0 0.3vw;
@@ -313,13 +347,10 @@ html {
 }
 
 @media (max-width:870px) {
-
-
     #home-page-footer {
 
         font-size: calc(1rem + 0.5vw);
     }
-
     .spinner {
         position: relative;
         width: 40vw;
@@ -353,8 +384,6 @@ html {
             transform: rotate(360deg);
         }
     }
-
-
 }
 @media (max-width:500px) {
 .home-container {

@@ -4,8 +4,7 @@ import './CSS/NewRecord.css';
 import BillDetails from './BillDetails';
 import InOutBillRow from './InOutBillRow';
 
-const ExistingRecordForm = ({ onClose }) => {
-    const [mobileNumber, setMobileNumber] = useState('');
+const OverlayRecord = ({ mobileNumber }) => {
     const [patientRecord, setPatientRecord] = useState(null);
     const [error, setError] = useState('');
     const [closeDetails, setCloseDetails] = useState(false);
@@ -42,17 +41,7 @@ const ExistingRecordForm = ({ onClose }) => {
             },
         ],
     });
-    const handleMobileNumberChange = (event) => {
-        // Validate if the entered value is a number
-        const value = event.target.value;
-        if (/^\d*$/.test(value)) {
-            // Only set the mobile number if it contains only numbers
-            setMobileNumber(value);
-        } else {
-            // If the entered value contains non-numeric characters, alert the user
-            alert('Please enter numbers only for the mobile number.');
-        }
-    };
+
 
     const handleSearch = async () => {
         setCloseDetails(false);
@@ -131,10 +120,6 @@ handleSearch();
         
       };
     
-    
-    const handleClose = () => {
-        setCloseDetails(true);
-    }
     const rangeOfMotionItems = [
         { label: "FLEXION", name: "flexion" },
         { label: "EXTENSION", name: "extension" },
@@ -296,14 +281,6 @@ handleSearch();
     return (
         <div >
             <div className="existing-record-form">
-                <h2>Find Existing Record</h2>
-                <label htmlFor="mobileNumber">Mobile Number:</label>
-                <div class="input-container">
-                    <input type="text" id="mobileNumber" value={mobileNumber} onChange={handleMobileNumberChange} />
-                    <button onClick={handleSearch}>Search</button>
-                </div>
-
-
                 {error && <p className="error-message">{error}</p>}
 
                 {patientRecord && !closeDetails && (
@@ -804,15 +781,12 @@ handleSearch();
                         </table>
   
                             <InOutBillRow patientReco={patientRecord}/>
-                            <button onClick={closeOverlay}>Close</button>
+                            {/*<button onClick={closeOverlay}>Close</button>*/}
 
                         <div>
                             <BillDetails record={patientRecord} />
                         </div>
 
-
-
-                        <button onClick={handleClose}>Close</button>
                     </div>
                 )}
             </div>
@@ -820,4 +794,4 @@ handleSearch();
     );
 };
 
-export default ExistingRecordForm;
+export default OverlayRecord;

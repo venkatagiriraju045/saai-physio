@@ -21,19 +21,28 @@ mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+
+
 console.log('Mongoose connected to MongoDB');
 
 
-const userSchema = new mongoose.Schema({
-    name: { type: String },
-    gender: { type: String },
-    age: { type: String }, // Assuming age is stored as a string
-    mobileNo: { type: String },
-    occupation: { type: String },
-    address: { type: String },
-    uhid: { type: String },
+const basicDetails = new mongoose.Schema({
+name: { type: String },
+pid: {type: String},
+gender: { type: String },
+age: { type: String }, // Assuming age is stored as a string
+mobileNo: { type: String },
+occupation: { type: String },
+address: { type: String },
+uhid: { type: String },
+complaint: { type: String },
+docr:{type: String},
 
-    complaint: { type: String },
+}, { versionKey: false });
+
+const userSchema = new mongoose.Schema({
+
+    mobileNo: { type: String },
 
     painRegion: {
         Neck: { type: Boolean, default: false },
@@ -102,6 +111,10 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+
             },
         ],
         shoulder: [
@@ -116,6 +129,9 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
             // ... other properties
         ],
@@ -131,6 +147,9 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
             // ... other properties
         ],
@@ -146,8 +165,10 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
-            // ... other properties
         ],
         hip: [
             {
@@ -161,6 +182,9 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
             // ... other properties
         ],
@@ -176,6 +200,9 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
             // ... other properties
         ],
@@ -191,6 +218,9 @@ const userSchema = new mongoose.Schema({
                 internalRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 dorsiFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
                 plantarFlexion: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                supination: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                pronation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
+                lateralRotation: { rt: { type: Number, default: 0 }, lt: { type: Number, default: 0 } },
             },
         ],
     },
@@ -237,7 +267,6 @@ const userSchema = new mongoose.Schema({
     },
     handFunction: {
         grip: { normal: { type: Boolean }, abnormal: { type: Boolean }, remarks: { type: String } },
-
         grasp: { normal: { type: Boolean }, abnormal: { type: Boolean }, remarks: { type: String } },
         release: { normal: { type: Boolean }, abnormal: { type: Boolean }, remarks: { type: String } },
         // ... other properties
@@ -354,29 +383,74 @@ const userSchema = new mongoose.Schema({
         middleLobeLingulaMotion: { type: String }, // Assuming you want to store a string value
         upperLobeMotion: { type: String },
         lowerLobeMotion: { type: String },
+        middleLobeLingulaValues: { type: String },
+        middleLobeLingulaRemarks: { type: String },
+        upperLobeValues: { type: String },
+        upperLobeRemarks: { type: String },
+        lowerLobeValues: { type: String },
+        lowerLobeRemarks: { type: String },
     },
-    inPatientBillings: [{
-        roomNumber: { type: String },
-        admissionDate: { type: Date },
-        dischargeDate: { type: Date },
-        totalDays: { type: Number },
-        amountPerDay: { type: Number },
-        paymentMode: { type: String },
-        billAmount: { type: Number },
-        dateOfBill: { type: Date },
-    }],
-    outPatientBillings: [{
-        appointmentDate: { type: Date },
-        serviceName: { type: String },
-        paymentMode:{ type: String },
-        billAmount: { type: Number },
-        dateOfBill: { type: Date }, 
-    }],
+    inPatientBill: [
+        {
+            mobileNumber: { type: String },
+            roomNumber: { type: String },
+            admissionDate: { type: Date },
+            dischargeDate: { type: Date },
+            totalDays: { type: Number },
+            visitingBill: { type: Number },
+            physioBill: { type: Number },
+            nursingBill: { type: Number },
+            otherExpenses: { type: Number },
+            paymentMode: { type: String },
+            billAmount: { type: Number },
+        },
+    ],
+    outPatientBill: [
+        {
+            mobileNumber: {type: String},
+            appointmentDate: { type: String },
+            serviceName: { type: String },
+            paymentMode: { type: String },
+            billAmount: { type: Number },
+        },
+    ],
     planOfTreatment: { type: String },
+
+    planTreatment: [
+        {
+            patientType: { type: String },
+            startDate: { type: String },
+            endDate: { type: String },
+            days: { type: String },
+            ust: { type: Boolean, default: false },
+            ift: { type: Boolean, default: false },
+            swd: { type: Boolean, default: false },
+            tr: { type: Boolean, default: false },
+            wax: { type: Boolean, default: false },
+            est: { type: Boolean, default: false },
+            sht: { type: Boolean, default: false },
+            laser: { type: Boolean, default: false },
+            exs: { type: Boolean, default: false },
+            rehab: { type: Boolean, default: false },
+        },
+    ],
+
+    investigation: [
+        {
+            date: { type: String },
+            xray: { type: String },
+            mri: { type: String },
+            others: { type: String },
+            provisionalDiagnosis: { type: String },
+        },
+    ],
+
 }, { versionKey: false });
 
 
 const User = mongoose.model('patients', userSchema);
+const BasicDetails = mongoose.model('basicDetails', basicDetails);
+
 
 app.post('/api/admin-login', async (req, res) => {
     const { login_id, password } = req.body;
@@ -391,7 +465,6 @@ app.post('/api/admin-login', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
 app.get('/api/students', async (req, res) => {
     const { email } = req.query;
 
@@ -407,7 +480,6 @@ app.get('/api/students', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -423,13 +495,110 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// app.post('/api/create_record', async (req, res) => {
+//     const { patient } = req.body;
+
+//     try {
+//         let foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
+
+//         if (foundPatient) {
+//             // Update the existing patient record
+//             foundPatient = { ...foundPatient._doc, ...patient }; // Use _doc to get the plain object
+
+//             // Remove the specific billing field if the condition is not true
+//             // if (!foundPatient.inPatientBill[0].roomNumber) {
+//             //     foundPatient.inPatientBill = undefined;
+//             // }
+
+//             // if (!foundPatient.outPatientBill[0].serviceName) {
+//             //     foundPatient.outPatientBill = undefined;
+//             // }
+//         } else {
+//             // Create a new patient record
+//             const newPatient = new User({
+//                 ...patient,
+//             });
+
+//             // Remove the specific billing field if the condition is not true
+//             // if (!patient.inPatientBill[0].roomNumber) {
+//             //     newPatient.inPatientBill = undefined;
+//             // }
+
+//             // if (!patient.outPatientBill[0].serviceName) {
+//             //     newPatient.outPatientBill = undefined;
+//             // }
+
+//             // Save the new patient record to the database
+//             await newPatient.save();
+
+//             res.status(201).json({ message: 'Patient record created successfully', patient: newPatient });
+//             return; // Add return to avoid executing the code below in case of creating a new patient
+//         }
+
+//         // Update the existing patient record in the database
+//         await foundPatient.save();
+
+//         res.status(200).json({ message: 'Patient record updated successfully', patient: foundPatient });
+//     } catch (error) {
+//         console.error('Error creating/updating patient record:', error);
+//         res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// });
 app.post('/api/create_record', async (req, res) => {
     const { patient } = req.body;
-
     try {
-        // Create a new patient record
-        const newPatient = new User(patient);
+        let foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
 
+        if (foundPatient) {
+            console.log(patient.planTreatment);
+            // Update the existing patient record
+            foundPatient.set(patient); // Use set method to update fields
+            // if (!foundPatient.inPatientBill[0].roomNumber) {
+            //     foundPatient.inPatientBill = undefined;
+            // }
+
+            // if (!foundPatient.outPatientBill[0].serviceName) {
+            //     foundPatient.outPatientBill = undefined;
+            // }
+        } else {
+            // Create a new patient record
+            const newPatient = new User({
+                ...patient,
+            });
+            foundPatient = newPatient; // Assign foundPatient for consistent handling
+            // Save the new patient record to the database
+            await newPatient.save();
+            res.status(201).json({ message: 'Patient record created successfully', patient: newPatient });
+            return; // Add return to avoid executing the code below in case of creating a new patient
+        }
+
+        // Save the updated patient record in the database
+        await foundPatient.save();
+
+        res.status(200).json({ message: 'Patient record updated successfully', patient: foundPatient });
+    } catch (error) {
+        console.error('Error creating/updating patient record:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+app.post('/api/create_basic_record', async (req, res) => {
+    const { patient } = req.body;
+    try {
+        // Find the latest user record to determine the next pid
+        const lastRecord = await BasicDetails.findOne().sort({ _id: -1 }).limit(1);
+        let nextPid = 'spc1'; // Default pid if no records are found
+        if (lastRecord && lastRecord.pid) {
+            // Ensure that lastRecord.pid is defined before accessing slice
+            const lastPidNumber = parseInt(lastRecord.pid.slice(3), 10);
+            nextPid = 'spc' + (lastPidNumber + 1);
+        }
+        // Create a new patient record
+        const newPatient = new BasicDetails({
+            ...patient,
+            pid: nextPid,
+        });
         // Save the new patient record to the database
         await newPatient.save();
 
@@ -439,11 +608,77 @@ app.post('/api/create_record', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-app.get('/api/find_record', async (req, res) => {
-    const { mobileNumber } = req.query;
+// app.post('/api/create_record', async (req, res) => {
+//     const { patient } = req.body;
+
+//     try {
+//         // Find the latest user record to determine the next pid
+//         const lastRecord = await User.findOne().sort({ _id: -1 }).limit(1);
+
+//         let nextPid = 'spc1'; // Default pid if no records are found
+
+//         if (lastRecord && lastRecord.pid) {
+//             // Ensure that lastRecord.pid is defined before accessing slice
+//             const lastPidNumber = parseInt(lastRecord.pid.slice(3), 10);
+//             nextPid = 'spc' + (lastPidNumber + 1);
+//         }
+
+//         // Create a new patient record
+//         const newPatient = new User({
+//             ...patient,
+//             pid: nextPid,
+//         });
+
+//         // Remove the specific billing field if the condition is not true
+//         if (patient.inPatientBill && patient.inPatientBill.length > 0 && !patient.inPatientBill[0].roomNumber) {
+//             newPatient.inPatientBill = undefined;
+//         }
+
+//         if (patient.outPatientBill && patient.outPatientBill.length > 0 && !patient.outPatientBill[0].serviceName) {
+//             newPatient.outPatientBill = undefined;
+//         }
+
+//         // Save the new patient record to the database
+//         await newPatient.save();
+
+//         res.status(201).json({ message: 'Patient record created successfully', patient: newPatient });
+//     } catch (error) {
+//         console.error('Error creating patient record:', error);
+//         res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// });
+
+app.post('/api/update_record', async (req, res) => {
+    try {
+      const { patient } = req.body;
+      console.log(patient);
+  
+      if (!patient || !patient.pid) {
+        return res.status(400).json({ error: 'Invalid request. Patient data or ID missing.' });
+      }
+  
+      // Update the patient record based on pid (assuming pid is the unique identifier)
+      const updatedPatient = await User.findOneAndUpdate(
+        { pid: patient.pid },
+        { $set: patient },
+        { new: true } // Returns the modified document
+      );
+  
+      if (updatedPatient) {
+        res.status(200).json(updatedPatient.toObject());
+      } else {
+        res.status(404).json({ error: 'Patient not found' });
+      }
+    } catch (error) {
+      console.error('Error updating patient record:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+app.get('/api/find_basic_record', async (req, res) => {
+    const { mobileNo } = req.query;
 
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNumber });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);
@@ -455,29 +690,180 @@ app.get('/api/find_record', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+app.get('/api/find_record', async (req, res) => {
+    const { mobileNo } = req.query;
 
-app.post('/api/create_new_inpatient_bill', async (req, res) => {
+    try {
+        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+
+        if (foundPatient) {
+            res.json(foundPatient);
+        } else {
+            res.json("kulukulu");
+            res.status(404).json({ error: 'Patient not found' });
+        }
+    } catch (error) {
+        console.error('Error finding patient record:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+app.get('/api/get_patient_details', async (req, res) => {
+    const { mobileNumber } = req.query;
+    console.log('Mobile Number:', mobileNumber);
+    try {
+        const foundPatient = await User.findOne({ mobileNo: mobileNumber });
+
+        if (foundPatient) {
+            const { name, pid,gender,age } = foundPatient;
+            res.json({ name, pid,gender,age });
+        } else {
+            res.status(404).json({ error: 'Patient not found' });
+        }
+    } catch (error) {
+        console.error('Error finding patient record:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+app.get('/api/get_all_records', async (req, res) => {
+    try {
+      const allRecords = await User.find();
+      res.json(allRecords);
+    } catch (error) {
+      console.error('Error fetching all records:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+app.post('/api/edit_invest_record', async (req, res) => {
+    const { mobileNo, updatedData } = req.body;
+
+    try {
+        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+
+        if (foundPatient) {
+            // Iterate over each new row and push it to the planTreatment array
+            updatedData.forEach((newRow) => {
+                foundPatient.investigation.push(newRow);
+            });
+
+            await foundPatient.save();
+
+            res.json({ message: 'Patient record updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Patient not found' });
+        }
+    } catch (error) {
+        console.error('Error updating patient record:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+app.post('/api/add_row', async (req, res) => {
+    const { mobileNumber, newRows } = req.body;
+
+    try {
+        const foundPatient = await User.findOne({ mobileNo: mobileNumber });
+
+        if (foundPatient) {
+            // Add new rows to the patient record
+            newRows.forEach((newRow) => {
+                foundPatient.planTreatment.push(newRow);
+            });
+
+            await foundPatient.save();
+
+            res.json({ message: 'Rows added successfully' });
+        } else {
+            res.status(404).json({ error: 'Patient not found' });
+        }
+    } catch (error) {
+        console.error('Error adding new rows:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+app.post('/api/update_bill_plantreatment', async (req, res) => {
+    const { mobileNo, updatedData, inBillDetails, outBillDetails } = req.body;
+    console.log('Received update data:', updatedData, mobileNo, inBillDetails, outBillDetails);
+  
+    try {
+      const foundPatient = await User.findOne({ mobileNo: mobileNo });
+  
+      if (!foundPatient) {
+        return res.status(404).json({ error: 'Patient not found' });
+      }
+  
+      // Update planTreatment
+      updatedData.forEach((newRow) => {
+        foundPatient.planTreatment.push(newRow);
+      });
+  
+      // Update in-patient bill details if provided
+      if (inBillDetails) {
+        const newInBillingRecord = {
+          mobileNumber: inBillDetails.mobileNumber,
+          roomNumber: inBillDetails.roomNumber,
+          admissionDate: inBillDetails.admissionDate,
+          dischargeDate: inBillDetails.dischargeDate,
+          totalDays: inBillDetails.totalDays,
+          visitingBill: inBillDetails.visitingBill,
+          physioBill: inBillDetails.physioBill,
+          nursingBill: inBillDetails.nursingBill,
+          otherExpenses: inBillDetails.otherExpenses,
+          paymentMode: inBillDetails.paymentMode,
+          billAmount: inBillDetails.billAmount,
+        };
+        foundPatient.inPatientBill.push(newInBillingRecord);
+      }
+  
+      // Update out-patient bill details if provided
+      if (outBillDetails) {
+        const newOutBillingRecord = {
+          mobileNumber: outBillDetails.mobileNumber,
+          appointmentDate: outBillDetails.appointmentDate,
+          serviceName: outBillDetails.serviceName,
+          paymentMode: outBillDetails.paymentMode,
+          billAmount: outBillDetails.billAmount,
+        };
+  
+        foundPatient.outPatientBill.push(newOutBillingRecord);
+      }
+  
+      await foundPatient.save();
+  
+      res.json({ message: 'Patient record updated successfully' });
+    } catch (error) {
+      console.error('Error updating patient record:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  app.post('/api/create_new_inpatient_bill', async (req, res) => {
     const { patient } = req.body;
+
+    console.log('Received patient data:', patient);
 
     try {
         // Find the user based on the mobile number
-        const foundPatient = await User.findOne({ mobileNo: patient.mobileNumber });
+        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo});
 
         if (!foundPatient) {
+            console.log('Patient not found in the database');
             return res.status(404).json({ message: 'Patient not found' });
         }
 
         // Add billing details to the billings array
-        foundPatient.inPatientBillings.push({
+        const newBillingRecord = {
+            mobileNumber: patient.mobileNumber,
             roomNumber: patient.roomNumber,
             admissionDate: patient.admissionDate,
             dischargeDate: patient.dischargeDate,
             totalDays: patient.totalDays,
-            amountPerDay: patient.amountPerDay,
+            visitingBill: patient.visitingBill,
+            physioBill: patient.physioBill,
+            nursingBill: patient.nursingBill,
+            otherExpenses: patient.otherExpenses,
             paymentMode: patient.paymentMode,
             billAmount: patient.billAmount,
-            dateOfBill: new Date(),
-        });
+        };
+
+        foundPatient.inPatientBill.push(newBillingRecord);
 
         // Save the updated patient record
         await foundPatient.save();
@@ -488,35 +874,40 @@ app.post('/api/create_new_inpatient_bill', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 app.post('/api/create_new_outpatient_bill', async (req, res) => {
     const { patient } = req.body;
-
+    console.log("Received patient data:", patient);
     try {
         // Find the user based on the mobile number
-        const foundPatient = await User.findOne({ mobileNo: patient.mobileNumber });
+        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
 
         if (!foundPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
 
         // Add billing details to the billings array
-        foundPatient.outPatientBillings.push({
+        const newBillingRecord = {
+            mobileNumber: patient.mobileNumber,
             appointmentDate: patient.appointmentDate,
             serviceName: patient.serviceName,
             paymentMode: patient.paymentMode,
             billAmount: patient.billAmount,
-            dateOfBill: new Date(),
-        });
+        };
+
+        foundPatient.outPatientBill.push(newBillingRecord);
         // Save the updated patient record
         await foundPatient.save();
 
-        res.status(201).json({ message: 'Out-Patient Bill created successfully' });
+        // Send back the details of the created bill
+        res.status(201).json({ message: 'Out-Patient Bill created successfully', newBillingRecord });
     } catch (error) {
-        console.error('Error creating in-patient bill:', error);
+        console.error('Error creating out-patient bill:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 
+  
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

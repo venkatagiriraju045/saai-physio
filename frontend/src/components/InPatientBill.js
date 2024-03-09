@@ -6,30 +6,52 @@ const InPatientBill = () => {
     const [loading, setLoading] = useState(false);
     const [mobileNo, setMobileNo] = useState(false);
     const [appMessage, setAppMessage] = useState('');
+    const [patientDetails, setPatientDetails] = useState({
+        name: '',
+        pid: '',
+        gender:'',
+        age:'',
+    });
     const [patient, setPatient] = useState({
         mobileNumber: '',
         roomNumber: '',
         admissionDate: '',
         dischargeDate: '',
         totalDays: '',
-        amountPerDay: '',
+        visitingBill: '',
+        physioBill: '',
+        nursingBill: '',
+        otherExpenses: '',
         paymentMode: '',
-        billAmount: '',
     });
     console.log(patient);
 
-    const validateMobileNumber = (number) => {
-        const digitCount = number.replace(/\D/g, '').length; // Count only digits
+    
+    const validateMobileNumber = async () => {
+        const digitCount = patient.mobileNumber.replace(/\D/g, '').length; // Count only digits
 
         // Check if the number of digits is between 6 and 11
         if (digitCount > 5 && digitCount < 12) {
-            setMobileNo(true);
+            try {
+                const response = await axios.get(`http://localhost:3000/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
+                const foundPatientRecord = response.data;
+                console.log("fo",foundPatientRecord);
+                setPatientDetails(foundPatientRecord);
+                setMobileNo(true);
+            } catch (error) {
+                console.error('Error fetching patient details:', error);
+                setMobileNo(false);
+                setPatientDetails({ name: '', pid: '' }); // Clear patient details on error
+                alert('Error fetching patient details. Please try again.');
+            }
         } else {
             setMobileNo(false);
-            alert("Please enter the valid mobile number and create record.");
-
+            setPatientDetails({ name: '', pid: '' }); // Clear patient details if mobile number is not valid
+            alert("Please enter a valid mobile number and create a record.");
         }
     };
+
+    console.log("pa",patientDetails);
 
     const createInPatientBill = async () => {
         setTimeout(() => {
@@ -40,7 +62,7 @@ const InPatientBill = () => {
             console.log('Patient Object:', patient);
 
             try {
-                const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
+                const response = await axios.post('http://localhost:3000/api/create_new_inpatient_bill', {
                     patient: {
                         ...patient,
                         dateAndTime,
@@ -69,66 +91,59 @@ const InPatientBill = () => {
         }
     };
 
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        // Update the patient state dynamically based on the input field
-        setPatient((prevPatient) => {
-            let updatedPatient = {
-                ...prevPatient,
-                [name]: value,
-            };
+        let updatedPatient = { ...patient };
 
-            if (name === 'mobileNumber') {
-                if (/^\d{0,12}$/.test(value)) {
-                    setPatient((prevPatient) => ({
-                        ...prevPatient,
-                        [name]: value,
-                    }));
-                } else {
-                    alert("Please enter a valid mobile number with maximum 13 digits.");
+        // Helper function to calculate the sum of bills
+        const getSumOfBills = () => {
+            let sum = 0;
+
+            for (const billName in updatedPatient) {
+                if (billName.endsWith('Bill') || billName === 'otherExpenses') {
+                    sum += parseFloat(updatedPatient[billName]) || 0;
                 }
-
             }
-            if (name === 'amountPerDay') {
+
+            return sum;
+        };
+
+
+        switch (name) {
+            case 'mobileNumber':
                 if (/^\d{0,12}$/.test(value)) {
-                    setPatient((prevPatient) => ({
-                        ...prevPatient,
+                    updatedPatient = {
+                        ...updatedPatient,
                         [name]: value,
-                    }));
+                    };
                 } else {
-                    alert("Please enter a valid amount in number.");
+                    alert("Please enter a valid mobile number with a maximum of 12 digits.");
                 }
+                break;
 
-            }
-            if (name === 'roomNumber') {
+            case 'roomNumber':
                 if (/^\d{0,5}$/.test(value)) {
-                    setPatient((prevPatient) => ({
-                        ...prevPatient,
+                    updatedPatient = {
+                        ...updatedPatient,
                         [name]: value,
-                    }));
+                    };
                 } else {
-                    alert("Please enter a valid room number.");
+                    alert("Please enter a valid room number with a maximum of 5 digits.");
                 }
+                break;
 
-            }
-            // Dynamically update billAmount if totalDays or amountPerDay changes
-            if (name === 'totalDays' || name === 'amountPerDay') {
-                const totalDays = parseInt(updatedPatient.totalDays) || 0;
-                const amountPerDay = parseFloat(updatedPatient.amountPerDay) || 0;
+            case 'admissionDate':
+            case 'dischargeDate':
                 updatedPatient = {
-                    ...updatedPatient,
-                    billAmount: (totalDays * amountPerDay).toFixed(2),
+                    ...patient,
+                    [name]: value,
                 };
-            }
-            // Dynamically calculate totalDays if admissionDate and dischargeDate are available
-            if (name === 'admissionDate' || name === 'dischargeDate') {
+
                 const admissionDate = new Date(updatedPatient.admissionDate);
                 const dischargeDate = new Date(updatedPatient.dischargeDate);
 
                 if (!isNaN(admissionDate.getTime()) && !isNaN(dischargeDate.getTime())) {
-                    // Calculate the difference in days
                     const timeDifference = dischargeDate.getTime() - admissionDate.getTime();
                     const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24));
 
@@ -137,11 +152,51 @@ const InPatientBill = () => {
                         totalDays: daysDifference.toString(),
                     };
                 }
-            }
+                break;
 
-            return updatedPatient;
-        });
+            case 'totalDays':
+                if (/^\d{0,5}$/.test(value)) {
+                    updatedPatient = {
+                        ...patient,
+                        [name]: value,
+                    };
+                } else {
+                    alert("Please enter a valid total days (maximum 5 digits).");
+                }
+                break;
+
+            case 'visitingBill':
+            case 'physioBill':
+            case 'nursingBill':
+            case 'otherExpenses':
+                if (/^\d{0,10}$/.test(value)) {
+                    updatedPatient = {
+                        ...patient,
+                        [name]: value,
+                    };
+                } else {
+                    alert(`Please enter a valid amount`);
+                }
+                break;
+
+            default:
+                updatedPatient = {
+                    ...patient,
+                    [name]: value,
+                };
+                break;
+        }
+
+        const sumOfBills = getSumOfBills(updatedPatient);
+        const totalDays = parseFloat(updatedPatient.totalDays) || 0;
+        updatedPatient = {
+            ...updatedPatient,
+            billAmount: (sumOfBills * totalDays).toFixed(2),
+        };
+
+        setPatient(updatedPatient);
     };
+
 
     return (
         <div>
@@ -151,12 +206,21 @@ const InPatientBill = () => {
 
                 {/* In-Patient Specific Information */}
                 <div className="in-patient-info">
+                    {/* Patient Details */}
                     <div className="patient-details">
                         <label>
                             Mobile Number:
                             <input type="text" name="mobileNumber" value={patient.mobileNumber} onChange={handleInputChange} />
+                            {patientDetails.name && <p>Name: {patientDetails.name}</p>}
+                            {patientDetails.pid && <p>Patient ID: {patientDetails.pid}</p>}
+                            {patientDetails.gender && <p>Gender: {patientDetails.gender}</p>}
+                            {patientDetails.age && <p>Age: {patientDetails.age}</p>}
                         </label>
+                        <button onClick={validateMobileNumber} disabled={loading}>
+                            {loading ? 'Searching Patient...' : 'Search Patient'}
+                        </button>
                     </div>
+
                     <label>
                         Room Number:
                         <input type="text" name="roomNumber" value={patient.roomNumber} onChange={handleInputChange} />
@@ -175,10 +239,30 @@ const InPatientBill = () => {
                         Total Days:
                         <input type="text" name="totalDays" value={patient.totalDays} onChange={handleInputChange} readOnly />
                     </label>
-                    <label>
+                    <label className="amount-per-day-label">
                         Amount Per Day:
-                        <input type="text" name="amountPerDay" value={patient.amountPerDay} onChange={handleInputChange} />
+                        <div className="bill-section">
+                            <div>
+                                <p>Visiting Bill</p>
+                                <input type="text" name="visitingBill" value={patient.visitingBill} onChange={handleInputChange} />
+                            </div>
+                            <div>
+                                <p>Physio Bill</p>
+                                <input type="text" name="physioBill" value={patient.physioBill} onChange={handleInputChange} />
+                            </div>
+                            <div>
+                                <p>Nursing Bill</p>
+                                <input type="text" name="nursingBill" value={patient.nursingBill} onChange={handleInputChange} />
+                            </div>
+                            <div>
+                                <p>Other Expenses</p>
+                                <input type="text" name="otherExpenses" value={patient.otherExpenses} onChange={handleInputChange} />
+                            </div>
+                        </div>
                     </label>
+
+
+
                 </div>
                 {/* Billing Information */}
                 <div >

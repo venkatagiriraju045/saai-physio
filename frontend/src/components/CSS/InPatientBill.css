@@ -18,14 +18,14 @@ h2 {
     margin-bottom: 5%;
 }
 
-.billing-info {
+.billing-info{
     display: flex;
     justify-content: space-between;
     font-size: calc(0.5rem + 0.3vw);
 
 }
 
-.billing-info select {
+.billing-info select{
     width:100%;
     min-width: 100px;
     padding: 8px;
@@ -34,6 +34,10 @@ h2 {
 
     margin-top: 4px;
 }
+
+
+
+
 
 label {
     display: block;
@@ -103,4 +107,31 @@ button:disabled {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.amount-per-day-label {
+    display: flex;
+    flex-direction: column; 
+}
+
+.bill-section {
+    display: flex;
+    flex-direction: row; 
+    margin-top: 5px; 
+}
+
+.bill-section > div {
+    display: flex;
+    flex-direction: column; 
+    margin-right: 10px; 
+}
+
+.bill-section > div > p {
+    margin: 0; 
+    margin-bottom: 5px; 
+}
+
+.bill-section > div > input {
+    margin: 0; 
 }

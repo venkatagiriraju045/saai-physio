@@ -5,6 +5,12 @@ import './CSS/InPatientBill.css';
 const OutPatientBill = () => {
     const [loading, setLoading] = useState(false);
     const [appMessage, setAppMessage] = useState('');
+    const [patientDetails, setPatientDetails] = useState({
+        name: '',
+        pid: '',
+        gender: '',
+        age: '',
+    });
     const [patient, setPatient] = useState({
         mobileNumber: '',
         appointmentDate: '',
@@ -18,7 +24,7 @@ const OutPatientBill = () => {
         console.log('Patient Object:', patient);
 
         try {
-            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
+            const response = await axios.post('http://localhost:3000/api/create_new_outpatient_bill', {
                 patient: {
                     ...patient,
                     dateAndTime,
@@ -45,49 +51,127 @@ const OutPatientBill = () => {
             setLoading(false);
         }
     };
+    /*
+        const handleInputChange = (e) => {
+            const { name, value } = e.target;
+    
+            // Update the patient state dynamically based on the input field
+            setPatient((prevPatient) => {
+                let updatedPatient = {
+                    ...prevPatient,
+                    [name]: value,
+                };
+                if (name === 'mobileNumber') {
+                    if (/^\d{0,12}$/.test(value)) {
+                        setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            [name]: value,
+                        }));
+                    } else {
+                        alert("Please enter a valid mobile number with maximum 13 digits.");
+                    }
+                }
+                if (name === 'billAmount') {
+                    if (/^\d{0,12}$/.test(value)) {
+                        setPatient((prevPatient) => ({
+                            ...prevPatient,
+                            [name]: value,
+                        }));
+                    } else {
+                        alert("Please enter a valid mobile number with maximum 13 digits.");
+                    }
+                }
+                if (name === 'serviceName') {
+                if (/^[a-zA-Z ]*$/.test(value)) {
+                    setPatient((prevPatient) => ({
+                        ...prevPatient,
+                        [name]: value,
+                    }));
+                } else {
+                    alert("Please enter only alphabets for the name field.");
+                }
+            }
+                return updatedPatient;
+            });
+        };*/
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
         // Update the patient state dynamically based on the input field
-        setPatient((prevPatient) => {
-            let updatedPatient = {
-                ...prevPatient,
-                [name]: value,
-            };
-            if (name === 'mobileNumber') {
+        let updatedPatient;
+
+        switch (name) {
+            case 'mobileNumber':
                 if (/^\d{0,12}$/.test(value)) {
-                    setPatient((prevPatient) => ({
-                        ...prevPatient,
+                    updatedPatient = {
+                        ...updatedPatient,
                         [name]: value,
-                    }));
+                    };
                 } else {
-                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                    alert("Please enter a valid mobile number with a maximum of 12 digits.");
                 }
-            }
-            if (name === 'billAmount') {
-                if (/^\d{0,12}$/.test(value)) {
-                    setPatient((prevPatient) => ({
-                        ...prevPatient,
+                break;
+
+            case 'billAmount':
+                if (/^\d{0,8}$/.test(value)) {
+                    updatedPatient = {
+                        ...updatedPatient,
                         [name]: value,
-                    }));
+                    };
                 } else {
-                    alert("Please enter a valid mobile number with maximum 13 digits.");
+                    alert("Please enter a valid amount with a maximum of 8 digits.");
                 }
-            }
-            if (name === 'serviceName') {
-            if (/^[a-zA-Z ]*$/.test(value)) {
-                setPatient((prevPatient) => ({
-                    ...prevPatient,
+                break;
+
+            case 'serviceName':
+                if (/^[a-zA-Z ]*$/.test(value)) {
+                    updatedPatient = {
+                        ...updatedPatient,
+                        [name]: value,
+                    };
+                } else {
+                    alert("Please enter only alphabets for the name field.");
+                }
+                break;
+
+            default:
+                updatedPatient = {
+                    ...updatedPatient,
                     [name]: value,
-                }));
-            } else {
-                alert("Please enter only alphabets for the name field.");
-            }
+                };
+                break;
         }
-            return updatedPatient;
-        });
+
+        setPatient((prevPatient) => ({
+            ...prevPatient,
+            ...updatedPatient,
+        }));
     };
+
+
+    const validateMobileNumber = async () => {
+        const digitCount = patient.mobileNumber.replace(/\D/g, '').length; // Count only digits
+
+        // Check if the number of digits is between 6 and 11
+        if (digitCount > 5 && digitCount < 12) {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
+                const foundPatientRecord = response.data;
+                console.log("fo", foundPatientRecord);
+                setPatientDetails(foundPatientRecord);
+
+            } catch (error) {
+                console.error('Error fetching patient details:', error);
+                setPatientDetails({ name: '', pid: '' }); // Clear patient details on error
+                alert('Error fetching patient details. Please try again.');
+            }
+        } else {
+            setPatientDetails({ name: '', pid: '' }); // Clear patient details if mobile number is not valid
+            alert("Please enter a valid mobile number and create a record.");
+        }
+    };
+
     return (
         <div>
             <div className="in-patient-bill-container">
@@ -98,7 +182,14 @@ const OutPatientBill = () => {
                     <label>
                         Mobile Number:
                         <input type="text" name="mobileNumber" value={patient.mobileNumber} onChange={handleInputChange} />
+                        {patientDetails.name && <p>Name: {patientDetails.name}</p>}
+                        {patientDetails.pid && <p>Patient ID: {patientDetails.pid}</p>}
+                        {patientDetails.gender && <p>Gender: {patientDetails.gender}</p>}
+                        {patientDetails.age && <p>Age: {patientDetails.age}</p>}
                     </label>
+                    <button onClick={validateMobileNumber} disabled={loading}>
+                        {loading ? 'Searching Patient...' : 'Search Patient'}
+                    </button>
                 </div>
 
                 {/* Out-Patient Specific Information */}

@@ -542,7 +542,7 @@ const InOutBillRow = ({ patientReco }) => {
       };
   
       const response = await fetch(
-        "http://localhost:3000/api/update_bill_plantreatment",
+        "https://saai-physio-api.vercel.app/api/update_bill_plantreatment",
         {
           method: "POST",
           headers: {
@@ -590,7 +590,7 @@ const InOutBillRow = ({ patientReco }) => {
         console.log(updatedBill);
 
         // Send a PUT request to update the outpatient bill
-        const response = await fetch('http://localhost:3000/api/create_new_outpatient_bill', {
+        const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
           method: 'POST', // Change this to POST if your server expects a POST request
           headers: {
             'Content-Type': 'application/json',
@@ -642,7 +642,7 @@ const InOutBillRow = ({ patientReco }) => {
 
 
         // Send a PUT request to update the outpatient bill
-        const response = await fetch('http://localhost:3000/api/create_new_inpatient_bill', {
+        const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
           method: 'POST', // Change this to POST if your server expects a POST request
           headers: {
             'Content-Type': 'application/json',
@@ -790,7 +790,7 @@ const InOutBillRow = ({ patientReco }) => {
 
     // Update the backend immediately when a change is made to a new row
     axios
-      .post("http://localhost:3000/api/edit_invest_record", {
+      .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
         mobileNumber,
         updatedData: newRows,
       })

@@ -24,7 +24,7 @@ const OutPatientBill = () => {
         console.log('Patient Object:', patient);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/create_new_outpatient_bill', {
+            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
                 patient: {
                     ...patient,
                     dateAndTime,
@@ -156,7 +156,7 @@ const OutPatientBill = () => {
         // Check if the number of digits is between 6 and 11
         if (digitCount > 5 && digitCount < 12) {
             try {
-                const response = await axios.get(`http://localhost:3000/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
+                const response = await axios.get(`https://saai-physio-api.vercel.app/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
                 const foundPatientRecord = response.data;
                 console.log("fo", foundPatientRecord);
                 setPatientDetails(foundPatientRecord);

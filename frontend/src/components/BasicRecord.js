@@ -30,7 +30,7 @@ const BasicRecord = () => {
             patient.doc = dateAndTime;
     
             try {
-                const response = await axios.post('http://localhost:3000/api/create_basic_record', {
+                const response = await axios.post('https://saai-physio-api.vercel.app/api/create_basic_record', {
                     patient: { ...patient },
                 });
     

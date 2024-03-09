@@ -1685,7 +1685,7 @@ const Treatment = () => {
     const handleSearch = async () => {
         setCloseDetails(false);
         try {
-            const response = await axios.get(`http://localhost:3000/api/find_record?patientid=${patientId}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?patientid=${patientId}`);
             const foundPatientRecord = response.data;
             console.log("handle", foundPatientRecord);
     
@@ -1725,7 +1725,7 @@ const Treatment = () => {
             patient.doc = dateAndTime;
     
             try {
-                const response = await axios.post('http://localhost:3000/api/update_record', {
+                const response = await axios.post('https://saai-physio-api.vercel.app/api/update_record', {
                     patient: { ...patient },
                 });
     

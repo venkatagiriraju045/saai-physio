@@ -439,7 +439,7 @@ const UpdateRecord = () => {
                     }
                 }
 
-                await axios.post('http://localhost:3000/api/create_record', {
+                await axios.post('https://saai-physio-api.vercel.app/api/create_record', {
                     patient: {
                         ...patient,
                         dateAndTime,
@@ -994,7 +994,7 @@ const UpdateRecord = () => {
             };
 
             const response = await fetch(
-                "http://localhost:3000/api/update_bill_plantreatment",
+                "https://saai-physio-api.vercel.app/api/update_bill_plantreatment",
                 {
                     method: "POST",
                     headers: {
@@ -1042,7 +1042,7 @@ const UpdateRecord = () => {
                 console.log(updatedBill);
 
                 // Send a PUT request to update the outpatient bill
-                const response = await fetch('http://localhost:3000/api/create_new_outpatient_bill', {
+                const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
                     method: 'POST', // Change this to POST if your server expects a POST request
                     headers: {
                         'Content-Type': 'application/json',
@@ -1095,7 +1095,7 @@ const UpdateRecord = () => {
 
 
                 // Send a PUT request to update the outpatient bill
-                const response = await fetch('http://localhost:3000/api/create_new_inpatient_bill', {
+                const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
                     method: 'POST', // Change this to POST if your server expects a POST request
                     headers: {
                         'Content-Type': 'application/json',
@@ -1243,7 +1243,7 @@ const UpdateRecord = () => {
 
         // Update the backend immediately when a change is made to a new row
         axios
-            .post("http://localhost:3000/api/edit_invest_record", {
+            .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
                 mobileNo,
                 updatedData: newRows,
             })
@@ -2641,7 +2641,7 @@ const UpdateRecord = () => {
 
         try {
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`http://localhost:3000/api/find_basic_record?mobileNo=${mobileNo}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_basic_record?mobileNo=${mobileNo}`);
             // Assuming the backend returns the patient record
             const foundPatientBasicRecord = response.data;
             setPatientBasicRecord(foundPatientBasicRecord);
@@ -2661,7 +2661,7 @@ const UpdateRecord = () => {
         try {
             console.log("fetching rec");
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`http://localhost:3000/api/find_record?mobileNo=${mobileNo}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNo=${mobileNo}`);
             // Assuming the backend returns the patient record
             const foundPatientBasicRecord = response.data;
             if (foundPatientBasicRecord !== "kulukulu") {

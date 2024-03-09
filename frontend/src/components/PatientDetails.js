@@ -16,7 +16,7 @@ const PatientDetails = () => {
     useEffect(() => {
         const fetchAllRecords = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/get_all_records');
+                const response = await axios.get('https://saai-physio-api.vercel.app/api/get_all_records');
 
                 if (response.status === 200) {
                     setPatientData(response.data);
@@ -47,7 +47,7 @@ const PatientDetails = () => {
 
     const handleViewDetails = async (mobileNo) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/find_record?mobileNumber=${mobileNo}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNumber=${mobileNo}`);
 
             if (response.status === 200) {
                 setSelectedPatientDetails(response.data);

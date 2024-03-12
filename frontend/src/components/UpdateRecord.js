@@ -2747,7 +2747,7 @@ const UpdateRecord = () => {
                 <input type="text" id="mobileNo" value={mobileNo} onChange={handleMobileNumberChange} />
                 <button onClick={handleSearch}>Search</button>
             </div>
-            {patient.mobileNo && (
+            { patient.mobileNo && (
                 <div>
                     <div>{patientBasicRecord &&
                         <div>

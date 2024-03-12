@@ -27,16 +27,16 @@ console.log('Mongoose connected to MongoDB');
 
 
 const basicDetails = new mongoose.Schema({
-    name: { type: String },
-    pid: { type: String },
-    gender: { type: String },
-    age: { type: String }, // Assuming age is stored as a string
-    mobileNo: { type: String },
-    occupation: { type: String },
-    address: { type: String },
-    uhid: { type: String },
-    complaint: { type: String },
-    docr: { type: String },
+name: { type: String },
+pid: {type: String},
+gender: { type: String },
+age: { type: String }, // Assuming age is stored as a string
+mobileNo: { type: String },
+occupation: { type: String },
+address: { type: String },
+uhid: { type: String },
+complaint: { type: String },
+docr:{type: String},
 
 }, { versionKey: false });
 
@@ -407,7 +407,7 @@ const userSchema = new mongoose.Schema({
     ],
     outPatientBill: [
         {
-            mobileNumber: { type: String },
+            mobileNumber: {type: String},
             appointmentDate: { type: String },
             serviceName: { type: String },
             paymentMode: { type: String },
@@ -650,30 +650,30 @@ app.post('/api/create_basic_record', async (req, res) => {
 
 app.post('/api/update_record', async (req, res) => {
     try {
-        const { patient } = req.body;
-        console.log(patient);
-
-        if (!patient || !patient.pid) {
-            return res.status(400).json({ error: 'Invalid request. Patient data or ID missing.' });
-        }
-
-        // Update the patient record based on pid (assuming pid is the unique identifier)
-        const updatedPatient = await User.findOneAndUpdate(
-            { pid: patient.pid },
-            { $set: patient },
-            { new: true } // Returns the modified document
-        );
-
-        if (updatedPatient) {
-            res.status(200).json(updatedPatient.toObject());
-        } else {
-            res.status(404).json({ error: 'Patient not found' });
-        }
+      const { patient } = req.body;
+      console.log(patient);
+  
+      if (!patient || !patient.pid) {
+        return res.status(400).json({ error: 'Invalid request. Patient data or ID missing.' });
+      }
+  
+      // Update the patient record based on pid (assuming pid is the unique identifier)
+      const updatedPatient = await User.findOneAndUpdate(
+        { pid: patient.pid },
+        { $set: patient },
+        { new: true } // Returns the modified document
+      );
+  
+      if (updatedPatient) {
+        res.status(200).json(updatedPatient.toObject());
+      } else {
+        res.status(404).json({ error: 'Patient not found' });
+      }
     } catch (error) {
-        console.error('Error updating patient record:', error);
-        res.status(500).json({ error: 'Internal server error' });
+      console.error('Error updating patient record:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-});
+  });
 app.post('/api/find_basic_record', async (req, res) => {
     const { mobileNo } = req.body; // Assuming you're sending mobileNo in the request body
 
@@ -693,7 +693,7 @@ app.post('/api/find_basic_record', async (req, res) => {
 });
 
 app.post('/api/find_record', async (req, res) => {
-    const { mobileNo } = req.body;
+    const { mobileNo } = req.body; // Assuming you're sending mobileNo in the request body
 
     try {
         const foundPatient = await User.findOne({ mobileNo: mobileNo });
@@ -701,6 +701,7 @@ app.post('/api/find_record', async (req, res) => {
         if (foundPatient) {
             res.json(foundPatient);
         } else {
+            res.json("kulukulu");
             res.status(404).json({ error: 'Patient not found' });
         }
     } catch (error) {
@@ -708,7 +709,6 @@ app.post('/api/find_record', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 app.get('/api/get_patient_details', async (req, res) => {
     const { mobileNumber } = req.query;
     console.log('Mobile Number:', mobileNumber);
@@ -716,8 +716,8 @@ app.get('/api/get_patient_details', async (req, res) => {
         const foundPatient = await User.findOne({ mobileNo: mobileNumber });
 
         if (foundPatient) {
-            const { name, pid, gender, age } = foundPatient;
-            res.json({ name, pid, gender, age });
+            const { name, pid,gender,age } = foundPatient;
+            res.json({ name, pid,gender,age });
         } else {
             res.status(404).json({ error: 'Patient not found' });
         }
@@ -728,13 +728,13 @@ app.get('/api/get_patient_details', async (req, res) => {
 });
 app.get('/api/get_all_records', async (req, res) => {
     try {
-        const allRecords = await User.find();
-        res.json(allRecords);
+      const allRecords = await User.find();
+      res.json(allRecords);
     } catch (error) {
-        console.error('Error fetching all records:', error);
-        res.status(500).json({ error: 'Internal server error' });
+      console.error('Error fetching all records:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-});
+  });
 app.post('/api/edit_invest_record', async (req, res) => {
     const { mobileNo, updatedData } = req.body;
 
@@ -784,66 +784,66 @@ app.post('/api/add_row', async (req, res) => {
 app.post('/api/update_bill_plantreatment', async (req, res) => {
     const { mobileNo, updatedData, inBillDetails, outBillDetails } = req.body;
     console.log('Received update data:', updatedData, mobileNo, inBillDetails, outBillDetails);
-
+  
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
-
-        if (!foundPatient) {
-            return res.status(404).json({ error: 'Patient not found' });
-        }
-
-        // Update planTreatment
-        updatedData.forEach((newRow) => {
-            foundPatient.planTreatment.push(newRow);
-        });
-
-        // Update in-patient bill details if provided
-        if (inBillDetails) {
-            const newInBillingRecord = {
-                mobileNumber: inBillDetails.mobileNumber,
-                roomNumber: inBillDetails.roomNumber,
-                admissionDate: inBillDetails.admissionDate,
-                dischargeDate: inBillDetails.dischargeDate,
-                totalDays: inBillDetails.totalDays,
-                visitingBill: inBillDetails.visitingBill,
-                physioBill: inBillDetails.physioBill,
-                nursingBill: inBillDetails.nursingBill,
-                otherExpenses: inBillDetails.otherExpenses,
-                paymentMode: inBillDetails.paymentMode,
-                billAmount: inBillDetails.billAmount,
-            };
-            foundPatient.inPatientBill.push(newInBillingRecord);
-        }
-
-        // Update out-patient bill details if provided
-        if (outBillDetails) {
-            const newOutBillingRecord = {
-                mobileNumber: outBillDetails.mobileNumber,
-                appointmentDate: outBillDetails.appointmentDate,
-                serviceName: outBillDetails.serviceName,
-                paymentMode: outBillDetails.paymentMode,
-                billAmount: outBillDetails.billAmount,
-            };
-
-            foundPatient.outPatientBill.push(newOutBillingRecord);
-        }
-
-        await foundPatient.save();
-
-        res.json({ message: 'Patient record updated successfully' });
+      const foundPatient = await User.findOne({ mobileNo: mobileNo });
+  
+      if (!foundPatient) {
+        return res.status(404).json({ error: 'Patient not found' });
+      }
+  
+      // Update planTreatment
+      updatedData.forEach((newRow) => {
+        foundPatient.planTreatment.push(newRow);
+      });
+  
+      // Update in-patient bill details if provided
+      if (inBillDetails) {
+        const newInBillingRecord = {
+          mobileNumber: inBillDetails.mobileNumber,
+          roomNumber: inBillDetails.roomNumber,
+          admissionDate: inBillDetails.admissionDate,
+          dischargeDate: inBillDetails.dischargeDate,
+          totalDays: inBillDetails.totalDays,
+          visitingBill: inBillDetails.visitingBill,
+          physioBill: inBillDetails.physioBill,
+          nursingBill: inBillDetails.nursingBill,
+          otherExpenses: inBillDetails.otherExpenses,
+          paymentMode: inBillDetails.paymentMode,
+          billAmount: inBillDetails.billAmount,
+        };
+        foundPatient.inPatientBill.push(newInBillingRecord);
+      }
+  
+      // Update out-patient bill details if provided
+      if (outBillDetails) {
+        const newOutBillingRecord = {
+          mobileNumber: outBillDetails.mobileNumber,
+          appointmentDate: outBillDetails.appointmentDate,
+          serviceName: outBillDetails.serviceName,
+          paymentMode: outBillDetails.paymentMode,
+          billAmount: outBillDetails.billAmount,
+        };
+  
+        foundPatient.outPatientBill.push(newOutBillingRecord);
+      }
+  
+      await foundPatient.save();
+  
+      res.json({ message: 'Patient record updated successfully' });
     } catch (error) {
-        console.error('Error updating patient record:', error);
-        res.status(500).json({ error: 'Internal server error' });
+      console.error('Error updating patient record:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-});
-app.post('/api/create_new_inpatient_bill', async (req, res) => {
+  });
+  app.post('/api/create_new_inpatient_bill', async (req, res) => {
     const { patient } = req.body;
 
     console.log('Received patient data:', patient);
 
     try {
         // Find the user based on the mobile number
-        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
+        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo});
 
         if (!foundPatient) {
             console.log('Patient not found in the database');
@@ -909,7 +909,7 @@ app.post('/api/create_new_outpatient_bill', async (req, res) => {
     }
 });
 
-
+  
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

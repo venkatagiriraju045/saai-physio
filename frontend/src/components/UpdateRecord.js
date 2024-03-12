@@ -2671,7 +2671,7 @@ const UpdateRecord = () => {
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
 
-            fetchPatienRecord(foundPatientBasicRecord.mobileNo);
+            fetchPatienRecord();
             setError('');
         } catch (error) {
             setPatientBasicRecord(null);
@@ -2680,7 +2680,7 @@ const UpdateRecord = () => {
         }
     };
 
-    const fetchPatienRecord = async (mobileNo) => {
+    const fetchPatienRecord = async () => {
         try {
             console.log("fetching rec");
             

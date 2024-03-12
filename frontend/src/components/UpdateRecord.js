@@ -2656,41 +2656,49 @@ const UpdateRecord = () => {
     };
     const handleSearch = async () => {
         setCloseDetails(false);
-    
+
         try {
-            const response = await axios.post('https://saai-physio-api.vercel.app/api/find_basic_record', {
-                mobileNo: mobileNo // Assuming mobileNo is defined somewhere in your client-side code
-            });
+            // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
+            // Assuming the backend returns the patient record
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_basic_record', {
+                    params: {
+                        mobileNo// Filter by institute_name
+                    }
+                });
             const foundPatientBasicRecord = response.data;
             setPatientBasicRecord(foundPatientBasicRecord);
-            await delay(500); // Introduce a delay if needed
-            fetchPatientRecord(foundPatientBasicRecord.mobileNo);
+            //patient.mobileNo = foundPatientBasicRecord.mobileNo;
+            // Introduce a delay of 500 milliseconds (adjust as needed)
+            await delay(500);
+
+            fetchPatienRecord(foundPatientBasicRecord.mobileNo);
             setError('');
         } catch (error) {
             setPatientBasicRecord(null);
-            alert('Patient record not found. Please check the mobile number and create basic record for the patient');
+            alert('Patient record not found. Please check the mobile number and create basic record for the patient')
             setError('Patient record not found. Please check the mobile number.');
         }
     };
-    
 
-    const fetchPatientRecord = async (mobileNo) => {
+    const fetchPatienRecord = async (mobileNo) => {
         try {
-            console.log("fetching record");
+            console.log("fetching rec");
             
-            const response = await axios.post('https://saai-physio-api.vercel.app/api/find_record', {
-                mobileNo: mobileNo
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+                params: {
+                    mobileNo// Filter by institute_name
+                }
             });
             const foundPatientBasicRecord = response.data;
-            if (foundPatientBasicRecord) {
+            if (foundPatientBasicRecord !== "kulukulu") {
                 setPatient(foundPatientBasicRecord);
-                console.log("record found: ", foundPatientBasicRecord);
-    
+                console.log("rec fou : ", foundPatientBasicRecord);
+
                 // Introduce a delay of 500 milliseconds (adjust as needed)
                 await delay(500);
-    
+
                 setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
-                console.log("first row: ", firstRow);
+                console.log("rec fr : ", firstRow);
                 setFounded(true);
                 setError('');
             } else {
@@ -2698,13 +2706,13 @@ const UpdateRecord = () => {
                 setFirstRow(patient.planTreatment[0].patientType === "");
                 console.log("not working");
             }
-    
+
         } catch (error) {
             setPatientBasicRecord(null);
             setError('Patient record not found. Please check the mobile number.');
         }
     };
-    
+
     // Utility function to introduce delays using Promise
 
     console.log("founded patient", patient)
@@ -2747,7 +2755,7 @@ const UpdateRecord = () => {
                 <input type="text" id="mobileNo" value={mobileNo} onChange={handleMobileNumberChange} />
                 <button onClick={handleSearch}>Search</button>
             </div>
-            { patient.mobileNo && (
+            {patient.mobileNo && (
                 <div>
                     <div>{patientBasicRecord &&
                         <div>

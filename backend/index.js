@@ -674,8 +674,8 @@ app.post('/api/update_record', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-app.post('/api/find_basic_record', async (req, res) => {
-    const { mobileNo } = req.body; // Assuming you're sending mobileNo in the request body
+app.get('/api/find_basic_record', async (req, res) => {
+    const { mobileNo } = req.query;
 
     try {
         console.log(mobileNo);
@@ -691,16 +691,16 @@ app.post('/api/find_basic_record', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-app.post('/api/find_record', async (req, res) => {
-    const { mobileNo } = req.body; // Assuming you're sending mobileNo in the request body
+app.get('/api/find_record', async (req, res) => {
+    const { mobileNo } = req.query;
 
     try {
-        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
+        const foundPatient = await User.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);
         } else {
+            res.json("kulukulu");
             res.status(404).json({ error: 'Patient not found' });
         }
     } catch (error) {

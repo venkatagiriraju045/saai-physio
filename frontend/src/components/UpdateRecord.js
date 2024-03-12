@@ -2658,7 +2658,7 @@ const UpdateRecord = () => {
         setCloseDetails(false);
     
         try {
-            const response = await axios.post('http://localhost:3000/api/find_basic_record', {
+            const response = await axios.post('https://saai-physio-api.vercel.app/api/find_basic_record', {
                 mobileNo: mobileNo // Assuming mobileNo is defined somewhere in your client-side code
             });
             const foundPatientBasicRecord = response.data;

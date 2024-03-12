@@ -2658,44 +2658,42 @@ const UpdateRecord = () => {
         setCloseDetails(false);
     
         try {
-            // Fetch basic patient record
-            const basicRecordResponse = await axios.get('https://saai-physio-api.vercel.app/api/find_basic_record', {
+            // Fetch combined patient record
+            const combinedRecordResponse = await axios.get('https://saai-physio-api.vercel.app/api/find_combined_record', {
                 params: {
                     mobileNo // Filter by mobile number
                 }
             });
     
-            const foundPatientBasicRecord = basicRecordResponse.data;
-            setPatientBasicRecord(foundPatientBasicRecord);
-            // Introduce a delay of 500 milliseconds (adjust as needed)
-            await delay(500);
+            const foundPatientRecord = combinedRecordResponse.data;
     
-            // Fetch detailed patient record
-            const detailedRecordResponse = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
-                params: {
-                    mobileNo // Filter by mobile number
-                }
-            });
-    
-            const foundPatientDetailedRecord = detailedRecordResponse.data;
-            if (foundPatientDetailedRecord !== "kulukulu") {
-                setPatient(foundPatientDetailedRecord);
-                setFirstRow(foundPatientDetailedRecord.planTreatment[0].patientType === "");
-                setFounded(true);
-                setError('');
+            if (foundPatientRecord.error) {
+                // If patient record not found, show error message
+                setPatientBasicRecord(null);
+                alert('Patient record not found. Please check the mobile number and create basic record for the patient')
+                setError('Patient record not found. Please check the mobile number.');
             } else {
-                // If detailed record not found, set patient with basic record
-                setPatient(foundPatientBasicRecord);
-                setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+                // If patient record found, set patient data accordingly
+                if (foundPatientRecord.planTreatment) {
+                    // Detailed record found
+                    setPatient(foundPatientRecord);
+                    setFirstRow(foundPatientRecord.planTreatment[0].patientType === "");
+                } else {
+                    // Basic record found
+                    setPatient(foundPatientRecord);
+                    setFirstRow(foundPatientRecord.planTreatment[0].patientType === "");
+                }
                 setFounded(true);
                 setError('');
             }
         } catch (error) {
+            // Handle error
             setPatientBasicRecord(null);
-            alert('Patient record not found. Please check the mobile number and create basic record for the patient')
-            setError('Patient record not found. Please check the mobile number.');
+            alert('Error fetching patient record. Please try again later.');
+            setError('Error fetching patient record. Please try again later.');
         }
     };
+    
     
     // Utility function to introduce delays using Promise
 

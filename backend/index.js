@@ -674,16 +674,26 @@ app.post('/api/update_record', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-app.get('/api/find_basic_record', async (req, res) => {
+  app.get('/api/find_combined_record', async (req, res) => {
     const { mobileNo } = req.query;
 
     try {
-        console.log(mobileNo);
-        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
+        // Find basic patient record
+        const foundBasicPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
-        if (foundPatient) {
-            res.json(foundPatient);
+        if (foundBasicPatient) {
+            // If basic record found, find detailed patient record
+            const foundDetailedPatient = await User.findOne({ mobileNo: mobileNo });
+
+            if (foundDetailedPatient) {
+                // If detailed record found, return it
+                res.json(foundDetailedPatient);
+            } else {
+                // If detailed record not found, return basic record
+                res.json(foundBasicPatient);
+            }
         } else {
+            // If basic record not found, return error
             res.status(404).json({ error: 'Patient not found' });
         }
     } catch (error) {
@@ -691,23 +701,7 @@ app.get('/api/find_basic_record', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-app.get('/api/find_record', async (req, res) => {
-    const { mobileNo } = req.query;
 
-    try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
-
-        if (foundPatient) {
-            res.json(foundPatient);
-        } else {
-            res.json("kulukulu");
-            res.status(404).json({ error: 'Patient not found' });
-        }
-    } catch (error) {
-        console.error('Error finding patient record:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 app.get('/api/get_patient_details', async (req, res) => {
     const { mobileNumber } = req.query;
     console.log('Mobile Number:', mobileNumber);

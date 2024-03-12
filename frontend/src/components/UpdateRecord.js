@@ -2659,7 +2659,7 @@ const UpdateRecord = () => {
     
         try {
             // Fetch combined patient record
-            const combinedRecordResponse = await axios.get('https://saai-physio-api.vercel.app/api/find_combined_record', {
+            const combinedRecordResponse = await axios.get(`https://saai-physio-api.vercel.app/api/find_combined_record`, {
                 params: {
                     mobileNo // Filter by mobile number
                 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './CSS/NewRecord.css';
 import BillDetails from './BillDetails';
 import InOutBillRow from './InOutBillRow';
 

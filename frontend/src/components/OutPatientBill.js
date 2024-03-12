@@ -4,6 +4,7 @@ import './CSS/InPatientBill.css';
 
 const OutPatientBill = () => {
     const [loading, setLoading] = useState(false);
+    const [mobileNo, setMobileNo] = useState(false);
     const [appMessage, setAppMessage] = useState('');
     const [patientDetails, setPatientDetails] = useState({
         name: '',
@@ -20,35 +21,48 @@ const OutPatientBill = () => {
     });
 
     const createOutPatientBill = async () => {
-        const dateAndTime = new Date().toLocaleString();
-        console.log('Patient Object:', patient);
+        await new Promise(resolve => setTimeout(() => {
+            validateMobileNumber(patient.mobileNumber);
+            resolve();
+        }, 2000));
 
-        try {
-            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
-                patient: {
-                    ...patient,
-                    dateAndTime,
-                },
-            });
+        if (mobileNo) {
+            const dateAndTime = new Date().toLocaleString();
+            console.log('Patient Object:', patient);
 
-            const { message, outPatientBill } = response.data;
+            try {
+                const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
+                    patient: {
+                        ...patient,
+                        dateAndTime,
+                    },
+                });
 
-            setAppMessage(message);
+                const { message, outPatientBill } = response.data;
 
-            // If the out-patient bill was created successfully, you can access details from outPatientBill
-            if (outPatientBill) {
-                console.log('Out-Patient Bill Details:', outPatientBill);
-                // Additional actions or state updates can be performed based on the out-patient bill details
+                setAppMessage(message);
+
+                // If the out-patient bill was created successfully, you can access details from outPatientBill
+                if (outPatientBill) {
+                    console.log('Out-Patient Bill Details:', outPatientBill);
+                    // Additional actions or state updates can be performed based on the out-patient bill details
+                }
+
+                setTimeout(() => {
+                    setAppMessage('');
+                }, 5000);
+                setLoading(false);
+            }  catch (error) {
+                if (error.response && error.response.status === 404) {
+                    setAppMessage('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
+                    alert('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
+                } else {
+                    console.error('Error creating in-patient bill:', error);
+                    setAppMessage(`An error occurred while creating the in-patient bill: ${error.message}`);
+                }
+    
+                setLoading(false);
             }
-
-            setTimeout(() => {
-                setAppMessage('');
-            }, 5000);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error creating out-patient bill:', error);
-            setAppMessage('An error occurred while creating the out-patient bill');
-            setLoading(false);
         }
     };
     /*
@@ -158,15 +172,17 @@ const OutPatientBill = () => {
             try {
                 const response = await axios.get(`https://saai-physio-api.vercel.app/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
                 const foundPatientRecord = response.data;
-                console.log("fo", foundPatientRecord);
+                console.log("fo",foundPatientRecord);
                 setPatientDetails(foundPatientRecord);
-
+                setMobileNo(true);
             } catch (error) {
                 console.error('Error fetching patient details:', error);
+                setMobileNo(false);
                 setPatientDetails({ name: '', pid: '' }); // Clear patient details on error
                 alert('Error fetching patient details. Please try again.');
             }
         } else {
+            setMobileNo(false);
             setPatientDetails({ name: '', pid: '' }); // Clear patient details if mobile number is not valid
             alert("Please enter a valid mobile number and create a record.");
         }

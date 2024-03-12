@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./CSS/NewRecord.css";
 
 const InOutBillRow = ({ patientReco }) => {
   const [mobileNumber, setMobileNumber] = useState(patientReco.mobileNo);

@@ -1,8 +1,7 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './CSS/NewRecord.css';
 
 const BasicRecord = () => {
     const [mobileNo, setMobileNo] = useState(false);
@@ -11,47 +10,95 @@ const BasicRecord = () => {
     const [appMessage, setAppMessage] = useState('');
     const [selectedPatientType, setSelectedPatientType] = useState('');
     const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
+
+    const [inputValidation, setInputValidation] = useState({
+        name: true,
+        gender: true,
+        age: true,
+        mobileNo: true,
+        occupation: true,
+        address: true,
+        complaint: true,
+        uhid: true,
+        // ... add other fields here
+    });
     const [patient, setPatient] = useState({
         name: '',
         gender: '',
         age: '',
-        dateOfBirth: '',
         mobileNo: '',
         occupation: '',
         address: '',
         complaint: '',
         uhid: '',
-        doc:'',
+        doc: '',
 
     });
 
+    const setInputClasses = (fieldName, isValid) => {
+        setInputValidation((prevValidation) => ({
+            ...prevValidation,
+            [fieldName]: isValid,
+        }));
+    };
+
     const createPatientRecord = async () => {
-            const dateAndTime = new Date().toLocaleString();
-            patient.doc = dateAndTime;
-    
-            try {
-                const response = await axios.post('https://saai-physio-api.vercel.app/api/create_basic_record', {
-                    patient: { ...patient },
-                });
-    
-                if (response.status === 201) {
-                    alert("Record created successfully!");
-                    setAppMessage('Record updated successfully!');
-                    setTimeout(() => {
-                        setAppMessage('');
-                    }, 5000);
-                    setLoading(false);
-                } else {
-                    throw new Error('Failed to create record');
-                }
-            } catch (error) {
-                console.error('Error creating patient record:', error);
+        const dateAndTime = new Date().toLocaleString();
+        patient.doc = dateAndTime;
+
+        // Check all fields and update input classes
+        setInputClasses('name', !!patient.name.trim());
+        setInputClasses('gender', !!patient.gender.trim());
+        setInputClasses('age', !!patient.age.trim());
+        setInputClasses('mobileNo', !!patient.mobileNo.trim());
+        setInputClasses('occupation', !!patient.occupation.trim());
+        setInputClasses('address', !!patient.address.trim());
+        setInputClasses('complaint', !!patient.complaint.trim());
+        setInputClasses('uhid', !!patient.uhid.trim());
+
+        // Add similar checks for other fields
+
+        // Check if any field is empty and show an alert
+        if (!Object.values(patient).every(value => !!value.trim())) {
+            alert('Please fill all the fields');
+            return;
+        }
+
+        // Validate the mobile number
+        if (!validateMobileNumber(patient.mobileNo)) {
+            return;
+        }
+
+        try {
+            const response = await axios.post('https://saai-physio-api.vercel.app/api/create_basic_record', {
+                patient: { ...patient },
+            });
+
+            if (response.status === 201) {
+                alert("Record created successfully!");
+                setAppMessage('Record updated successfully!');
+                setTimeout(() => {
+                    setAppMessage('');
+                }, 5000);
+                setLoading(false);
+            } else {
+                throw new Error('Failed to create record');
+            }
+        } catch (error) {
+            console.error('Error creating patient record:', error);
+
+            if (error.response && error.response.status === 400) {
+                // Display alert for duplicate mobile number
+                alert("Patient with the provided mobile number already exists");
+            } else {
+                // Display a general error message
                 setAppMessage('An error occurred while creating the patient record');
                 setLoading(false);
             }
-       
+        }
+
     };
-    
+
     console.log(patient);
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -64,6 +111,8 @@ const BasicRecord = () => {
                         ...prevPatient,
                         [name]: value,
                     }));
+
+                    setInputClasses(name, /^[a-zA-Z ]*$/.test(value.trim()));
                 } else {
                     alert("Please enter only alphabets for the field.");
                 }
@@ -75,6 +124,7 @@ const BasicRecord = () => {
                         ...prevPatient,
                         [name]: value,
                     }));
+                    setInputClasses(name, /^[a-zA-Z ]*$/.test(value.trim()));
                 } else {
                     alert("Please enter only alphabets for the occupation field.");
                 }
@@ -87,25 +137,29 @@ const BasicRecord = () => {
                         ...prevPatient,
                         [name]: value,
                     }));
+                    setInputClasses(name, /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]*$/.test(value.trim()));
                 } else {
                     alert("Please enter only alphanumeric characters and special characters for the field.");
                 }
                 break;
 
             case "age":
-                // Allow only numeric values within a specific range or empty string
-                if (value.trim() === "" || !isNaN(value)) {
+                // Validate and set the state
+                if (value.trim() === "" || !isNaN(value.trim())) {
                     const age = value.trim() === "" ? "" : parseInt(value, 10);
                     if (age === "" || (age >= 0 && age <= 150)) {
                         setPatient((prevPatient) => ({
                             ...prevPatient,
-                            [name]: age,
+                            [name]: value.trim(),
                         }));
+                        setInputClasses(name, true);
                     } else {
                         alert("Please enter a valid age between 0 and 150.");
+                        setInputClasses(name, false);
                     }
                 } else {
                     alert("Please enter a valid numeric age.");
+                    setInputClasses(name, false);
                 }
                 break;
 
@@ -116,8 +170,9 @@ const BasicRecord = () => {
                         ...prevPatient,
                         [name]: value,
                     }));
+                    setInputClasses(name, /^\d{0,12}$/.test(value.trim()));
                 } else {
-                    alert("Please enter a valid mobile number with maximum 12 digits.");
+                    alert("Please enter a valid mobile number with maximum 10 digits.");
                 }
                 break;
             // Add more cases for additional fields with specific validation requirements
@@ -128,6 +183,7 @@ const BasicRecord = () => {
                     ...prevPatient,
                     [name]: value,
                 }));
+                setInputClasses(name, !!value.trim());
 
                 break;
 
@@ -142,6 +198,7 @@ const BasicRecord = () => {
                     // Handle invalid input (e.g., show an error message)
                     alert("Please enter only numeric and alphabetic characters.");
                 }
+                setInputClasses(name, /^[a-zA-Z0-9\s]*$/.test(value.trim()));
 
                 break;
 
@@ -152,14 +209,15 @@ const BasicRecord = () => {
         const digitCount = number.replace(/\D/g, '').length; // Count only digits
 
         // Check if the number of digits is between 6 and 11
-        if (digitCount > 5 && digitCount < 12) {
+        if (digitCount > 5 && digitCount < 11) {
             setMobileNo(true);
+            return true;
         } else {
             setMobileNo(false);
             alert("Please enter the valid mobile number and create record.");
+            return false;
         }
     };
-
 
     return (
         <div className='new-record-main-container'>
@@ -170,8 +228,8 @@ const BasicRecord = () => {
                     <br />
                     <form action="#">
                         <div className="user-details">
-                            <div className="input-box">
-                                <span className="details">Name</span>
+                            <div className={`input-box-name${!inputValidation.name ? '-abnormal' : ''}`}>
+                                <span className="details">Name*</span>
                                 <input
                                     type="text"
                                     name="name"
@@ -181,8 +239,8 @@ const BasicRecord = () => {
                                     required
                                 />
                             </div>
-                            <div className="input-box">
-                                <span className="details">Gender</span>
+                            <div className={`input-box-gender${!inputValidation.gender ? '-abnormal' : ''}`}>
+                                <span className="details">Gender*</span>
                                 <select
                                     id="gender"
                                     name="gender"
@@ -196,8 +254,8 @@ const BasicRecord = () => {
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                            <div className="input-box">
-                                <span className="details">Age</span>
+                            <div className={`input-box-age${!inputValidation.age ? '-abnormal' : ''}`}>
+                                <span className="details">Age*</span>
                                 <input
                                     type="text"
                                     name="age"
@@ -208,8 +266,8 @@ const BasicRecord = () => {
                                 />
                             </div>
 
-                            <div className="input-box">
-                                <span className="details">Mobile No</span>
+                            <div className={`input-box-mobileNo${!inputValidation.mobileNo ? '-abnormal' : ''}`}>
+                                <span className="details">Mobile No*</span>
                                 <input
                                     type="text"
                                     name="mobileNo"
@@ -219,8 +277,8 @@ const BasicRecord = () => {
                                     required
                                 />
                             </div>
-                            <div className="input-box">
-                                <span className="details">Occupation</span>
+                            <div className={`input-box-occupation${!inputValidation.occupation ? '-abnormal' : ''}`}>
+                                <span className="details">Occupation*</span>
                                 <input
                                     type="text"
                                     name="occupation"
@@ -230,8 +288,8 @@ const BasicRecord = () => {
                                     required
                                 />
                             </div>
-                            <div className="input-box">
-                                <span className="details">IP/UHID</span>
+                            <div className={`input-box-uhid${!inputValidation.uhid ? '-abnormal' : ''}`}>
+                                <span className="details">IP/UHID*</span>
                                 <input
                                     type="text"
                                     name="uhid"
@@ -241,8 +299,8 @@ const BasicRecord = () => {
                                     required
                                 />
                             </div>
-                            <div className="input-box">
-                                <span className="details">Complaint</span>
+                            <div className={`input-box-complaint${!inputValidation.complaint ? '-abnormal' : ''}`}>
+                                <span className="details">Complaint*</span>
                                 <input
                                     type="text"
                                     name="complaint"
@@ -252,8 +310,8 @@ const BasicRecord = () => {
                                     required
                                 />
                             </div>
-                            <div className="address">
-                                <span className="details">Address</span>
+                            <div className={`input-box-address${!inputValidation.address ? '-abnormal' : ''}`}>
+                                <span className="details">Address*</span>
                                 <input
                                     type="text"
                                     name="address"

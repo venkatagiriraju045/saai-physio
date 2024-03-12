@@ -47,7 +47,7 @@ const PatientDetails = () => {
 
     const handleViewDetails = async (mobileNo) => {
         try {
-            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNumber=${mobileNo}`);
+            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNo=${mobileNo}`);
 
             if (response.status === 200) {
                 setSelectedPatientDetails(response.data);
@@ -60,6 +60,8 @@ const PatientDetails = () => {
         }
     };
     // ...
+
+    console.log("sp",selectedPatientDetails);
 
     useEffect(() => {
         // Filter data based on the entered mobile number dynamically
@@ -77,6 +79,7 @@ const PatientDetails = () => {
         <div>
             {loading && <p>Loading...</p>}
             <h1>Patient Details</h1>
+
 
             <div>
                 <label>Filter by Mobile Number:</label>
@@ -126,6 +129,7 @@ const PatientDetails = () => {
                         <h2>Patient Details</h2>
                         {selectedPatientDetails &&
                             <div>
+                                {console.log("selected mobile",selectedPatientDetails.mobileNo)}
                                 <OverlayRecord mobileNumber={selectedPatientDetails.mobileNo} />
                             </div>
                         }

@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './CSS/AdminHome.css';
-import './CSS/DepartmentMenu.css';
-import './CSS/Profile_model.css';
 import UpdateRecord from './UpdateRecord';
 import BasicRecord from './BasicRecord';
 import ExistingRecordForm from './ExistingRecordForm';
 import InPatientBill from './InPatientBill';
 import OutPatientBill from './OutPatientBill';
+import powerButton from './power-button.png';
 import PatientDetails from './PatientDetails';
 import Treatment from './Treatment';
+import './CSS/landing-page.css';
 
 const AdminMenu = () => {
   const [loading, setLoading] = useState(false);
@@ -80,103 +79,98 @@ const AdminMenu = () => {
  * 
  * @returns {void}
  */
-const handleHomeButtonClick = () => {
-  // Hide record forms and bills
-  setShowExistingRecordForm(false);
-  setShowUpdateRecord(false);
-  setShowInPatientBill(false);
-  setShowOutPatientBill(false);
-  setShowPatientDetails(false);
-  setShowBasicRecord(false);
-  
-  // Set home button state
-  setIsHomeButtonClicked(true);
-  
-  // Hide navigation bar
-  setShowNavBar(false);
-  
-  // Set loading state
-  setIsLoading(true);
-
-  // Display elements with class 'body'
-  document.querySelectorAll('.body').forEach((element) => {
-    element.style.display = 'block';
-  });
-
-  // After 1000 milliseconds, reset states and loading state
-  setTimeout(() => {
-    setIsLoading(false);
-    setShowBasicRecord(false);
+  const handleHomeButtonClick = () => {
+    // Hide record forms and bills
     setShowExistingRecordForm(false);
     setShowUpdateRecord(false);
-    setIsHomeButtonClicked(true);
     setShowInPatientBill(false);
-    setShowNavBar(false);
     setShowOutPatientBill(false);
     setShowPatientDetails(false);
-  }, 1000);
-};
+    setShowBasicRecord(false);
 
+    // Set home button state
+    setIsHomeButtonClicked(true);
 
+    // Hide navigation bar
+    setShowNavBar(false);
 
-/**
+    // Set loading state
+    setIsLoading(true);
 
-Toggles the visibility state of the navigation bar.
-This function toggles the visibility state of the navigation bar by flipping the value of prevShowNavBar.
-@returns {void}
-*/
-const handleShowNav = () => {
-  setShowNavBar((prevShowNavBar) => !prevShowNavBar);
+    // Display elements with class 'body'
+    document.querySelectorAll('.body').forEach((element) => {
+      element.style.display = 'block';
+    });
+
+    // After 1000 milliseconds, reset states and loading state
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowBasicRecord(false);
+      setShowExistingRecordForm(false);
+      setShowUpdateRecord(false);
+      setIsHomeButtonClicked(true);
+      setShowInPatientBill(false);
+      setShowNavBar(false);
+      setShowOutPatientBill(false);
+      setShowPatientDetails(false);
+    }, 1000);
   };
 
-  
-/**
 
-Handles the click event to create a new record.
 
-This function initializes the creation of a new record by setting various states and displaying elements.
-
-It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
-
-@returns {void}
-*/
-const handleUpdateRecordClick = () => {
-  // Show new record form and hide other elements
-  setShowUpdateRecord(true);
-  setShowBasicRecord(false);
-  setShowExistingRecordForm(false);
-  setShowNavBar(false);
-  setShowInPatientBill(false);
-  setShowOutPatientBill(false);
-  setShowPatientDetails(false);
+  /**
   
-  // Set loading state
-  setIsLoading(true);
-  
-  // Hide elements with class 'admin-chart-container'
-  document.querySelectorAll('.admin-chart-container').forEach((element) => {
-  element.style.display = 'none';
-  });
-  
-  // Create a message element
-  const messageElement = document.createElement('div');
-  messageElement.style.color = 'black';
-  document.querySelector('.profile-right-content-container').appendChild(messageElement);
-  
-  // After 1000 milliseconds, reset states and loading state
-  setTimeout(() => {
-  setIsLoading(false);
-  messageElement.remove();
-  setShowBasicRecord(false);
-  setShowUpdateRecord(true);
-  setShowExistingRecordForm(false);
-  setShowNavBar(false);
-  setIsHomeButtonClicked(false);
-  setShowInPatientBill(false);
-  setShowOutPatientBill(false);
-  setShowPatientDetails(false);
-  }, 1000);
+  Toggles the visibility state of the navigation bar.
+  This function toggles the visibility state of the navigation bar by flipping the value of prevShowNavBar.
+  @returns {void}
+  */
+  const handleShowNav = () => {
+    setShowNavBar((prevShowNavBar) => !prevShowNavBar);
   };
+
+  const handleUpdateRecordClick = () => {
+    // Show new record form and hide other elements
+    setShowBasicRecord(false);
+    setShowUpdateRecord(true);
+    setShowExistingRecordForm(false);
+    setShowNavBar(false);
+    setShowInPatientBill(false);
+    setShowOutPatientBill(false);
+    setShowPatientDetails(false);
+
+    // Set loading state
+    setIsLoading(true);
+
+    // Hide elements with class 'admin-chart-container'
+
+
+    // Create a message element
+
+
+    // After 1000 milliseconds, reset states and loading state
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowBasicRecord(false);
+      setShowUpdateRecord(true);
+      setShowExistingRecordForm(false);
+      setShowNavBar(false);
+      setIsHomeButtonClicked(false);
+      setShowInPatientBill(false);
+      setShowOutPatientBill(false);
+      setShowPatientDetails(false);
+    }, 1000);
+  };
+  /**
+  
+  Handles the click event to create a new record.
+  
+  This function initializes the creation of a new record by setting various states and displaying elements.
+  
+  It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
+  
+  @returns {void}
+  */
+
 
   const handleBasicRecordClick = () => {
     // Show new record form and hide other elements
@@ -187,37 +181,29 @@ const handleUpdateRecordClick = () => {
     setShowInPatientBill(false);
     setShowOutPatientBill(false);
     setShowPatientDetails(false);
-    
+
     // Set loading state
     setIsLoading(true);
-    
+
     // Hide elements with class 'admin-chart-container'
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-    element.style.display = 'none';
-    });
-    
+
+
     // Create a message element
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
-    
+
+
     // After 1000 milliseconds, reset states and loading state
     setTimeout(() => {
-    setIsLoading(false);
-    messageElement.remove();
-    setShowBasicRecord(true);
-    setShowUpdateRecord(false);
-    setShowExistingRecordForm(false);
-    setShowNavBar(false);
-    setIsHomeButtonClicked(false);
-    setShowInPatientBill(false);
-    setShowOutPatientBill(false);
-    setShowPatientDetails(false);
+      setIsLoading(false);
+      setShowBasicRecord(true);
+      setShowUpdateRecord(false);
+      setShowExistingRecordForm(false);
+      setShowNavBar(false);
+      setIsHomeButtonClicked(false);
+      setShowInPatientBill(false);
+      setShowOutPatientBill(false);
+      setShowPatientDetails(false);
     }, 1000);
-    };
-  
-
-  
+  };
   const handleExistingRecordClick = () => {
     setShowBasicRecord(false);
     setShowUpdateRecord(false);
@@ -227,15 +213,10 @@ const handleUpdateRecordClick = () => {
     setShowOutPatientBill(false);
     setShowPatientDetails(false);
     setIsLoading(true);
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-      element.style.display = 'none';
-    });
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
+
+
     setTimeout(() => {
-      setIsLoading(false);  
-      messageElement.remove();
+      setIsLoading(false);
       setShowBasicRecord(false);
       setShowUpdateRecord(false);
       setShowExistingRecordForm(true);
@@ -255,15 +236,10 @@ const handleUpdateRecordClick = () => {
     setShowExistingRecordForm(false);
     setShowPatientDetails(false);
     setIsLoading(true);
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-      element.style.display = 'none';
-    });
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
+
+
     setTimeout(() => {
       setIsLoading(false);
-      messageElement.remove();
       setShowBasicRecord(false);
       setShowUpdateRecord(false);
       setShowExistingRecordForm(false);
@@ -283,15 +259,10 @@ const handleUpdateRecordClick = () => {
     setShowExistingRecordForm(false);
     setShowPatientDetails(false);
     setIsLoading(true);
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-      element.style.display = 'none';
-    });
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
+
+
     setTimeout(() => {
       setIsLoading(false);
-      messageElement.remove();
       setShowBasicRecord(false);
       setShowUpdateRecord(false);
       setShowExistingRecordForm(false);
@@ -311,15 +282,10 @@ const handleUpdateRecordClick = () => {
     setShowExistingRecordForm(false);
     setShowPatientDetails(true);
     setIsLoading(true);
-    document.querySelectorAll('.admin-chart-container').forEach((element) => {
-      element.style.display = 'none';
-    });
-    const messageElement = document.createElement('div');
-    messageElement.style.color = 'black';
-    document.querySelector('.profile-right-content-container').appendChild(messageElement);
+
+
     setTimeout(() => {
       setIsLoading(false);
-      messageElement.remove();
       setShowBasicRecord(false);
       setShowUpdateRecord(false);
       setShowExistingRecordForm(false);
@@ -330,7 +296,6 @@ const handleUpdateRecordClick = () => {
       setShowPatientDetails(true);
     }, 1000);
   };
-
   if (deviceType === 'mobile') {
     return (
       <div className="mobile-warning-overlay-message">
@@ -338,96 +303,51 @@ const handleUpdateRecordClick = () => {
       </div>
     );
   }
-
   return (
     <div className="dep-admin-page-container">
-      {showNavBar &&
-        <nav className="navigation1">
-          <ul>
-            <li>
-              <div className="student-details-card">
-                <img src="./uploads/logo-icon.png" className='main-icon' />
-                SPC
-                <br />
+      <div>
+        {(loading || isLoading) && <div className={overlayClass}>
+          <div className="spinner">
+            <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
+          </div>
+          <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
+        </div>}
+      </div>
+      <div class="nav-back">
+        <button class="back-button">
+          <div class="back">
+            <img src="./uploads/back.png" alt="Back" />
+          </div>
+          <div class="text">Back</div>
+        </button>
+        <nav class="navbar">
+          <ul class="nav-links">
+            <input type="checkbox" id="checkbox_toggle" />
+            <label for="checkbox_toggle" class="hamburger">&#9776;</label>
+            <div class="nav-bar-menu">
+              <li class="nav-bar-services"><a>ACTIONS</a>
+                <ul class="dropdown">
+                  <li><a onClick={handleBasicRecordClick}>CREATE RECORD </a></li>
+                  <li><a onClick={handleUpdateRecordClick}>UPDATE RECORD</a></li>
+                </ul>
+              </li>
+              <li class="nav-bar-services"><a>BILLINGS</a>
+                <ul class="dropdown">
+                  <li><a onClick={handleInPatientBillClick}>IN-PATIENT BILLINGS</a></li>
+                  <li><a onClick={handleOutPatientBillClick}>OUT-PATIENT BILLINGS</a></li>
+                </ul>
+              </li>
 
-              </div>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" onClick={handleHomeButtonClick} className="test-score-button" title="Go to Home">
-                Menu
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handleBasicRecordClick} title="View Attendance">
-                Create Basic Record
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handleUpdateRecordClick} title="View Attendance">
-                Update Record
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handleExistingRecordClick} title="Send Messages">
-                Find a Record
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handleInPatientBillClick} title="Send Messages">
-                In-Patient Bill
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handleOutPatientBillClick} title="Send Messages">
-                Out-Patient Bill
-              </a>
-            </li>
-            <br />
-            <br />
-            <li>
-              <a href="#" className="test-score-button" onClick={handlePatientDetails} title="Send Messages">
-                Patient Details
-              </a>
-            </li>
-            <br />
-            <br />
+              <li><a onClick={handlePatientDetails}>RECORDS</a></li>
+
+              <label  className="power-button" onClick={() => setShowConfirmationPrompt(true)}>
+                <input type="checkbox" checked={showConfirmationPrompt} readOnly />
+                <div className="checkmark-pwr-btn">
+                  <img src={powerButton} alt="Power Button" />
+                </div>
+              </label>
+            </div>
           </ul>
-          <footer className="profile-footer">
-            &copy; Students Gate Tech Solutions.
-          </footer>
-        </nav>
-      }
-
-      <div
-        className={`profile-right-content-container ${showNavBar ? "with-nav-bar" : "without-nav-bar"
-          }`}>
-        <header
-          className="admin-header">
-          <div className='nav-bar-hider'>
-            <img src="./uploads/nav-menu.png" href="#" onClick={handleShowNav} id='nav-menu-button' alt="Dashboard-icon Icon"
-              className={`nav-button-menu ${showNavBar ? "with-nav-bar" : "without-nav-bar"
-                }`} />
-          </div>
-          <div className='header-dialogue'>
-            <p>SAAI PHYSIOTHERAPY AND FITNESS CLINIC </p>
-          </div>
-          <div >
-            <button className='logout-button' onClick={() => setShowConfirmationPrompt(true)}>
-              Logout
-            </button>
-          </div>
           {showConfirmationPrompt && (
             <div className="logout-overlay">
               <div className="confirmation-container">
@@ -437,64 +357,38 @@ const handleUpdateRecordClick = () => {
               </div>
             </div>
           )}
-        </header>
-        <main
-          className={`profile-content-container ${showNavBar ? "with-nav-bar" : "without-nav-bar"
-            }`}>
-          <div>
-            {/*(loading || isLoading) && <div className={overlayClass}>
-                      <div className="spinner">
-                          <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
-                      </div>
-                      <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
-            </div>*/}
-          </div>
-          {showExistingRecordForm ? (
-            <ExistingRecordForm />
-          ) : showUpdateRecord ? (
-            <UpdateRecord />
-          ): showBasicRecord ? (
-            <BasicRecord />
-          ): showInPatientBill ? (
-            <InPatientBill />
-          ) : showOutPatientBill ? (
-            <OutPatientBill />
-          ): showPatientDetails ? (
-            <PatientDetails />
-          ) : isHomeButtonClicked && (
-            <div className='home-contents'>
-              <div className='menu-options'>
-                <div className='menu-option'>
-                  <a className="form-selection-a" onClick={handleBasicRecordClick}><img src="./uploads/create-icon.png" className='crete-icon' /></a>
-                  <p>Create Basic record</p>
-                </div>
-                <div className='menu-option'>
-                  <a className="form-selection-a" onClick={handleUpdateRecordClick}><img src="./uploads/create-icon.png" className='crete-icon' /></a>
-                  <p>Create Update record</p>
-                </div>
-                <div className='menu-option'>
-                  <a className="form-selection-a" onClick={handleExistingRecordClick}><img src="./uploads/find-icon.png" className='crete-icon' /></a>
-                  <p>Find record</p>
-                </div>
-                <div className='menu-option'>
-                  <a className="form-selection-a" onClick={handleInPatientBillClick}><img src="./uploads/in-icon.png" className='crete-icon' /></a>
-                  <p>In-Patient bill</p>
-                </div>
-                <div className='menu-option'>
-
-                  <a className="form-selection-a" onClick={handleOutPatientBillClick}><img src="./uploads/out-icon.png" className='crete-icon' /></a>
-                  <p>Out-Patient bill</p>
-                </div>
-                <div className='menu-option'>
-
-                  <a className="form-selection-a" onClick={handlePatientDetails}><img src="./uploads/out-icon.png" className='crete-icon' /></a>
-                  <p>Patient Details</p>
-                </div>
-              </div>
-            </div>)}
-        </main>
+        </nav>
       </div>
+
+
+      <main>
+        <div>
+          {(loading || isLoading) && <div className={overlayClass}>
+            <div className="spinner">
+              <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
+            </div>
+            <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
+          </div>}
+        </div>
+        {showExistingRecordForm ? (
+          <ExistingRecordForm />
+        ) : showUpdateRecord ? (
+          <UpdateRecord />
+        ) : showBasicRecord ? (
+          <BasicRecord />
+        ) : showInPatientBill ? (
+          <InPatientBill />
+        ) : showOutPatientBill ? (
+          <OutPatientBill />
+        ) : showPatientDetails ? (
+          <PatientDetails />
+        ) : isHomeButtonClicked && (
+          <div className='home-contents'>
+
+          </div>)}
+      </main>
     </div>
+
   );
 };
 export default AdminMenu;

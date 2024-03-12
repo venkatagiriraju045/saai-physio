@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './CSS/NewRecord.css';
 
 const Treatment = () => {
     const [mobileNo, setMobileNo] = useState(false);

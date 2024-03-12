@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './CSS/InPatientBill.css';
 
 const InPatientBill = () => {
     const [loading, setLoading] = useState(false);
@@ -50,17 +49,20 @@ const InPatientBill = () => {
             alert("Please enter a valid mobile number and create a record.");
         }
     };
-
+    
     console.log("pa",patientDetails);
 
+
     const createInPatientBill = async () => {
-        setTimeout(() => {
+       await new Promise(resolve => setTimeout(() => {
             validateMobileNumber(patient.mobileNumber);
-        }, 2000);
+            resolve();
+        }, 2000));
+    
         if (mobileNo) {
             const dateAndTime = new Date().toLocaleString();
             console.log('Patient Object:', patient);
-
+    
             try {
                 const response = await axios.post('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
                     patient: {
@@ -68,28 +70,36 @@ const InPatientBill = () => {
                         dateAndTime,
                     },
                 });
-
+    
                 const { message, inPatientBill } = response.data;
-
+    
                 setAppMessage(message);
-
-                // If the in-patient bill was created successfully, you can access details from inPatientBill
+    
                 if (inPatientBill) {
                     console.log('In-Patient Bill Details:', inPatientBill);
                     // Additional actions or state updates can be performed based on the in-patient bill details
                 }
-
+    
                 setTimeout(() => {
                     setAppMessage('');
                 }, 5000);
+    
                 setLoading(false);
             } catch (error) {
-                console.error('Error creating in-patient bill:', error);
-                setAppMessage('An error occurred while creating the in-patient bill');
+                if (error.response && error.response.status === 404) {
+                    setAppMessage('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
+                    alert('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
+                } else {
+                    console.error('Error creating in-patient bill:', error);
+                    setAppMessage(`An error occurred while creating the in-patient bill: ${error.message}`);
+                }
+    
                 setLoading(false);
             }
         }
     };
+    
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

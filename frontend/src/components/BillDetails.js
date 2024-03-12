@@ -1,5 +1,4 @@
 import React from 'react';
-import './CSS/InPatientBill.css';
 
 const BillDetails = ({ record }) => {
     const outPatientBillings = record?.outPatientBillings || [];

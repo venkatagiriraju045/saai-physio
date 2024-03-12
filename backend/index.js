@@ -696,7 +696,7 @@ app.post('/api/find_record', async (req, res) => {
     const { mobileNo } = req.body; // Assuming you're sending mobileNo in the request body
 
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);

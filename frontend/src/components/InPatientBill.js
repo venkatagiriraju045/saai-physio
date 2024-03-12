@@ -32,7 +32,11 @@ const InPatientBill = () => {
         // Check if the number of digits is between 6 and 11
         if (digitCount > 5 && digitCount < 12) {
             try {
-                const response = await axios.get(`https://saai-physio-api.vercel.app/api/get_patient_details?mobileNumber=${patient.mobileNumber}`);
+                const response = await axios.get('https://saai-physio-api.vercel.app/api/get_patient_details', {
+                    params: {
+                        mobileNumber:patient.mobileNumber,// Filter by institute_name
+                    }
+                });
                 const foundPatientRecord = response.data;
                 console.log("fo",foundPatientRecord);
                 setPatientDetails(foundPatientRecord);

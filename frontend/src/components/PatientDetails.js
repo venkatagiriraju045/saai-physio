@@ -46,8 +46,11 @@ const PatientDetails = () => {
 
     const handleViewDetails = async (mobileNo) => {
         try {
-            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNo=${mobileNo}`);
-
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+                params: {
+                    mobileNo// Filter by institute_name
+                }
+            });
             if (response.status === 200) {
                 setSelectedPatientDetails(response.data);
                 setViewPatientDetails(true);

@@ -2610,8 +2610,12 @@ const OverlayRecord = (mobileNumber) => {
     
         try {
             // Replace 'http://localhost:3000/api/find_basic_record' with your actual endpoint
-            const response = await axios.get(`http://localhost:3000/api/find_basic_record?mobileNo=${mobileNo}`);
-            // Assuming the backend returns the patient record
+
+            const response = await axios.get('http://localhost:3000/api/find_basic_record', {
+                    params: {
+                        mobileNo// Filter by institute_name
+                    }
+                });            // Assuming the backend returns the patient record
             const foundPatientBasicRecord = response.data;
             setPatientBasicRecord(foundPatientBasicRecord);
             // Introduce a delay of 500 milliseconds (adjust as needed)
@@ -2630,8 +2634,11 @@ const OverlayRecord = (mobileNumber) => {
         try {
             console.log("fetching rec");
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNo=${mobileNo}`);
-            // Assuming the backend returns the patient record
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+                params: {
+                    mobileNo// Filter by institute_name
+                }
+            });            // Assuming the backend returns the patient record
             const foundPatientRecord = response.data;
     
             if (foundPatientRecord && foundPatientRecord !== "kulukulu") {

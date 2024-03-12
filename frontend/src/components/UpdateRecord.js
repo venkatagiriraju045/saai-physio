@@ -2659,8 +2659,12 @@ const UpdateRecord = () => {
 
         try {
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_basic_record?mobileNo=${mobileNo}`);
             // Assuming the backend returns the patient record
+            const response = await axios.get('http://localhost:3000/api/find_basic_record', {
+                    params: {
+                        mobileNo// Filter by institute_name
+                    }
+                });
             const foundPatientBasicRecord = response.data;
             setPatientBasicRecord(foundPatientBasicRecord);
             //patient.mobileNo = foundPatientBasicRecord.mobileNo;
@@ -2679,9 +2683,12 @@ const UpdateRecord = () => {
     const fetchPatienRecord = async (mobileNo) => {
         try {
             console.log("fetching rec");
-            // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get(`https://saai-physio-api.vercel.app/api/find_record?mobileNo=${mobileNo}`);
-            // Assuming the backend returns the patient record
+            
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+                params: {
+                    mobileNo// Filter by institute_name
+                }
+            });
             const foundPatientBasicRecord = response.data;
             if (foundPatientBasicRecord !== "kulukulu") {
                 setPatient(foundPatientBasicRecord);

@@ -2663,7 +2663,6 @@ const UpdateRecord = () => {
             const response = await axios.get('https://saai-physio-api.vercel.app/api/find_basic_record', {
                     params: {
                         mobileNo// Filter by institute_name
-                        
                     }
                 });
             const foundPatientBasicRecord = response.data;

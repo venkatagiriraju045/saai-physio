@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './CSS/InPatientBill.css';
 
 const OutPatientBill = () => {
     const [loading, setLoading] = useState(false);

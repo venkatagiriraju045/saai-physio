@@ -701,7 +701,6 @@ app.post('/api/find_record', async (req, res) => {
         if (foundPatient) {
             res.json(foundPatient);
         } else {
-            res.json("kulukulu");
             res.status(404).json({ error: 'Patient not found' });
         }
     } catch (error) {

@@ -2682,7 +2682,7 @@ const UpdateRecord = () => {
                 mobileNo: mobileNo
             });
             const foundPatientBasicRecord = response.data;
-            if (foundPatientBasicRecord !== "kulukulu") {
+            if (foundPatientBasicRecord) {
                 setPatient(foundPatientBasicRecord);
                 console.log("record found: ", foundPatientBasicRecord);
     

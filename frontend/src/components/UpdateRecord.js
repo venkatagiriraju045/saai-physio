@@ -291,7 +291,6 @@ const UpdateRecord = () => {
             eyes: { normal: false, abnormal: false, remarks: '' },
             cyanosis: { normal: false, abnormal: false, remarks: '' },
             jugularVenousPressure: { normal: false, abnormal: false, remarks: '' },
-            // ... other properties
         },
         chestObservation: {
             breathingPattern: { normal: false, abnormal: false, remarks: '' },
@@ -2621,6 +2620,7 @@ const UpdateRecord = () => {
                 }
             });
             foundPatientBasicRecord = response.data;
+            setFirstRow(foundPatientBasicRecord.planTreatment.length()===0);
             // setFounded(true);
             // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("patient ::::", foundPatientBasicRecord);
@@ -2696,7 +2696,7 @@ const UpdateRecord = () => {
     // }, [founded, newNextRow]);
 
 
-    console.log("in patient billlllllllll",patient);
+    console.log("in patient billlllllllll",patient, firstRow);
 
 
     return (

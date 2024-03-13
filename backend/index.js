@@ -675,7 +675,7 @@ app.get('/api/find_basic_record', async (req, res) => {
 
     try {
         console.log(mobileNo);
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);

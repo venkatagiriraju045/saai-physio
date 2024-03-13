@@ -400,10 +400,6 @@ const UpdateRecord = () => {
             try {
                 setRecordButtonClicked(true);
 
-                console.log(patient.outPatientBill[0].appointmentDate);
-                console.log(patient.inPatientBill[0].admissionDate, patient.inPatientBill[0].dischargeDate);
-
-
                 if (firstRow) {
                     if (!patient.planTreatment[0].patientType) {
                         alert("Please select a patient type from plan treament");
@@ -412,8 +408,6 @@ const UpdateRecord = () => {
                     else if ((!patient.outPatientBill[0].appointmentDate) &&
                         ((!patient.inPatientBill[0].admissionDate) || (!patient.inPatientBill[0].dischargeDate))
                     ) {
-                        console.log('Condition met');
-                        console.log(patient.inPatientBill[0].admissionDate, " oooo ", patient.inPatientBill[0].dischargeDate);
                         alert("Please select date from plan treament");
                         return;
                     }
@@ -564,7 +558,7 @@ const UpdateRecord = () => {
     const handleInOutInputChange = (index, field, value) => {
         // Update the patient record in the state immediately
         setPatient((prevpatient) => {
-            console.log("Handling Input Change - isNewRow:", prevpatient.planTreatment[index].isNewRow); // Add this line
+            // console.log("Handling Input Change - isNewRow:", prevpatient.planTreatment[index].isNewRow); // Add this line
             const updatedPlanTreatment = prevpatient.planTreatment.map((item, i) =>
                 i === index && item.isNewRow
                     ? { ...item, [field]: value }
@@ -838,7 +832,6 @@ const UpdateRecord = () => {
         }));
     };
     const handleNewInPatientInputChange = (e) => {
-        console.log("function called");
         const { name, value } = e.target;
 
         let updatedInPatientBill = [...inPatientBillDetails.inBill];
@@ -941,9 +934,7 @@ const UpdateRecord = () => {
         );
     };
 
-    console.log("currentrow", currentRowPatientType);
     const handleInOutUpdate = async () => {
-        console.log("update");
         const selectedPlanTreatment = patient.planTreatment.find(
             (plan) => plan.isNewRow
         );
@@ -975,7 +966,6 @@ const UpdateRecord = () => {
                     };
                 });
 
-            console.log(newRows);
 
             const inBillDetails =
                 (nextRowPatientType === "inpatient" && isBillDetailsInOutInPatientFilled())
@@ -987,7 +977,6 @@ const UpdateRecord = () => {
                     ? outPatientBillDetails.outBill[0]
                     : undefined;
 
-            console.log(outBillDetails);
 
             if (
                 (nextRowPatientType === "inpatient" && inBillDetails === undefined) ||
@@ -1024,7 +1013,6 @@ const UpdateRecord = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("Data updated successfully:", data);
                 alert("Data updated successfully");
                 // Handle any UI updates or redirection after successful update
             } else {
@@ -1043,11 +1031,9 @@ const UpdateRecord = () => {
     };
     const handleInOutUpdateOutBill = async () => {
         const isBillDetailsFilled = isBillDetailsInOutOutPatientFilled();
-        console.log("outbill", outPatientBillDetails.outBill);
         if (isBillDetailsFilled) {
             try {
                 // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
-                console.log(outPatientBillDetails.outBill[0]);
 
                 const updatedBill = {
                     mobileNo: mobileNo,
@@ -1056,9 +1042,6 @@ const UpdateRecord = () => {
                     paymentMode: outPatientBillDetails.outBill[0].paymentMode,
                     billAmount: outPatientBillDetails.outBill[0].billAmount,
                 };
-
-                console.log(updatedBill);
-
                 // Send a PUT request to update the outpatient bill
                 const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
                     method: 'POST', // Change this to POST if your server expects a POST request
@@ -1070,7 +1053,6 @@ const UpdateRecord = () => {
 
                 if (response.ok) {
                     const updatedBillData = await response.json();
-                    console.log('Outpatient Bill updated successfully:', updatedBillData);
                     alert("Out Patient Bill updated successfully");
                     // Handle any additional logic or UI updates if needed
                 } else {
@@ -1092,7 +1074,6 @@ const UpdateRecord = () => {
     //console.log("currentrow",currentRowPatientType);
     const handleInOutUpdateInBill = async () => {
         const isBillDetailsFilled = isBillDetailsInOutInPatientFilled();
-        console.log("inbill", inPatientBillDetails.inBill);
         if (isBillDetailsFilled) {
             try {
                 // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
@@ -1123,7 +1104,6 @@ const UpdateRecord = () => {
 
                 if (response.ok) {
                     const updatedBillData = await response.json();
-                    console.log('Outpatient Bill updated successfully:', updatedBillData);
                     alert("In Patient Bill updated successfully");
                     // Handle any additional logic or UI updates if needed
                 } else {
@@ -1315,7 +1295,7 @@ const UpdateRecord = () => {
     }
 
     useEffect(() => {
-        console.log(currentRowPatientType);
+        console.log("currentRowPatientType",currentRowPatientType);
     }, [createoverlayVisible]);
 
 
@@ -1987,20 +1967,16 @@ const UpdateRecord = () => {
 
     const handleCreateBill = (ptype) => {
         if (ptype === "outpatient") {
-            console.log("out");
             setCreateOverlayVisible(true);
         } else {
-            console.log("in");
             setCreateOverlayVisible(true);
         }
     };
 
     const handleCreateFreshBill = (ptype) => {
         if (ptype === "outpatient") {
-            console.log("out");
             setCreateFreshOverlayVisible(true);
         } else {
-            console.log("in");
             setCreateFreshOverlayVisible(true);
         }
     }
@@ -2716,7 +2692,6 @@ const UpdateRecord = () => {
 
     // Utility function to introduce delays using Promise
 
-    console.log("founded patient", patient)
     useEffect(() => {
         if (!firstRow) {
             const sort = patient.planTreatment
@@ -2738,12 +2713,11 @@ const UpdateRecord = () => {
                 ...prevPatient,
                 planTreatment: sort,
             }));
-            console.log("sorted rows", sortedRows);
         }
     }, [founded, newNextRow]);
 
 
-    console.log("in patient bill", patient.inPatientBill[0]);
+    console.log("in patient billlllllllll", patient);
 
 
     return (

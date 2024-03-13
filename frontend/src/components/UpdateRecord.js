@@ -184,9 +184,6 @@ const UpdateRecord = () => {
             ],
         }))
     }, [selectedRowStartDate, selectedRowEndDate]);
-
-
-
     const handleInOutCheckboxChange = (index, field) => {
         // Update the patient record in the state immediately
         setPatient((prevpatient) => ({
@@ -196,7 +193,6 @@ const UpdateRecord = () => {
             ),
         }));
     };
-
     const handleInOutInputChange = (index, field, value) => {
         // Update the patient record in the state immediately
         setPatient((prevpatient) => {
@@ -213,7 +209,6 @@ const UpdateRecord = () => {
             };
         });
     };
-
     const handleAddRow = () => {
         setNewNextRow(true);
         setPatient((prevPatient) => {
@@ -244,7 +239,6 @@ const UpdateRecord = () => {
             return { ...prevPatient, ...updatedRecord };
         });
     };
-
     const handleAddInvestRow = () => {
         setPatient((prevpatient) => {
             const newInvest = {
@@ -265,9 +259,7 @@ const UpdateRecord = () => {
             return { ...prevpatient, ...updatedRecord };
         });
     };
-
     const handleDeleteRow = (index) => {
-
         setOutPatientBillDetails({
             outBill: [
                 {
@@ -1042,10 +1034,6 @@ const UpdateRecord = () => {
             }));
         }*/
     };
-
-
-
-
     const isBillDetailsInPatientFilled = () => {
         const inBillDetails = patient.inPatientBill[0];
         return (
@@ -1061,7 +1049,6 @@ const UpdateRecord = () => {
             inBillDetails.billAmount
         );
     };
-
     const isBillDetailsOutPatientFilled = () => {
         const outBillDetails = patient.outPatientBill[0];
         return (
@@ -1071,7 +1058,6 @@ const UpdateRecord = () => {
             outBillDetails.billAmount
         );
     };
-
     const rangeOfMotionJoints = ['cervical', 'shoulder', 'elbow', 'wrist', 'hip', 'knee', 'ankle'];
     const severityOptions = ['Critical', 'High', 'Medium', 'Low'];
     const hemoptysisOptions = ['Red: Blood', 'Rust: Pneumonia', 'Purple: Neoplasm', 'Yellow: Infected', 'Green: Pus', 'Pink: Pulmonary Oedema'];
@@ -1381,8 +1367,6 @@ const UpdateRecord = () => {
         }));
 
     };
-
-
     /*
         const handleInPatientInputChange = (e) => {
             const { name, value } = e.target;
@@ -2335,7 +2319,7 @@ const UpdateRecord = () => {
     // Utility function to introduce delays using Promise
 
     useEffect(() => {
-        if (!firstRow) {
+        if (foundPatientBasicRecord.planTreatment[0].patientType!=='') {
             const sort = patient.planTreatment
                 .filter((plan) => !plan.isNewRow)
                 .sort((a, b) => {
@@ -2372,7 +2356,7 @@ const UpdateRecord = () => {
                 <input type="text" id="mobileNo" value={mobileNo} onChange={handleMobileNumberChange} />
                 <button onClick={handleSearch}>Search</button>
             </div>
-            {patient.mobileNo && (
+            {patient.mobileNo!=="" && (
                 <div>
                     <div>{patientBasicRecord &&
                         <div>

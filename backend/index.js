@@ -449,7 +449,7 @@ const BasicDetails = mongoose.model('basicDetails', basicDetails);
 app.post('/api/admin-login', async (req, res) => {
     const { login_id, password } = req.body;
     try {
-        const admin = await User.findOne({ login_id, password });
+        const admin = await BasicDetails.findOne({ login_id, password });
         if (!admin) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
@@ -463,7 +463,7 @@ app.get('/api/students', async (req, res) => {
     const { email } = req.query;
 
     try {
-        const student = await User.findOne({ email });
+        const student = await BasicDetails.findOne({ email });
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         }
@@ -478,7 +478,7 @@ app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const student = await User.findOne({ email, password });
+        const student = await BasicDetails.findOne({ email, password });
         if (!student) {
             return res.status(401).json({ message: 'Authentication failed' });
         }
@@ -493,7 +493,7 @@ app.post('/api/login', async (req, res) => {
 //     const { patient } = req.body;
 
 //     try {
-//         let foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
+//         let foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo });
 
 //         if (foundPatient) {
 //             // Update the existing patient record
@@ -509,7 +509,7 @@ app.post('/api/login', async (req, res) => {
 //             // }
 //         } else {
 //             // Create a new patient record
-//             const newPatient = new User({
+//             const newPatient = new BasicDetails({
 //                 ...patient,
 //             });
 
@@ -541,7 +541,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/create_record', async (req, res) => {
     const { patient } = req.body;
     try {
-        let foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
+        let foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo });
 
         if (foundPatient) {
             console.log(patient.planTreatment);
@@ -556,7 +556,7 @@ app.post('/api/create_record', async (req, res) => {
             // }
         } else {
             // Create a new patient record
-            const newPatient = new User({
+            const newPatient = new BasicDetails({
                 ...patient,
             });
             foundPatient = newPatient; // Assign foundPatient for consistent handling
@@ -580,7 +580,7 @@ app.post('/api/create_record', async (req, res) => {
 app.post('/api/create_basic_record', async (req, res) => {
     const { patient } = req.body;
     try {
-        // Find the latest user record to determine the next pid
+        // Find the latest BasicDetails record to determine the next pid
         const lastRecord = await BasicDetails.findOne().sort({ _id: -1 }).limit(1);
         let nextPid = 'spc1'; // Default pid if no records are found
         if (lastRecord && lastRecord.pid) {
@@ -606,8 +606,8 @@ app.post('/api/create_basic_record', async (req, res) => {
 //     const { patient } = req.body;
 
 //     try {
-//         // Find the latest user record to determine the next pid
-//         const lastRecord = await User.findOne().sort({ _id: -1 }).limit(1);
+//         // Find the latest BasicDetails record to determine the next pid
+//         const lastRecord = await BasicDetails.findOne().sort({ _id: -1 }).limit(1);
 
 //         let nextPid = 'spc1'; // Default pid if no records are found
 
@@ -618,7 +618,7 @@ app.post('/api/create_basic_record', async (req, res) => {
 //         }
 
 //         // Create a new patient record
-//         const newPatient = new User({
+//         const newPatient = new BasicDetails({
 //             ...patient,
 //             pid: nextPid,
 //         });
@@ -652,7 +652,7 @@ app.post('/api/update_record', async (req, res) => {
       }
   
       // Update the patient record based on pid (assuming pid is the unique identifier)
-      const updatedPatient = await User.findOneAndUpdate(
+      const updatedPatient = await BasicDetails.findOneAndUpdate(
         { pid: patient.pid },
         { $set: patient },
         { new: true } // Returns the modified document
@@ -690,7 +690,7 @@ app.get('/api/find_record', async (req, res) => {
 
     try {
         console.log(mobileNo)
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);
@@ -707,7 +707,7 @@ app.get('/api/get_patient_details', async (req, res) => {
     const { mobileNumber } = req.query;
     console.log('Mobile Number:', mobileNumber);
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNumber });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNumber });
 
         if (foundPatient) {
             const { name, pid,gender,age } = foundPatient;
@@ -722,7 +722,7 @@ app.get('/api/get_patient_details', async (req, res) => {
 });
 app.get('/api/get_all_records', async (req, res) => {
     try {
-      const allRecords = await User.find();
+      const allRecords = await BasicDetails.find();
       res.json(allRecords);
     } catch (error) {
       console.error('Error fetching all records:', error);
@@ -733,7 +733,7 @@ app.post('/api/edit_invest_record', async (req, res) => {
     const { mobileNo, updatedData } = req.body;
 
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNo });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             // Iterate over each new row and push it to the planTreatment array
@@ -756,7 +756,7 @@ app.post('/api/add_row', async (req, res) => {
     const { mobileNumber, newRows } = req.body;
 
     try {
-        const foundPatient = await User.findOne({ mobileNo: mobileNumber });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNumber });
 
         if (foundPatient) {
             // Add new rows to the patient record
@@ -780,7 +780,7 @@ app.post('/api/update_bill_plantreatment', async (req, res) => {
     console.log('Received update data:', updatedData, mobileNo, inBillDetails, outBillDetails);
   
     try {
-      const foundPatient = await User.findOne({ mobileNo: mobileNo });
+      const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
   
       if (!foundPatient) {
         return res.status(404).json({ error: 'Patient not found' });
@@ -836,8 +836,8 @@ app.post('/api/update_bill_plantreatment', async (req, res) => {
     console.log('Received patient data:', patient);
 
     try {
-        // Find the user based on the mobile number
-        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo});
+        // Find the BasicDetails based on the mobile number
+        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo});
 
         if (!foundPatient) {
             console.log('Patient not found in the database');
@@ -875,8 +875,8 @@ app.post('/api/create_new_outpatient_bill', async (req, res) => {
     const { patient } = req.body;
     console.log("Received patient data:", patient);
     try {
-        // Find the user based on the mobile number
-        const foundPatient = await User.findOne({ mobileNo: patient.mobileNo });
+        // Find the BasicDetails based on the mobile number
+        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo });
 
         if (!foundPatient) {
             return res.status(404).json({ message: 'Patient not found' });

@@ -2620,10 +2620,29 @@ const UpdateRecord = () => {
                 }
             });
             foundPatientBasicRecord = response.data;
+            
             // setFounded(true);
             // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("patient ::::", foundPatientBasicRecord);
             setPatient(foundPatientBasicRecord);
+            if(patient.planTreatment.length===0){ 
+            patient.planTreatment[0]={
+                patientType: 'outpatient',
+                startDate: '',
+                endDate: '',
+                days: '',
+                ust: false,
+                ift: false,
+                swd: false,
+                tr: false,
+                wax: false,
+                est: false,
+                sht: false,
+                laser: false,
+                exs: false,
+                rehab: false,
+            }
+        }
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
             // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
@@ -3808,12 +3827,12 @@ const UpdateRecord = () => {
                                                     <th>Date</th>
                                                     <th>No. of Days</th>
                                                     <th>Patient Type</th>
-                                                    {patient.planTreatment.patientType === 'inpatient' ? (
-                                                        Object.keys(patient.planTreatment).slice(4).map((category, index) => (
+                                                    {patient.planTreatment[0].patientType === 'inpatient' ? (
+                                                        Object.keys(patient.planTreatment[0]).slice(4).map((category, index) => (
                                                             <th key={index}>{category}</th>
                                                         ))
                                                     ) : (
-                                                        Object.keys(patient.planTreatment).slice(4, -1).map((category, index) => (
+                                                        Object.keys(patient.planTreatment[0]).slice(4, -1).map((category, index) => (
                                                             <th key={index}>{category}</th>
                                                         ))
                                                     )

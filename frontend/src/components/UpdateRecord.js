@@ -337,7 +337,7 @@ const UpdateRecord = () => {
 
         planTreatment: [
             {
-                patientType: '',
+                patientType: 'outpatient',
                 startDate: '',
                 endDate: '',
                 days: '',

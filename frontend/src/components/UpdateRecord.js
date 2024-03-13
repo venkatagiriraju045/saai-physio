@@ -2696,7 +2696,7 @@ const UpdateRecord = () => {
     // }, [founded, newNextRow]);
 
 
-    console.log("in patient billlllllllll", foundPatientBasicRecord, patient, founded, firstRow);
+    console.log("in patient billlllllllll",patient, founded, firstRow);
 
 
     return (

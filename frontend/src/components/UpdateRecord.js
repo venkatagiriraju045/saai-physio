@@ -3022,7 +3022,7 @@ const UpdateRecord = () => {
                                                                         <input
                                                                             type="number"
                                                                             name={joint + '-' + motion + '-' + side}
-                                                                            value={patient.rangeOfMotion[joint][index][motion][side]}
+                                                                            value={patient.rangeOfMotion[joint][index][motion][side] ? patient.rangeOfMotion[joint][index][motion][side] : 0 }
                                                                             onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
                                                                             placeholder={allowedMotions[joint] && allowedMotions[joint].includes(motion) ? "0" : "-"}
                                                                             disabled={!allowedMotions[joint] || !allowedMotions[joint].includes(motion)}

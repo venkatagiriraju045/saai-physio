@@ -2643,7 +2643,7 @@ const UpdateRecord = () => {
             });
             const foundPatientBasicRecord = response.data;
             setPatient(foundPatientBasicRecord);
-            setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+            // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("patient ::::", foundPatientBasicRecord);
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
@@ -2652,7 +2652,6 @@ const UpdateRecord = () => {
             setError('');
         } catch (error) {
             setPatientBasicRecord(null);
-            alert('Patient record not found. Please check the mobile number and create basic record for the patient')
             setError('Patient record not found. Please check the mobile number.');
         }
     };

@@ -2696,7 +2696,7 @@ const UpdateRecord = () => {
     // }, [founded, newNextRow]);
 
 
-    console.log("in patient billlllllllll",patient, founded, firstRow);
+    console.log("in patient billlllllllll",patient);
 
 
     return (
@@ -2711,17 +2711,17 @@ const UpdateRecord = () => {
             </div>
             {patient.mobileNo!=="" && (
                 <div>
-                    <div>{patientBasicRecord &&
+                    <div>{patient &&
                         <div>
-                            <label>Name : </label>{patientBasicRecord.name}<br></br>
-                            <label>Gender : </label>{patientBasicRecord.gender}<br></br>
-                            <label>Age : </label>{patientBasicRecord.age}<br></br>
-                            <label>Date Of Birth : </label>{patientBasicRecord.dateOfBirth}<br></br>
-                            <label>Mobile Number : </label>{patientBasicRecord.mobileNo}<br></br>
-                            <label>Occupation : </label>{patientBasicRecord.occupation}<br></br>
-                            <label>Address : </label>{patientBasicRecord.address}<br></br>
-                            <label>Complaint : </label>{patientBasicRecord.complaint}<br></br>
-                            <label>Uhid : </label>{patientBasicRecord.uhid}<br></br>
+                            <label>Name : </label>{patient.name}<br></br>
+                            <label>Gender : </label>{patient.gender}<br></br>
+                            <label>Age : </label>{patient.age}<br></br>
+                            <label>Date Of Birth : </label>{patient.dateOfBirth}<br></br>
+                            <label>Mobile Number : </label>{patient.mobileNo}<br></br>
+                            <label>Occupation : </label>{patient.occupation}<br></br>
+                            <label>Address : </label>{patient.address}<br></br>
+                            <label>Complaint : </label>{patient.complaint}<br></br>
+                            <label>Uhid : </label>{patient.uhid}<br></br>
                         </div>
                     }</div>
                     <div className="container">

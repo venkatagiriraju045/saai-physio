@@ -2643,7 +2643,7 @@ const UpdateRecord = () => {
             });
             const foundPatientBasicRecord = response.data;
             setPatient(foundPatientBasicRecord);
-            // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+            setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("patient ::::", foundPatientBasicRecord);
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
@@ -2716,7 +2716,7 @@ const UpdateRecord = () => {
     }, [founded, newNextRow]);
 
 
-    console.log("in patient billlllllllll", patient, founded);
+    console.log("in patient billlllllllll", patient, founded, firstRow);
 
 
     return (

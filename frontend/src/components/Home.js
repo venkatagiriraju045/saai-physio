@@ -123,11 +123,15 @@ const Home = () => {
                                     onChange={handleLoginIDChange}
                                 />
                                 <label>
-                                    <span style={{ transitionDelay: '0ms' }}>E</span>
-                                    <span style={{ transitionDelay: '50ms' }}>m</span>
-                                    <span style={{ transitionDelay: '100ms' }}>a</span>
+                                    <span style={{ transitionDelay: '0ms' }}>L</span>
+                                    <span style={{ transitionDelay: '50ms' }}>o</span>
+                                    <span style={{ transitionDelay: '100ms' }}>g</span>
                                     <span style={{ transitionDelay: '150ms' }}>i</span>
-                                    <span style={{ transitionDelay: '200ms' }}>l</span>
+                                    <span style={{ transitionDelay: '200ms' }}>n</span>
+                                    <span style={{ transitionDelay: '200ms' }}> </span>
+                                    <span style={{ transitionDelay: '200ms' }}>i</span>
+                                    <span style={{ transitionDelay: '200ms' }}>d</span>
+
                                 </label>
                             </div>
                             <div className="form-control">

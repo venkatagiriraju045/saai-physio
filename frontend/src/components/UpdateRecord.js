@@ -3808,12 +3808,12 @@ const UpdateRecord = () => {
                                                     <th>Date</th>
                                                     <th>No. of Days</th>
                                                     <th>Patient Type</th>
-                                                    {patient.planTreatment[0].patientType === 'inpatient' ? (
-                                                        Object.keys(patient.planTreatment[0]).slice(4).map((category, index) => (
+                                                    {patient.planTreatment.patientType === 'inpatient' ? (
+                                                        Object.keys(patient.planTreatment).slice(4).map((category, index) => (
                                                             <th key={index}>{category}</th>
                                                         ))
                                                     ) : (
-                                                        Object.keys(patient.planTreatment[0]).slice(4, -1).map((category, index) => (
+                                                        Object.keys(patient.planTreatment).slice(4, -1).map((category, index) => (
                                                             <th key={index}>{category}</th>
                                                         ))
                                                     )

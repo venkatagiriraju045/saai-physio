@@ -2666,9 +2666,10 @@ const UpdateRecord = () => {
                 }
             });
             const foundPatientBasicRecord = response.data;
-            setPatientBasicRecord(foundPatientBasicRecord);
+            setPatient(foundPatientBasicRecord);
             patient.mobileNo = foundPatientBasicRecord;
-            setFirstRow(patient.planTreatment[0].patientType === "");
+
+            setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("not working");
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);

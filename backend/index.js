@@ -26,23 +26,19 @@ mongoose.connect(MONGODB_URI, {
 console.log('Mongoose connected to MongoDB');
 
 
-const basicDetails = new mongoose.Schema({
-name: { type: String },
-pid: {type: String},
-gender: { type: String },
-age: { type: String }, // Assuming age is stored as a string
-mobileNo: { type: String },
-occupation: { type: String },
-address: { type: String },
-uhid: { type: String },
-complaint: { type: String },
-docr:{type: String},
-
-}, { versionKey: false });
 
 const userSchema = new mongoose.Schema({
-
+    name: { type: String },
+    pid: {type: String},
+    gender: { type: String },
+    age: { type: String }, // Assuming age is stored as a string
     mobileNo: { type: String },
+    occupation: { type: String },
+    address: { type: String },
+    uhid: { type: String },
+    complaint: { type: String },
+    docr:{type: String},
+    
 
     painRegion: {
         Neck: { type: Boolean, default: false },
@@ -679,7 +675,7 @@ app.get('/api/find_basic_record', async (req, res) => {
 
     try {
         console.log(mobileNo);
-        const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNo });
+        const foundPatient = await User.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);

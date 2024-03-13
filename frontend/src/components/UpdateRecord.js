@@ -2668,9 +2668,8 @@ const UpdateRecord = () => {
             const foundPatientBasicRecord = response.data;
             setPatient(foundPatientBasicRecord);
             patient.mobileNo = foundPatientBasicRecord;
-
             setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
-            console.log("not working");
+            console.log("patient ::::", patient);
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
             setFounded(true);

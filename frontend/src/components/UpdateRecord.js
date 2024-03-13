@@ -10,7 +10,7 @@ const UpdateRecord = () => {
     const [recordButtonClicked, setRecordButtonClicked] = useState(false);
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const [verifiedMobileNo, setVerifiedMobileNo] = useState(false);
-    const [founded, setFounded] = useState(false);
+    const [founded, setFounded] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [nextRowPatientType, setNextRowPatientType] = useState("");
     const [currentRowPatientType, setCurrentRowPatientType] = useState("");
@@ -29,7 +29,7 @@ const UpdateRecord = () => {
     const [selectedPatientType, setSelectedPatientType] = useState('');
     const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
     const [createFreshOverlayVisible, setCreateFreshOverlayVisible] = useState(false);
-    const [firstRow, setFirstRow] = useState(false);
+    const [firstRow, setFirstRow] = useState(true);
     const [patient, setPatient] = useState({
         mobileNo: '',
         painRegion: {
@@ -2620,7 +2620,6 @@ const UpdateRecord = () => {
                 }
             });
             foundPatientBasicRecord = response.data;
-            setFirstRow(foundPatientBasicRecord.planTreatment.length()===0);
             // setFounded(true);
             // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
             console.log("patient ::::", foundPatientBasicRecord);

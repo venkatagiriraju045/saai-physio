@@ -10,7 +10,7 @@ const UpdateRecord = () => {
     const [recordButtonClicked, setRecordButtonClicked] = useState(false);
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const [verifiedMobileNo, setVerifiedMobileNo] = useState(false);
-    const [founded, setFounded] = useState(true);
+    const [founded, setFounded] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [nextRowPatientType, setNextRowPatientType] = useState("");
     const [currentRowPatientType, setCurrentRowPatientType] = useState("");

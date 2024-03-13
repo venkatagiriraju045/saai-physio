@@ -2666,14 +2666,13 @@ const UpdateRecord = () => {
                 }
             });
             const foundPatientBasicRecord = response.data;
-            setPatient(foundPatientBasicRecord);
-            patient.mobileNo = foundPatientBasicRecord;
-            setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
-            console.log("patient ::::", patient);
+            // setPatient(foundPatientBasicRecord);
+            // patient.mobileNo = foundPatientBasicRecord;
+            // setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+            console.log("patient ::::", foundPatientBasicRecord);
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
             setFounded(true);
-
             // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
             setError('');
         } catch (error) {

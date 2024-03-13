@@ -30,7 +30,366 @@ const UpdateRecord = () => {
     const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
     const [createFreshOverlayVisible, setCreateFreshOverlayVisible] = useState(false);
     const [firstRow, setFirstRow] = useState(false);
-    const [patient, setPatient] = useState({});
+    const [patient, setPatient] = useState({
+        mobileNo: '',
+        painRegion: {
+            Neck: false,
+            Wrist: false,
+            LowerBack: false,
+            Ankle: false,
+            Shoulder: false,
+            Fingers: false,
+            Hip: false,
+            Toes: false,
+            Elbow: false,
+            UpperBack: false,
+            Knee: false,
+        },
+        postMedicalHistory: {
+            dm: false,
+            htn: false,
+            cad: false,
+            cvd: false,
+            asthma: false,
+            smoking: false,
+            alcohol: false,
+            surgicalHistory: false,
+        },
+        painAssessment: {
+            beforeTreatment: {
+                level: 0, // Initialize with a default value
+            },
+        },
+        aggFactor: '',  // Add other properties as needed
+        relFactor: '',
+        duration: '',
+        onset: '',
+        vitalSign: {
+            BP: '',
+            RR: '',
+            HR: '',
+            SPO2: '',
+            TEMP: '',
+        },
+        observation: {
+            onObservation: {
+                SkinColor: false,
+                Deformity: false,
+                Redness: false,
+                ShinySkin: false,
+                OpenWounds: false,
+            },
+            onPalpation: {
+                Tenderness: false,
+                Warmth: false,
+                Swelling: false,
+                Odema: false,
+            },
+        },
+        rangeOfMotion: {
+            cervical: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            shoulder: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            elbow: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            wrist: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            hip: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            knee: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            ankle: [
+                { flexion: { rt: 0, lt: 0 } },
+                { extension: { rt: 0, lt: 0 } },
+                { abduction: { rt: 0, lt: 0 } },
+                { adduction: { rt: 0, lt: 0 } },
+                { eversion: { rt: 0, lt: 0 } },
+                { inversion: { rt: 0, lt: 0 } },
+                { externalRotation: { rt: 0, lt: 0 } },
+                { internalRotation: { rt: 0, lt: 0 } },
+                { dorsiFlexion: { rt: 0, lt: 0 } },
+                { plantarFlexion: { rt: 0, lt: 0 } },
+                { supination: { rt: 0, lt: 0 } },
+                { pronation: { rt: 0, lt: 0 } },
+                { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+        },
+        musclePower: {
+            cervicalC1C2Flexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            cervicalC3SideFlexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            scapulaC4Elevation: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            shoulderC5Abduction: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            elbowC6FlexionWristExtension: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            elbowC7ExtensionWristFlexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            thumbC8Extension: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            hipL1L2Flexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            kneeL3Extension: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            ankleL4Dorsiflexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            bigToeL5Extension: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            ankleS1PlantarFlexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            kneeS2Flexion: { rt: { motor: 0, sensory: 0 }, lt: { motor: 0, sensory: 0 } },
+            // Add other properties as needed
+        },
+        coordination: {
+            fingerToNose: { normal: false, abnormal: false, remarks: '' },
+            fingerOpposition: { normal: false, abnormal: false, remarks: '' },
+            grip: { normal: false, abnormal: false, remarks: '' },
+            pronationSupination: { normal: false, abnormal: false, remarks: '' },
+            reboundTest: { normal: false, abnormal: false, remarks: '' },
+            tappingHand: { normal: false, abnormal: false, remarks: '' },
+            tappingFoot: { normal: false, abnormal: false, remarks: '' },
+            heelToKnee: { normal: false, abnormal: false, remarks: '' },
+            drawingCircleHand: { normal: false, abnormal: false, remarks: '' },
+            drawingCircleFoot: { normal: false, abnormal: false, remarks: '' },
+            // Add other properties as needed
+        },
+        standingWalking: {
+            normalPosture: { normal: false, abnormal: false, remarks: '' },
+            tandonWalking: { normal: false, abnormal: false, remarks: '' },
+            // Add other properties as needed
+        },
+        balance: {
+            sitting: { normal: false, abnormal: false, remarks: '' },
+            standing: { normal: false, abnormal: false, remarks: '' },
+            posture: { normal: false, abnormal: false, remarks: '' },
+            gait: { normal: false, abnormal: false, remarks: '' },
+            // Add other properties as needed
+        },
+        handFunction: {
+            grip: { normal: false, abnormal: false, remarks: '' },
+            grasp: { normal: false, abnormal: false, remarks: '' },
+            release: { normal: false, abnormal: false, remarks: '' },
+            // Add other properties as needed
+        },
+        prehension: {
+            tipToTip: { normal: false, abnormal: false, remarks: '' },
+            padToPad: { normal: false, abnormal: false, remarks: '' },
+            tipToPad: { normal: false, abnormal: false, remarks: '' },
+            // Add other properties as needed
+        },
+        subjectiveAssessment: {
+            breathlessness: { duration: '', severity: '', pattern: '', associatedFactors: '' },
+            cough: { duration: '', severity: '', pattern: '', associatedFactors: '' },
+            sputumHemoptysis: { duration: '', severity: '', pattern: '', associatedFactors: '', hemoptysisType: '' },
+            wheeze: { duration: '', severity: '', pattern: '', associatedFactors: '' },
+            chestPain: { duration: '', severity: '', pattern: '', associatedFactors: '' },
+            // Add other properties as needed
+        },
+        rpe: {
+            point6: false,
+            point7: false,
+            point8: false,
+            point9: false,
+            point10: false,
+            point11: false,
+            point12: false,
+            point13: false,
+            point14: false,
+            point15: false,
+            point16: false,
+            point17: false,
+        },
+        brpe: {
+            rating6: false,
+            rating7: false,
+            rating8: false,
+            rating9: false,
+            rating10: false,
+            rating11: false,
+            rating12: false,
+            rating13: false,
+            rating14: false,
+            rating15: false,
+            rating16: false,
+            rating17: false,
+            rating18: false,
+            rating19: false,
+            rating20: false,
+        },
+        generalObservation: {
+            bodyBuilt: { normal: false, abnormal: false, remarks: '' },
+            handsAndFingertips: { normal: false, abnormal: false, remarks: '' },
+            eyes: { normal: false, abnormal: false, remarks: '' },
+            cyanosis: { normal: false, abnormal: false, remarks: '' },
+            jugularVenousPressure: { normal: false, abnormal: false, remarks: '' },
+            // ... other properties
+        },
+        chestObservation: {
+            breathingPattern: { normal: false, abnormal: false, remarks: '' },
+            chestMovement: { normal: false, abnormal: false, remarks: '' },
+            palpationOfChest: { normal: false, abnormal: false, remarks: '' },
+            chestExpansion: { normal: false, abnormal: false, remarks: '' },
+            // ... other properties
+        },
+        barthelIndex: {
+            feeding: { score: 0, activity: 'Feeding', maxScore: 10 },
+            bathing: { score: 0, activity: 'Bathing', maxScore: 5 },
+            grooming: { score: 0, activity: 'Grooming', maxScore: 5 },
+            dressing: { score: 0, activity: 'Dressing', maxScore: 10 },
+            bowels: { score: 0, activity: 'Bowels', maxScore: 10 },
+            bladder: { score: 0, activity: 'Bladder', maxScore: 10 },
+            toiletUse: { score: 0, activity: 'Toilet Use', maxScore: 10 },
+            transfer: { score: 0, activity: 'Transfer (Bed to Chair and Back)', maxScore: 15 },
+            mobility: { score: 0, activity: 'Mobility (On level surfaces)', maxScore: 15 },
+            stairs: { score: 0, activity: 'Stairs', maxScore: 10 },
+
+        },
+
+        chestShapeObservation: {
+            chestShape: {
+                normal: false,
+                barrelChest: false,
+                kyphosis: false,
+                pectusExcavatum: false,
+                pectusCarinatum: false,
+            },
+        },
+        chestMotionObservation: {
+            middleLobeLingulaMotion: null,
+            upperLobeMotion: null,
+            lowerLobeMotion: null,
+            middleLobeLingulaValues: '',
+            middleLobeLingulaRemarks: '',
+            upperLobeValues: '',
+            upperLobeRemarks: '',
+            lowerLobeValues: '',
+            lowerLobeRemarks: '',
+        },
+        planOfTreatment: '',
+
+        planTreatment: [
+            {
+                patientType: '',
+                startDate: '',
+                endDate: '',
+                days: '',
+                ust: false,
+                ift: false,
+                swd: false,
+                tr: false,
+                wax: false,
+                est: false,
+                sht: false,
+                laser: false,
+                exs: false,
+                rehab: false,
+            },
+        ],
+
+        investigation: [
+            {
+                date: '',
+                xray: '',
+                mri: '',
+                others: '',
+                provisionalDiagnosis: '',
+            },
+        ],
+
+        outPatientBill: [
+            {
+                appointmentDate: '',
+                serviceName: '',
+                paymentMode: '',
+                billAmount: '',
+            },
+        ],
+
+        inPatientBill: [
+            {
+                roomNumber: '',
+                admissionDate: '',
+                dischargeDate: '',
+                totalDays: '',
+                visitingBill: '',
+                physioBill: '',
+                nursingBill: '',
+                otherExpenses: '',
+                paymentMode: '',
+                billAmount: '',
+            },
+        ],
+
+    });
 
     const createPatientRecord = async () => {
         setTimeout(() => {
@@ -931,8 +1290,6 @@ const UpdateRecord = () => {
     useEffect(() => {
         console.log("currentRowPatientType",currentRowPatientType);
     }, [createoverlayVisible]);
-
-
     console.log("recobtn", recordButtonClicked, founded, firstRow);
 
     // useEffect(() => {

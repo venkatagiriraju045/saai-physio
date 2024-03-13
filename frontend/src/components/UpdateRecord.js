@@ -543,6 +543,8 @@ const UpdateRecord = () => {
             ],
         }))
     }, [selectedRowStartDate, selectedRowEndDate]);
+
+
     const handleInOutCheckboxChange = (index, field) => {
         // Update the patient record in the state immediately
         setPatient((prevpatient) => ({
@@ -3804,8 +3806,7 @@ const UpdateRecord = () => {
                                 <>
                                     {firstRow ? (
                                         <table className="treatment-table">
-                                            {console.log("1st row", patient.planTreatment[0])}
-                                            {console.log("next row type", nextRowPatientType)}
+                                            
                                             <caption>Treatment Details</caption>
                                             <thead>
 

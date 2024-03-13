@@ -27,7 +27,7 @@ console.log('Mongoose connected to MongoDB');
 
 
 
-const userSchema = new mongoose.Schema({
+const basicDetails = new mongoose.Schema({
     name: { type: String },
     pid: {type: String},
     gender: { type: String },
@@ -443,8 +443,6 @@ const userSchema = new mongoose.Schema({
 
 }, { versionKey: false });
 
-
-const User = mongoose.model('patients', userSchema);
 const BasicDetails = mongoose.model('basicDetails', basicDetails);
 
 

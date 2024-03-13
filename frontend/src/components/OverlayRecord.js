@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const OverlayRecord = (mobileNumber) => {
     const [mobileNo, setMobileNo] = useState(mobileNumber.mobileNumber || '');
+    let foundPatientBasicRecord;
     const [sortedRows, setSortedRows] = useState([]);
     const [newNextRow, setNewNextRow] = useState(false);
     const [recordButtonClicked, setRecordButtonClicked] = useState(false);
@@ -290,7 +291,6 @@ const OverlayRecord = (mobileNumber) => {
             eyes: { normal: false, abnormal: false, remarks: '' },
             cyanosis: { normal: false, abnormal: false, remarks: '' },
             jugularVenousPressure: { normal: false, abnormal: false, remarks: '' },
-            // ... other properties
         },
         chestObservation: {
             breathingPattern: { normal: false, abnormal: false, remarks: '' },
@@ -337,7 +337,7 @@ const OverlayRecord = (mobileNumber) => {
 
         planTreatment: [
             {
-                patientType: '',
+                patientType: 'outpatient',
                 startDate: '',
                 endDate: '',
                 days: '',
@@ -547,8 +547,9 @@ const OverlayRecord = (mobileNumber) => {
         }))
     }, [selectedRowStartDate, selectedRowEndDate]);
 
+
     const handleInOutCheckboxChange = (index, field) => {
-        // Update the patient record in the state immediately
+
         setPatient((prevpatient) => ({
             ...prevpatient,
             planTreatment: prevpatient.planTreatment.map((item, i) =>
@@ -556,11 +557,10 @@ const OverlayRecord = (mobileNumber) => {
             ),
         }));
     };
-
     const handleInOutInputChange = (index, field, value) => {
         // Update the patient record in the state immediately
         setPatient((prevpatient) => {
-            console.log("Handling Input Change - isNewRow:", prevpatient.planTreatment[index].isNewRow); // Add this line
+            // console.log("Handling Input Change - isNewRow:", prevpatient.planTreatment[index].isNewRow); // Add this line
             const updatedPlanTreatment = prevpatient.planTreatment.map((item, i) =>
                 i === index && item.isNewRow
                     ? { ...item, [field]: value }
@@ -573,7 +573,6 @@ const OverlayRecord = (mobileNumber) => {
             };
         });
     };
-
     const handleAddRow = () => {
         setNewNextRow(true);
         setPatient((prevPatient) => {
@@ -593,7 +592,9 @@ const OverlayRecord = (mobileNumber) => {
                 rehab: false,
                 isNewRow: true,
                 patientType: nextRowPatientType, // Update patientType directly
+
             };
+
 
             const updatedRecord = {
                 planTreatment: [...prevPatient.planTreatment, newPlan],
@@ -605,6 +606,7 @@ const OverlayRecord = (mobileNumber) => {
         });
     };
 
+    console.log("added rowwwww", patient.planTreatment);
     const handleAddInvestRow = () => {
         setPatient((prevpatient) => {
             const newInvest = {
@@ -625,9 +627,7 @@ const OverlayRecord = (mobileNumber) => {
             return { ...prevpatient, ...updatedRecord };
         });
     };
-
     const handleDeleteRow = (index) => {
-
         setOutPatientBillDetails({
             outBill: [
                 {
@@ -935,8 +935,6 @@ const OverlayRecord = (mobileNumber) => {
             outBillDetails.billAmount
         );
     };
-
-    console.log("currentrow", currentRowPatientType);
     const handleInOutUpdate = () => {
         console.log("update");
         const selectedPlanTreatment = patient.planTreatment.find(
@@ -1014,27 +1012,63 @@ const OverlayRecord = (mobileNumber) => {
 
         // Additional UI updates or error handling if needed
     };
+
     const handleRowSelection = (index) => {
         setSelectedRowStartDate(sortedRows[index].startDate);
         setSelectedRowEndDate(sortedRows[index].endDate);
     };
+    
     const handleInOutUpdateOutBill = async () => {
-        const isBillDetailsFilled = isBillDetailsInOutOutPatientFilled();
+            const isBillDetailsFilled = isBillDetailsInOutOutPatientFilled();
+            if (isBillDetailsFilled) {
+                try {
+                    // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
+    
+                    const updatedBill = {
+                        mobileNumber: mobileNo,
+                        appointmentDate: selectedRowStartDate, // Assuming selectedRowDate is correctly set
+                        serviceName: outPatientBillDetails.outBill[0].serviceName,
+                        paymentMode: outPatientBillDetails.outBill[0].paymentMode,
+                        billAmount: outPatientBillDetails.outBill[0].billAmount,
+                    };
+                    
+                    patient.outPatientBill.push(updatedBill);
+                } catch (error) {
+                    console.error('Error updating outpatient bill:', error);
+                    // Handle error scenarios
+                }
+            }
+            else {
+                // Handle case where bill details are not filled
+                console.error("Error: Bill details not filled.");
+                alert("Bill details not filled");
+            }
+        };
+    //console.log("currentrow",currentRowPatientType);
+    const handleInOutUpdateInBill = async () => {
+        const isBillDetailsFilled = isBillDetailsInOutInPatientFilled();
         if (isBillDetailsFilled) {
             try {
                 // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
 
                 const updatedBill = {
-                    mobileNumber: mobileNo,
-                    appointmentDate: selectedRowStartDate, // Assuming selectedRowDate is correctly set
-                    serviceName: outPatientBillDetails.outBill[0].serviceName,
-                    paymentMode: outPatientBillDetails.outBill[0].paymentMode,
-                    billAmount: outPatientBillDetails.outBill[0].billAmount,
+                    mobileNumber : mobileNo,
+                    roomNumber: inPatientBillDetails.inBill[0].roomNumber,
+                    admissionDate: selectedRowStartDate,
+                    dischargeDate: selectedRowEndDate,
+                    totalDays: inPatientBillDetails.inBill[0].totalDays,
+                    visitingBill: inPatientBillDetails.inBill[0].visitingBill,
+                    physioBill: inPatientBillDetails.inBill[0].physioBill,
+                    nursingBill: inPatientBillDetails.inBill[0].nursingBill,
+                    otherExpenses: inPatientBillDetails.inBill[0].otherExpenses,
+                    paymentMode: inPatientBillDetails.inBill[0].paymentMode,
+                    billAmount: inPatientBillDetails.inBill[0].billAmount,
                 };
-                
-                patient.outPatientBill.push(updatedBill);
+
+                patient.inPatientBill.push(updatedBill);
+
             } catch (error) {
-                console.error('Error updating outpatient bill:', error);
+                console.error('Error updating inpatient bill:', error);
                 // Handle error scenarios
             }
         }
@@ -1043,175 +1077,141 @@ const OverlayRecord = (mobileNumber) => {
             console.error("Error: Bill details not filled.");
             alert("Bill details not filled");
         }
+
     };
-//console.log("currentrow",currentRowPatientType);
-const handleInOutUpdateInBill = async () => {
-    const isBillDetailsFilled = isBillDetailsInOutInPatientFilled();
-    if (isBillDetailsFilled) {
-        try {
-            // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
+    const handleViewBill = (index) => {
+        // Get the selected planTreatment
+        const selectedPlanTreatment = patient.planTreatment[index];
 
-            const updatedBill = {
-                mobileNumber : mobileNo,
-                roomNumber: inPatientBillDetails.inBill[0].roomNumber,
-                admissionDate: selectedRowStartDate,
-                dischargeDate: selectedRowEndDate,
-                totalDays: inPatientBillDetails.inBill[0].totalDays,
-                visitingBill: inPatientBillDetails.inBill[0].visitingBill,
-                physioBill: inPatientBillDetails.inBill[0].physioBill,
-                nursingBill: inPatientBillDetails.inBill[0].nursingBill,
-                otherExpenses: inPatientBillDetails.inBill[0].otherExpenses,
-                paymentMode: inPatientBillDetails.inBill[0].paymentMode,
-                billAmount: inPatientBillDetails.inBill[0].billAmount,
-            };
+        // Find all relevant bills for the selected date
+        const relevantInPatientBills = patient.inPatientBill.filter((inPatient) => {
+            return (
+                new Date(inPatient.admissionDate).toLocaleDateString() ===
+                new Date(selectedPlanTreatment.startDate).toLocaleDateString()
+            );
+        });
 
-            patient.inPatientBill.push(updatedBill);
+        const relevantOutPatientBills = patient.outPatientBill.filter((outPatient) => {
+            return (
+                new Date(outPatient.appointmentDate).toLocaleDateString() ===
+                new Date(selectedPlanTreatment.startDate).toLocaleDateString()
+            );
+        });
 
-        } catch (error) {
-            console.error('Error updating inpatient bill:', error);
-            // Handle error scenarios
-        }
-    }
-    else {
-        // Handle case where bill details are not filled
-        console.error("Error: Bill details not filled.");
-        alert("Bill details not filled");
-    }
+        if (relevantInPatientBills.length > 0 || relevantOutPatientBills.length > 0) {
+            // Set overlay content
+            setviewOverlayContent(
+                <div>
+                    <h3>Billing Details:</h3>
+                    <div style={{ display: "flex" }}>
+                        {/* Render Inpatient Bills on the Left Side */}
+                        <div style={{ flex: 1, marginRight: "30px" }}>
+                            <h4>In Patient Bill</h4>
+                            {relevantInPatientBills.map((bill, billIndex) => (
+                                <div key={billIndex}>
+                                    {/* Inpatient bill details rendering */}
+                                    <strong>Bill {billIndex + 1}:</strong>
+                                    {/* Display other inpatient details */}
+                                    <br />
+                                    <strong>Room Number</strong> {bill.roomNumber || "N/A"}
+                                    <br></br>
+                                    {/* Check if admissionDate is defined before using it */}
+                                    <strong>Admission Date</strong>{" "}
+                                    {bill.admissionDate
+                                        ? new Date(bill.admissionDate).toLocaleDateString()
+                                        : "N/A"}
+                                    <br></br>
+                                    {/* Check if dischargeDate is defined before using it */}
+                                    <strong>Discharge Date</strong>{" "}
+                                    {bill.dischargeDate
+                                        ? new Date(bill.dischargeDate).toLocaleDateString()
+                                        : "N/A"}
+                                    <br></br>
+                                    <strong>Total Days</strong> {bill.totalDays || "N/A"}
+                                    <br></br>
+                                    <strong>Visiting Bill</strong> {bill.visitingBill || "N/A"}
+                                    <br></br>
+                                    <strong>Physio Bill</strong> {bill.physioBill || "N/A"}
+                                    <br></br>
+                                    <strong>Nursing Bill</strong> {bill.nursingBill || "N/A"}
+                                    <br></br>
+                                    <strong>Other Expenses</strong> {bill.otherExpenses || "N/A"}
+                                    <br></br>
+                                    <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
+                                    <br></br>
+                                    <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
+                                </div>
+                            ))}
+                        </div>
 
-};
-const handleViewBill = (index) => {
-    // Get the selected planTreatment
-    const selectedPlanTreatment = patient.planTreatment[index];
-
-    // Find all relevant bills for the selected date
-    const relevantInPatientBills = patient.inPatientBill.filter((inPatient) => {
-        return (
-            new Date(inPatient.admissionDate).toLocaleDateString() ===
-            new Date(selectedPlanTreatment.startDate).toLocaleDateString()
-        );
-    });
-
-    const relevantOutPatientBills = patient.outPatientBill.filter((outPatient) => {
-        return (
-            new Date(outPatient.appointmentDate).toLocaleDateString() ===
-            new Date(selectedPlanTreatment.startDate).toLocaleDateString()
-        );
-    });
-
-    if (relevantInPatientBills.length > 0 || relevantOutPatientBills.length > 0) {
-        // Set overlay content
-        setviewOverlayContent(
-            <div>
-                <h3>Billing Details:</h3>
-                <div style={{ display: "flex" }}>
-                    {/* Render Inpatient Bills on the Left Side */}
-                    <div style={{ flex: 1, marginRight: "30px" }}>
-                        <h4>In Patient Bill</h4>
-                        {relevantInPatientBills.map((bill, billIndex) => (
-                            <div key={billIndex}>
-                                {/* Inpatient bill details rendering */}
-                                <strong>Bill {billIndex + 1}:</strong>
-                                {/* Display other inpatient details */}
-                                <br />
-                                <strong>Room Number</strong> {bill.roomNumber || "N/A"}
-                                <br></br>
-                                {/* Check if admissionDate is defined before using it */}
-                                <strong>Admission Date</strong>{" "}
-                                {bill.admissionDate
-                                    ? new Date(bill.admissionDate).toLocaleDateString()
-                                    : "N/A"}
-                                <br></br>
-                                {/* Check if dischargeDate is defined before using it */}
-                                <strong>Discharge Date</strong>{" "}
-                                {bill.dischargeDate
-                                    ? new Date(bill.dischargeDate).toLocaleDateString()
-                                    : "N/A"}
-                                <br></br>
-                                <strong>Total Days</strong> {bill.totalDays || "N/A"}
-                                <br></br>
-                                <strong>Visiting Bill</strong> {bill.visitingBill || "N/A"}
-                                <br></br>
-                                <strong>Physio Bill</strong> {bill.physioBill || "N/A"}
-                                <br></br>
-                                <strong>Nursing Bill</strong> {bill.nursingBill || "N/A"}
-                                <br></br>
-                                <strong>Other Expenses</strong> {bill.otherExpenses || "N/A"}
-                                <br></br>
-                                <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
-                                <br></br>
-                                <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Render Outpatient Bills on the Right Side */}
-                    <div>
-                        <h4>Out Patient Bill</h4>
-                        {relevantOutPatientBills.map((bill, billIndex) => (
-                            <div key={billIndex}>
-                                {/* Outpatient bill details rendering */}
-                                <strong>Bill {billIndex + 1}:</strong>
-                                {/* Display other outpatient details */}
-                                <br />
-                                <strong>Appointment Date</strong> {bill.appointmentDate || "N/A"}
-                                <br></br>
-                                <strong>Service Name</strong> {bill.serviceName || "N/A"}
-                                <br></br>
-                                <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
-                                <br></br>
-                                <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
-                            </div>
-                        ))}
+                        {/* Render Outpatient Bills on the Right Side */}
+                        <div>
+                            <h4>Out Patient Bill</h4>
+                            {relevantOutPatientBills.map((bill, billIndex) => (
+                                <div key={billIndex}>
+                                    {/* Outpatient bill details rendering */}
+                                    <strong>Bill {billIndex + 1}:</strong>
+                                    {/* Display other outpatient details */}
+                                    <br />
+                                    <strong>Appointment Date</strong> {bill.appointmentDate || "N/A"}
+                                    <br></br>
+                                    <strong>Service Name</strong> {bill.serviceName || "N/A"}
+                                    <br></br>
+                                    <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
+                                    <br></br>
+                                    <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            );
+
+            // Show the overlay
+            setviewOverlayVisible(true);
+        } else {
+            alert("No matching bills found for the selected plan treatment.");
+        }
+    };
+
+    const handleInOutPatientTypeChange = (newPatientType) => {
+
+        setNextRowPatientType(newPatientType);
+
+    };
+    console.log("pppppppprptttttttttttt", nextRowPatientType);
+
+    const handleInOutInvestigationChange = (index, field, value) => {
+        // Update the patient record in the state immediately
+        setPatient((prevpatient) => ({
+            ...prevpatient,
+            investigation: prevpatient.investigation.map((item, i) =>
+                i === index && item.isNewInvestRow ? { ...item, [field]: value } : item
+            ),
+        }));
+    };
+
+    const handleInOutUpdateInvestigation = () => {
+        // Extract only the new rows from the patient record
+        const newRows = patient.investigation.filter(
+            (item) => item.isNewInvestRow
         );
 
-        // Show the overlay
-        setviewOverlayVisible(true);
-    } else {
-        alert("No matching bills found for the selected plan treatment.");
-    }
-};
-
-const handleInOutPatientTypeChange = (newPatientType) => {
-
-    setNextRowPatientType(newPatientType);
-
-};
-console.log("pppppppprptttttttttttt", nextRowPatientType);
-
-const handleInOutInvestigationChange = (index, field, value) => {
-    // Update the patient record in the state immediately
-    setPatient((prevpatient) => ({
-        ...prevpatient,
-        investigation: prevpatient.investigation.map((item, i) =>
-            i === index && item.isNewInvestRow ? { ...item, [field]: value } : item
-        ),
-    }));
-};
-
-const handleInOutUpdateInvestigation = () => {
-    // Extract only the new rows from the patient record
-    const newRows = patient.investigation.filter(
-        (item) => item.isNewInvestRow
-    );
-
-    // Update the backend immediately when a change is made to a new row
-    axios
-        .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
-            mobileNo,
-            updatedData: newRows,
-        })
-        .then(() => {
-            console.log("Changes saved to the backend.");
-            alert("Ivestigation updated successfully");
-        })
-        .catch((error) => {
-            console.error("Error saving changes to the backend:", error);
-            alert("Failed to update");
-        });
-};
+        // Update the backend immediately when a change is made to a new row
+        axios
+            .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
+                mobileNo,
+                updatedData: newRows,
+            })
+            .then(() => {
+                console.log("Changes saved to the backend.");
+                alert("Ivestigation updated successfully");
+            })
+            .catch((error) => {
+                console.error("Error saving changes to the backend:", error);
+                alert("Failed to update");
+            });
+    };
 
     const handleEditClick = () => {
         setIsEditing(!isEditing);
@@ -1252,16 +1252,18 @@ const handleInOutUpdateInvestigation = () => {
         setCreateOverlayVisible(true);
     }
 
-
+    useEffect(() => {
+        console.log("currentRowPatientType", currentRowPatientType);
+    }, [createoverlayVisible]);
     console.log("recobtn", recordButtonClicked, founded, firstRow);
 
-    if (founded) {
+    // useEffect(() => {
+    //     if(founded){
 
-        console.log("row rjvcjndyoe", patient.planTreatment[0].patientType === "" ? "yesss" : "nooooo")
 
-    } else {
-        console.log("noooooooo");
-    }
+    //     }
+    // }, [patient]);
+
 
     const closeOverlay = () => {
         /*setCreateOverlayVisible(false);
@@ -1348,10 +1350,6 @@ const handleInOutUpdateInvestigation = () => {
             }));
         }*/
     };
-
-
-
-
     const isBillDetailsInPatientFilled = () => {
         const inBillDetails = patient.inPatientBill[0];
         return (
@@ -1367,7 +1365,6 @@ const handleInOutUpdateInvestigation = () => {
             inBillDetails.billAmount
         );
     };
-
     const isBillDetailsOutPatientFilled = () => {
         const outBillDetails = patient.outPatientBill[0];
         return (
@@ -1377,7 +1374,6 @@ const handleInOutUpdateInvestigation = () => {
             outBillDetails.billAmount
         );
     };
-
     const rangeOfMotionJoints = ['cervical', 'shoulder', 'elbow', 'wrist', 'hip', 'knee', 'ankle'];
     const severityOptions = ['Critical', 'High', 'Medium', 'Low'];
     const hemoptysisOptions = ['Red: Blood', 'Rust: Pneumonia', 'Purple: Neoplasm', 'Yellow: Infected', 'Green: Pus', 'Pink: Pulmonary Oedema'];
@@ -1687,8 +1683,6 @@ const handleInOutUpdateInvestigation = () => {
         }));
 
     };
-
-
     /*
         const handleInPatientInputChange = (e) => {
             const { name, value } = e.target;
@@ -1915,20 +1909,16 @@ const handleInOutUpdateInvestigation = () => {
 
     const handleCreateBill = (ptype) => {
         if (ptype === "outpatient") {
-            console.log("out");
             setCreateOverlayVisible(true);
         } else {
-            console.log("in");
             setCreateOverlayVisible(true);
         }
     };
 
     const handleCreateFreshBill = (ptype) => {
         if (ptype === "outpatient") {
-            console.log("out");
             setCreateFreshOverlayVisible(true);
         } else {
-            console.log("in");
             setCreateFreshOverlayVisible(true);
         }
     }
@@ -2480,9 +2470,6 @@ const handleInOutUpdateInvestigation = () => {
                 break;
         }
     };
-    const handleMobileNumberChange = (event) => {
-        setMobileNo(event.target.value);
-    };
 
 
     const handlePlanCheckboxChange = (index, category) => {
@@ -2576,6 +2563,17 @@ const handleInOutUpdateInvestigation = () => {
 
 
     };
+    const handleMobileNumberChange = (event) => {
+        // Validate if the entered value is a number
+        const value = event.target.value;
+        if (/^\d*$/.test(value)) {
+            // Only set the mobile number if it contains only numbers
+            setMobileNo(value);
+        } else {
+            // If the entered value contains non-numeric characters, alert the user
+            alert('Please enter numbers only for the mobile number.');
+        }
+    };
     const handleSearch = async () => {
         setCloseDetails(false);
 
@@ -2604,6 +2602,67 @@ const handleInOutUpdateInvestigation = () => {
         }
     };
 
+    // const fetchPatienRecord = async (mobileNo) => {
+    //     try {
+    //         console.log("fetching rec");
+
+    //         const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+    //             params: {
+    //                 mobileNo// Filter by institute_name
+    //             }
+    //         });
+    //         const foundPatientBasicRecord = response.data;
+    //         if (foundPatientBasicRecord !== "kulukulu") {
+    //             setPatient(foundPatientBasicRecord);
+    //             console.log("rec fou : ", foundPatientBasicRecord);
+
+    //             // Introduce a delay of 500 milliseconds (adjust as needed)
+    //             await delay(500);
+
+    //             setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+    //             console.log("rec fr : ", firstRow);
+    //             setFounded(true);
+    //             setError('');
+    //         } else {
+    //             patient.mobileNo = mobileNo;
+    //             setFirstRow(patient.planTreatment[0].patientType === "");
+    //             console.log("not working");
+    //         }
+
+    //     } catch (error) {
+    //         setPatientBasicRecord(null);
+    //         setError('Patient record not found. Please check the mobile number.');
+    //     }
+    // };
+
+    // Utility function to introduce delays using Promise
+
+    // useEffect(() => {
+    //     if (foundPatientBasicRecord.planTreatment[0].patientType!=='') {
+    //         const sort = patient.planTreatment
+    //             .filter((plan) => !plan.isNewRow)
+    //             .sort((a, b) => {
+    //                 if (a.startDate !== b.startDate) {
+    //                     return a.startDate > b.startDate ? 1 : -1;
+    //                 }
+    //                 return a.patientType.localeCompare(b.patientType);
+    //             });
+
+    //         const newRow = patient.planTreatment.find((plan) => plan.isNewRow);
+    //         if (newRow) {
+    //             sort.push(newRow);
+    //         }
+
+    //         setSortedRows(sort);
+    //         setPatient((prevPatient) => ({
+    //             ...prevPatient,
+    //             planTreatment: sort,
+    //         }));
+    //     }
+    // }, [founded, newNextRow]);
+
+
+    console.log("in patient billlllllllll", patient, firstRow);
     useEffect(()=>{
         if(mobileNo){
             handleSearch();
@@ -2636,13 +2695,38 @@ const handleInOutUpdateInvestigation = () => {
         }
     }, [founded, newNextRow]);
 
+    console.log("sorted rows", sortedRows);
 
-    console.log("sorted rows", sortedRows);
+
 
     return (
-        
         <div className='new-record-main-container'>
+
+
+            <h2>Find Existing Record</h2>
+            <label htmlFor="mobileNo">Mobile Number:</label>
+            <div class="input-container">
+                <input type="text" id="mobileNo" value={mobileNo} onChange={handleMobileNumberChange} />
+                <button onClick={handleSearch}>Search</button>
+            </div>
+            {patient.mobileNo !== "" && (
                 <div>
+                    <div>{patient &&
+                        <div>
+                            <label>Name : </label>{patient.name}<br></br>
+                            <label>Gender : </label>{patient.gender}<br></br>
+                            <label>Age : </label>{patient.age}<br></br>
+                            <label>Date Of Birth : </label>{patient.dateOfBirth}<br></br>
+                            <label>Mobile Number : </label>{patient.mobileNo}<br></br>
+                            <label>Occupation : </label>{patient.occupation}<br></br>
+                            <label>Address : </label>{patient.address}<br></br>
+                            <label>Complaint : </label>{patient.complaint}<br></br>
+                            <label>Uhid : </label>{patient.uhid}<br></br>
+                        </div>
+                    }</div>
+                    <div className="container">
+
+                    </div>
                     <div className="post-medical-history">
                         <div className="title">Post Medical History</div>
                         <br /><br />
@@ -4681,7 +4765,7 @@ const handleInOutUpdateInvestigation = () => {
                     </div>
                     <p>{appMessage}</p>
                 </div>
-            
+            )}
 
         </div>
     );
@@ -4690,4 +4774,3 @@ const handleInOutUpdateInvestigation = () => {
 };
 
 export default OverlayRecord;
-

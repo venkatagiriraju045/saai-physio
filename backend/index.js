@@ -695,12 +695,12 @@ app.get('/api/find_record', async (req, res) => {
     const { mobileNo } = req.query;
 
     try {
+        console.log(mobileNo)
         const foundPatient = await User.findOne({ mobileNo: mobileNo });
 
         if (foundPatient) {
             res.json(foundPatient);
         } else {
-            res.json("kulukulu");
             res.status(404).json({ error: 'Patient not found' });
         }
     } catch (error) {
@@ -708,6 +708,7 @@ app.get('/api/find_record', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 app.get('/api/get_patient_details', async (req, res) => {
     const { mobileNumber } = req.query;
     console.log('Mobile Number:', mobileNumber);

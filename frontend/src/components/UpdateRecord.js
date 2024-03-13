@@ -2661,17 +2661,20 @@ const UpdateRecord = () => {
             // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
             // Assuming the backend returns the patient record
             const response = await axios.get('https://saai-physio-api.vercel.app/api/find_basic_record', {
-                    params: {
-                        mobileNo// Filter by institute_name
-                    }
-                });
+                params: {
+                    mobileNo// Filter by institute_name
+                }
+            });
             const foundPatientBasicRecord = response.data;
             setPatientBasicRecord(foundPatientBasicRecord);
-            //patient.mobileNo = foundPatientBasicRecord.mobileNo;
+            patient.mobileNo = foundPatientBasicRecord;
+            setFirstRow(patient.planTreatment[0].patientType === "");
+            console.log("not working");
             // Introduce a delay of 500 milliseconds (adjust as needed)
             await delay(500);
+            setFounded(true);
 
-            fetchPatienRecord(foundPatientBasicRecord.mobileNo);
+            // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
             setError('');
         } catch (error) {
             setPatientBasicRecord(null);
@@ -2680,38 +2683,38 @@ const UpdateRecord = () => {
         }
     };
 
-    const fetchPatienRecord = async (mobileNo) => {
-        try {
-            console.log("fetching rec");
-            
-            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
-                params: {
-                    mobileNo// Filter by institute_name
-                }
-            });
-            const foundPatientBasicRecord = response.data;
-            if (foundPatientBasicRecord !== "kulukulu") {
-                setPatient(foundPatientBasicRecord);
-                console.log("rec fou : ", foundPatientBasicRecord);
+    // const fetchPatienRecord = async (mobileNo) => {
+    //     try {
+    //         console.log("fetching rec");
 
-                // Introduce a delay of 500 milliseconds (adjust as needed)
-                await delay(500);
+    //         const response = await axios.get('http://localhost:3000/api/find_record', {
+    //             params: {
+    //                 mobileNo// Filter by institute_name
+    //             }
+    //         });
+    //         const foundPatientBasicRecord = response.data;
+    //         if (foundPatientBasicRecord !== "kulukulu") {
+    //             setPatient(foundPatientBasicRecord);
+    //             console.log("rec fou : ", foundPatientBasicRecord);
 
-                setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
-                console.log("rec fr : ", firstRow);
-                setFounded(true);
-                setError('');
-            } else {
-                patient.mobileNo = mobileNo;
-                setFirstRow(patient.planTreatment[0].patientType === "");
-                console.log("not working");
-            }
+    //             // Introduce a delay of 500 milliseconds (adjust as needed)
+    //             await delay(500);
 
-        } catch (error) {
-            setPatientBasicRecord(null);
-            setError('Patient record not found. Please check the mobile number.');
-        }
-    };
+    //             setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "");
+    //             console.log("rec fr : ", firstRow);
+    //             setFounded(true);
+    //             setError('');
+    //         } else {
+    //             patient.mobileNo = mobileNo;
+    //             setFirstRow(patient.planTreatment[0].patientType === "");
+    //             console.log("not working");
+    //         }
+
+    //     } catch (error) {
+    //         setPatientBasicRecord(null);
+    //         setError('Patient record not found. Please check the mobile number.');
+    //     }
+    // };
 
     // Utility function to introduce delays using Promise
 

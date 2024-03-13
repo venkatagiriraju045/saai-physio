@@ -837,7 +837,7 @@ app.post('/api/update_bill_plantreatment', async (req, res) => {
 
     try {
         // Find the BasicDetails based on the mobile number
-        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo});
+        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNumber});
 
         if (!foundPatient) {
             console.log('Patient not found in the database');
@@ -876,7 +876,7 @@ app.post('/api/create_new_outpatient_bill', async (req, res) => {
     console.log("Received patient data:", patient);
     try {
         // Find the BasicDetails based on the mobile number
-        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNo });
+        const foundPatient = await BasicDetails.findOne({ mobileNo: patient.mobileNumber });
 
         if (!foundPatient) {
             return res.status(404).json({ message: 'Patient not found' });

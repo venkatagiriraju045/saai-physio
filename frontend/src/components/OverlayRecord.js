@@ -400,61 +400,78 @@ const OverlayRecord = (mobileNumber) => {
             try {
                 setRecordButtonClicked(true);
 
-                const startDate = patient.planTreatment[0].patientType === "inpatient"
-                    ? patient.inPatientBill[0].admissionDate
-                    : patient.outPatientBill[0].appointmentDate;
-
-                const endDate = patient.planTreatment[0].patientType === "inpatient"
-                    ? patient.inPatientBill[0].dischargeDate
-                    : null; // Set to null for outpatient
-
-                const days = patient.planTreatment[0].patientType === "inpatient"
-                    ? patient.inPatientBill[0].totalDays
-                    : 1; // Set days to 1 for outpatient
-
-                const inBillDetails =
-                    (patient.planTreatment[0].patientType === "inpatient" && isBillDetailsInPatientFilled())
-                        ? patient.inPatientBill[0]
-                        : undefined;
-
-                const outBillDetails =
-                    (patient.planTreatment[0].patientType === "outpatient" && isBillDetailsOutPatientFilled())
-                        ? patient.outPatientBill[0]
-                        : undefined;
-
-
-                if (
-                    (patient.planTreatment[0].patientType === "inpatient" && inBillDetails === undefined) ||
-                    (patient.planTreatment[0].patientType === "outpatient" && outBillDetails === undefined)
-                ) {
-                    // Display confirmation dialog
-                    const userConfirmation = window.confirm(
-                        "Bill details are not filled. Do you want to continue your update?"
-                    );
-
-                    if (!userConfirmation) {
-                        // User clicked "No", do not continue with the update
+                if (firstRow) {
+                    if (patient.planTreatment[0].patientType === "choose type") {
+                        alert("Please select a patient type from plan treament");
+                        return;
+                    }
+                    else if ((!patient.outPatientBill[0].appointmentDate) &&
+                        ((!patient.inPatientBill[0].admissionDate) || (!patient.inPatientBill[0].dischargeDate))
+                    ) {
+                        alert("Please select date from plan treament");
                         return;
                     }
                 }
 
+
+
+                if (firstRow) {
+                    const startedDate = patient.planTreatment[0].patientType === "inpatient"
+                        ? patient.inPatientBill[0].admissionDate
+                        : patient.outPatientBill[0].appointmentDate;
+
+                    const endedDate = patient.planTreatment[0].patientType === "inpatient"
+                        ? patient.inPatientBill[0].dischargeDate
+                        : null; // Set to null for outpatient
+
+                    const tDays = patient.planTreatment[0].patientType === "inpatient"
+                        ? patient.inPatientBill[0].totalDays
+                        : 1; // Set days to 1 for outpatient
+                    if (patient.planTreatment[0].patientType === "inpatient") {
+
+                        patient.planTreatment[0].startDate = startedDate;
+                        patient.planTreatment[0].endDate = endedDate;
+                        patient.planTreatment[0].days = tDays;
+
+                    }
+                    else {
+                        patient.planTreatment[0].startDate = startedDate;
+                        patient.planTreatment[0].endDate = '';
+                        patient.planTreatment[0].days = 1;
+                    }
+
+                    const inBillDetails =
+                        (patient.planTreatment[0].patientType === "inpatient" && isBillDetailsInPatientFilled())
+                            ? patient.inPatientBill[0]
+                            : undefined;
+
+                    const outBillDetails =
+                        (patient.planTreatment[0].patientType === "outpatient" && isBillDetailsOutPatientFilled())
+                            ? patient.outPatientBill[0]
+                            : undefined;
+
+
+                    if (
+                        (patient.planTreatment[0].patientType === "inpatient" && inBillDetails === undefined) ||
+                        (patient.planTreatment[0].patientType === "outpatient" && outBillDetails === undefined)
+                    ) {
+                        // Display confirmation dialog
+                        const userConfirmation = window.confirm(
+                            "Bill details are not filled. Do you want to continue your update?"
+                        );
+
+                        if (!userConfirmation) {
+                            // User clicked "No", do not continue with the update
+                            return;
+                        }
+                    }
+
+                }
+
+
                 await axios.post('https://saai-physio-api.vercel.app/api/create_record', {
                     patient: {
-                        ...patient,
-                        dateAndTime,
-                        painAssessment: {
-                            beforeTreatment: {
-                                level: patient.painAssessment.beforeTreatment.level,
-                            },
-                        },
-                        planTreatment: [
-                            {
-                                ...patient.planTreatment[0],
-                                startDate,
-                                endDate,
-                                days,
-                            },
-                        ],
+                        ...patient
                     },
                 });
 
@@ -920,96 +937,82 @@ const OverlayRecord = (mobileNumber) => {
     };
 
     console.log("currentrow", currentRowPatientType);
-    const handleInOutUpdate = async () => {
+    const handleInOutUpdate = () => {
         console.log("update");
         const selectedPlanTreatment = patient.planTreatment.find(
             (plan) => plan.isNewRow
         );
 
+        console.log("sel row:;;;", selectedPlanTreatment);
         if (!selectedPlanTreatment) {
             console.error("Error: No selected plan treatment found.");
             return;
         }
-        // Check if bill details are filled
-        try {
-            const newRows = patient.planTreatment
-                .filter((item) => item.isNewRow)
-                .map((row) => {
-                    // Ensure each row has the appropriate date value
-                    return {
-                        ...row,
-                        startDate:
-                            nextRowPatientType === "inpatient"
-                                ? inPatientBillDetails.inBill[0].admissionDate
-                                : outPatientBillDetails.outBill[0].appointmentDate,
-                        endDate:
-                            nextRowPatientType === "inpatient"
-                            && inPatientBillDetails.inBill[0].dischargeDate,
-                        days:
-                            nextRowPatientType === "inpatient"
-                                ? inPatientBillDetails.inBill[0].totalDays
-                                : 1, // Set days to 1 for outpatient
-                        patientType: nextRowPatientType,
-                    };
-                });
 
-            const inBillDetails =
-                (nextRowPatientType === "inpatient" && isBillDetailsInOutInPatientFilled())
-                    ? inPatientBillDetails.inBill[0]
-                    : undefined;
+        // Extract relevant information
+        // const ptype = nextRowPatientType;
+        console.log("iiiiiiiiiiiiiiiiiiiii", nextRowPatientType);
 
-            const outBillDetails =
-                (nextRowPatientType === "outpatient" && isBillDetailsInOutOutPatientFilled())
-                    ? outPatientBillDetails.outBill[0]
-                    : undefined;
+        console.log("inbill ", inPatientBillDetails.inBill[0]);
+        console.log("outbill ", outPatientBillDetails.outBill[0]);
+        // Ensure each row has the appropriate date value
+        const newRows = patient.planTreatment
+            .filter((item) => item.isNewRow)
+            .map((row) => {
+                return {
+                    ...row,
+                    patientType: nextRowPatientType,
 
-            if (
-                (nextRowPatientType === "inpatient" && inBillDetails === undefined) ||
-                (nextRowPatientType === "outpatient" && outBillDetails === undefined)
-            ) {
-                // Display confirmation dialog
-                const userConfirmation = window.confirm(
-                    "Bill details are not filled. Do you want to continue your update?"
-                );
+                    startDate:
+                        nextRowPatientType === "inpatient"
+                            ? inPatientBillDetails.inBill[0].admissionDate
+                            : outPatientBillDetails.outBill[0].appointmentDate,
+                    endDate:
+                        nextRowPatientType === "inpatient"
+                        && inPatientBillDetails.inBill[0].dischargeDate,
+                    days:
+                        nextRowPatientType === "inpatient"
+                            ? inPatientBillDetails.inBill[0].totalDays
+                            : 1, // Set days to 1 for outpatient
+                };
+            });
 
-                if (!userConfirmation) {
-                    // User clicked "No", do not continue with the update
-                    return;
-                }
-            }
+        console.log(newRows);
 
-            const updateData = {
-                mobileNo: mobileNo,
-                updatedData: newRows,
-                inBillDetails: inBillDetails,
-                outBillDetails: outBillDetails,
-            };
+        const inBillDetails =
+            (nextRowPatientType === "inpatient" && isBillDetailsInOutInPatientFilled())
+                ? inPatientBillDetails.inBill[0]
+                : undefined;
 
-            const response = await fetch(
-                "https://saai-physio-api.vercel.app/api/update_bill_plantreatment",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(updateData),
-                }
+        const outBillDetails =
+            (nextRowPatientType === "outpatient" && isBillDetailsInOutOutPatientFilled())
+                ? outPatientBillDetails.outBill[0]
+                : undefined;
+
+        console.log(outBillDetails);
+
+        if (
+            (nextRowPatientType === "inpatient" && inBillDetails === undefined) ||
+            (nextRowPatientType === "outpatient" && outBillDetails === undefined)
+        ) {
+            // Display confirmation dialog
+            const userConfirmation = window.confirm(
+                "Bill details are not filled. Do you want to continue your update?"
             );
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Data updated successfully:", data);
-                alert("Data updated successfully");
-                // Handle any UI updates or redirection after successful update
-            } else {
-                console.error("Error updating data:", response.statusText);
-                alert("Data update failed");
-                // Handle error, display error message, etc.
+            if (!userConfirmation) {
+                // User clicked "No", do not continue with the update
+                return;
             }
-        } catch (error) {
-            console.error("Error updating data:", error.message);
-            // Handle error, display error message, etc.
         }
+
+        // Update the patient state with new data
+        setPatient(prevPatient => ({
+            ...prevPatient,
+            planTreatment: prevPatient.planTreatment.map(plan => plan.isNewRow ? newRows.find(newRow => newRow.id === plan.id) : plan)
+        }));
+
+        // Additional UI updates or error handling if needed
     };
     const handleRowSelection = (index) => {
         setSelectedRowStartDate(sortedRows[index].startDate);
@@ -1022,32 +1025,14 @@ const OverlayRecord = (mobileNumber) => {
                 // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
 
                 const updatedBill = {
-                    mobileNo: mobileNo,
+                    mobileNumber: mobileNo,
                     appointmentDate: selectedRowStartDate, // Assuming selectedRowDate is correctly set
                     serviceName: outPatientBillDetails.outBill[0].serviceName,
                     paymentMode: outPatientBillDetails.outBill[0].paymentMode,
                     billAmount: outPatientBillDetails.outBill[0].billAmount,
                 };
-
-                // Send a PUT request to update the outpatient bill
-                const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_outpatient_bill', {
-                    method: 'POST', // Change this to POST if your server expects a POST request
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ patient: updatedBill }),
-                });
-
-                if (response.ok) {
-                    const updatedBillData = await response.json();
-                    console.log('Outpatient Bill updated successfully:', updatedBillData);
-                    alert("Out Patient Bill updated successfully");
-                    // Handle any additional logic or UI updates if needed
-                } else {
-                    console.error('Failed to update outpatient bill:', response.statusText);
-                    // Handle error scenarios
-                    alert("Failed to update Out Patient Bill");
-                }
+                
+                patient.outPatientBill.push(updatedBill);
             } catch (error) {
                 console.error('Error updating outpatient bill:', error);
                 // Handle error scenarios
@@ -1059,190 +1044,174 @@ const OverlayRecord = (mobileNumber) => {
             alert("Bill details not filled");
         }
     };
-    //console.log("currentrow",currentRowPatientType);
-    const handleInOutUpdateInBill = async () => {
-        const isBillDetailsFilled = isBillDetailsInOutInPatientFilled();
-        if (isBillDetailsFilled) {
-            try {
-                // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
+//console.log("currentrow",currentRowPatientType);
+const handleInOutUpdateInBill = async () => {
+    const isBillDetailsFilled = isBillDetailsInOutInPatientFilled();
+    if (isBillDetailsFilled) {
+        try {
+            // Assuming outPatientBillDetails.outBill[0] contains the details of the bill to update
 
-                const updatedBill = {
-                    mobileNo: mobileNo,
-                    roomNumber: inPatientBillDetails.inBill[0].roomNumber,
-                    admissionDate: selectedRowStartDate,
-                    dischargeDate: selectedRowEndDate,
-                    totalDays: inPatientBillDetails.inBill[0].totalDays,
-                    visitingBill: inPatientBillDetails.inBill[0].visitingBill,
-                    physioBill: inPatientBillDetails.inBill[0].physioBill,
-                    nursingBill: inPatientBillDetails.inBill[0].nursingBill,
-                    otherExpenses: inPatientBillDetails.inBill[0].otherExpenses,
-                    paymentMode: inPatientBillDetails.inBill[0].paymentMode,
-                    billAmount: inPatientBillDetails.inBill[0].billAmount,
-                };
+            const updatedBill = {
+                mobileNumber : mobileNo,
+                roomNumber: inPatientBillDetails.inBill[0].roomNumber,
+                admissionDate: selectedRowStartDate,
+                dischargeDate: selectedRowEndDate,
+                totalDays: inPatientBillDetails.inBill[0].totalDays,
+                visitingBill: inPatientBillDetails.inBill[0].visitingBill,
+                physioBill: inPatientBillDetails.inBill[0].physioBill,
+                nursingBill: inPatientBillDetails.inBill[0].nursingBill,
+                otherExpenses: inPatientBillDetails.inBill[0].otherExpenses,
+                paymentMode: inPatientBillDetails.inBill[0].paymentMode,
+                billAmount: inPatientBillDetails.inBill[0].billAmount,
+            };
 
+            patient.inPatientBill.push(updatedBill);
 
-                // Send a PUT request to update the outpatient bill
-                const response = await fetch('https://saai-physio-api.vercel.app/api/create_new_inpatient_bill', {
-                    method: 'POST', // Change this to POST if your server expects a POST request
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ patient: updatedBill }),
-                });
-
-                if (response.ok) {
-                    const updatedBillData = await response.json();
-                    console.log('Outpatient Bill updated successfully:', updatedBillData);
-                    alert("In Patient Bill updated successfully");
-                    // Handle any additional logic or UI updates if needed
-                } else {
-                    console.error('Failed to update outpatient bill:', response.statusText);
-                    // Handle error scenarios
-                    alert("Failed to update In Patient Bill");
-                }
-            } catch (error) {
-                console.error('Error updating inpatient bill:', error);
-                // Handle error scenarios
-            }
+        } catch (error) {
+            console.error('Error updating inpatient bill:', error);
+            // Handle error scenarios
         }
-        else {
-            // Handle case where bill details are not filled
-            console.error("Error: Bill details not filled.");
-            alert("Bill details not filled");
-        }
+    }
+    else {
+        // Handle case where bill details are not filled
+        console.error("Error: Bill details not filled.");
+        alert("Bill details not filled");
+    }
 
-    };
-    const handleViewBill = (index) => {
-        // Get the selected planTreatment
-        const selectedPlanTreatment = patient.planTreatment[index];
+};
+const handleViewBill = (index) => {
+    // Get the selected planTreatment
+    const selectedPlanTreatment = patient.planTreatment[index];
 
-        // Find all relevant bills for the selected date
-        const relevantInPatientBills = patient.inPatientBill.filter((inPatient) => {
-            return (
-                new Date(inPatient.admissionDate).toLocaleDateString() ===
-                new Date(selectedPlanTreatment.startDate).toLocaleDateString()
-            );
-        });
+    // Find all relevant bills for the selected date
+    const relevantInPatientBills = patient.inPatientBill.filter((inPatient) => {
+        return (
+            new Date(inPatient.admissionDate).toLocaleDateString() ===
+            new Date(selectedPlanTreatment.startDate).toLocaleDateString()
+        );
+    });
 
-        const relevantOutPatientBills = patient.outPatientBill.filter((outPatient) => {
-            return (
-                new Date(outPatient.appointmentDate).toLocaleDateString() ===
-                new Date(selectedPlanTreatment.startDate).toLocaleDateString()
-            );
-        });
+    const relevantOutPatientBills = patient.outPatientBill.filter((outPatient) => {
+        return (
+            new Date(outPatient.appointmentDate).toLocaleDateString() ===
+            new Date(selectedPlanTreatment.startDate).toLocaleDateString()
+        );
+    });
 
-        if (relevantInPatientBills.length > 0 || relevantOutPatientBills.length > 0) {
-            // Set overlay content
-            setviewOverlayContent(
-                <div>
-                    <h3>Billing Details:</h3>
-                    <div style={{ display: "flex" }}>
-                        {/* Render Inpatient Bills on the Left Side */}
-                        <div style={{ flex: 1, marginRight: "30px" }}>
-                            <h4>In Patient Bill</h4>
-                            {relevantInPatientBills.map((bill, billIndex) => (
-                                <div key={billIndex}>
-                                    {/* Inpatient bill details rendering */}
-                                    <strong>Bill {billIndex + 1}:</strong>
-                                    {/* Display other inpatient details */}
-                                    <br />
-                                    <strong>Room Number</strong> {bill.roomNumber || "N/A"}
-                                    <br></br>
-                                    {/* Check if admissionDate is defined before using it */}
-                                    <strong>Admission Date</strong>{" "}
-                                    {bill.admissionDate
-                                        ? new Date(bill.admissionDate).toLocaleDateString()
-                                        : "N/A"}
-                                    <br></br>
-                                    {/* Check if dischargeDate is defined before using it */}
-                                    <strong>Discharge Date</strong>{" "}
-                                    {bill.dischargeDate
-                                        ? new Date(bill.dischargeDate).toLocaleDateString()
-                                        : "N/A"}
-                                    <br></br>
-                                    <strong>Total Days</strong> {bill.totalDays || "N/A"}
-                                    <br></br>
-                                    <strong>Visiting Bill</strong> {bill.visitingBill || "N/A"}
-                                    <br></br>
-                                    <strong>Physio Bill</strong> {bill.physioBill || "N/A"}
-                                    <br></br>
-                                    <strong>Nursing Bill</strong> {bill.nursingBill || "N/A"}
-                                    <br></br>
-                                    <strong>Other Expenses</strong> {bill.otherExpenses || "N/A"}
-                                    <br></br>
-                                    <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
-                                    <br></br>
-                                    <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
-                                </div>
-                            ))}
-                        </div>
+    if (relevantInPatientBills.length > 0 || relevantOutPatientBills.length > 0) {
+        // Set overlay content
+        setviewOverlayContent(
+            <div>
+                <h3>Billing Details:</h3>
+                <div style={{ display: "flex" }}>
+                    {/* Render Inpatient Bills on the Left Side */}
+                    <div style={{ flex: 1, marginRight: "30px" }}>
+                        <h4>In Patient Bill</h4>
+                        {relevantInPatientBills.map((bill, billIndex) => (
+                            <div key={billIndex}>
+                                {/* Inpatient bill details rendering */}
+                                <strong>Bill {billIndex + 1}:</strong>
+                                {/* Display other inpatient details */}
+                                <br />
+                                <strong>Room Number</strong> {bill.roomNumber || "N/A"}
+                                <br></br>
+                                {/* Check if admissionDate is defined before using it */}
+                                <strong>Admission Date</strong>{" "}
+                                {bill.admissionDate
+                                    ? new Date(bill.admissionDate).toLocaleDateString()
+                                    : "N/A"}
+                                <br></br>
+                                {/* Check if dischargeDate is defined before using it */}
+                                <strong>Discharge Date</strong>{" "}
+                                {bill.dischargeDate
+                                    ? new Date(bill.dischargeDate).toLocaleDateString()
+                                    : "N/A"}
+                                <br></br>
+                                <strong>Total Days</strong> {bill.totalDays || "N/A"}
+                                <br></br>
+                                <strong>Visiting Bill</strong> {bill.visitingBill || "N/A"}
+                                <br></br>
+                                <strong>Physio Bill</strong> {bill.physioBill || "N/A"}
+                                <br></br>
+                                <strong>Nursing Bill</strong> {bill.nursingBill || "N/A"}
+                                <br></br>
+                                <strong>Other Expenses</strong> {bill.otherExpenses || "N/A"}
+                                <br></br>
+                                <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
+                                <br></br>
+                                <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
+                            </div>
+                        ))}
+                    </div>
 
-                        {/* Render Outpatient Bills on the Right Side */}
-                        <div>
-                            <h4>Out Patient Bill</h4>
-                            {relevantOutPatientBills.map((bill, billIndex) => (
-                                <div key={billIndex}>
-                                    {/* Outpatient bill details rendering */}
-                                    <strong>Bill {billIndex + 1}:</strong>
-                                    {/* Display other outpatient details */}
-                                    <br />
-                                    <strong>Appointment Date</strong> {bill.appointmentDate || "N/A"}
-                                    <br></br>
-                                    <strong>Service Name</strong> {bill.serviceName || "N/A"}
-                                    <br></br>
-                                    <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
-                                    <br></br>
-                                    <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
-                                </div>
-                            ))}
-                        </div>
+                    {/* Render Outpatient Bills on the Right Side */}
+                    <div>
+                        <h4>Out Patient Bill</h4>
+                        {relevantOutPatientBills.map((bill, billIndex) => (
+                            <div key={billIndex}>
+                                {/* Outpatient bill details rendering */}
+                                <strong>Bill {billIndex + 1}:</strong>
+                                {/* Display other outpatient details */}
+                                <br />
+                                <strong>Appointment Date</strong> {bill.appointmentDate || "N/A"}
+                                <br></br>
+                                <strong>Service Name</strong> {bill.serviceName || "N/A"}
+                                <br></br>
+                                <strong>Payment Mode</strong> {bill.paymentMode || "N/A"}
+                                <br></br>
+                                <strong>Bill Amount</strong> {bill.billAmount || "N/A"}
+                            </div>
+                        ))}
                     </div>
                 </div>
-            );
-
-            // Show the overlay
-            setviewOverlayVisible(true);
-        } else {
-            alert("No matching bills found for the selected plan treatment.");
-        }
-    };
-
-    const handleInOutPatientTypeChange = (newPatientType) => {
-        // Update the state with the modified patient type for the next newly added row
-        setNextRowPatientType(newPatientType);
-    };
-
-    const handleInOutInvestigationChange = (index, field, value) => {
-        // Update the patient record in the state immediately
-        setPatient((prevpatient) => ({
-            ...prevpatient,
-            investigation: prevpatient.investigation.map((item, i) =>
-                i === index && item.isNewInvestRow ? { ...item, [field]: value } : item
-            ),
-        }));
-    };
-
-    const handleInOutUpdateInvestigation = () => {
-        // Extract only the new rows from the patient record
-        const newRows = patient.investigation.filter(
-            (item) => item.isNewInvestRow
+            </div>
         );
 
-        // Update the backend immediately when a change is made to a new row
-        axios
-            .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
-                mobileNo,
-                updatedData: newRows,
-            })
-            .then(() => {
-                console.log("Changes saved to the backend.");
-                alert("Ivestigation updated successfully");
-            })
-            .catch((error) => {
-                console.error("Error saving changes to the backend:", error);
-                alert("Failed to update");
-            });
-    };
+        // Show the overlay
+        setviewOverlayVisible(true);
+    } else {
+        alert("No matching bills found for the selected plan treatment.");
+    }
+};
+
+const handleInOutPatientTypeChange = (newPatientType) => {
+
+    setNextRowPatientType(newPatientType);
+
+};
+console.log("pppppppprptttttttttttt", nextRowPatientType);
+
+const handleInOutInvestigationChange = (index, field, value) => {
+    // Update the patient record in the state immediately
+    setPatient((prevpatient) => ({
+        ...prevpatient,
+        investigation: prevpatient.investigation.map((item, i) =>
+            i === index && item.isNewInvestRow ? { ...item, [field]: value } : item
+        ),
+    }));
+};
+
+const handleInOutUpdateInvestigation = () => {
+    // Extract only the new rows from the patient record
+    const newRows = patient.investigation.filter(
+        (item) => item.isNewInvestRow
+    );
+
+    // Update the backend immediately when a change is made to a new row
+    axios
+        .post("https://saai-physio-api.vercel.app/api/edit_invest_record", {
+            mobileNo,
+            updatedData: newRows,
+        })
+        .then(() => {
+            console.log("Changes saved to the backend.");
+            alert("Ivestigation updated successfully");
+        })
+        .catch((error) => {
+            console.error("Error saving changes to the backend:", error);
+            alert("Failed to update");
+        });
+};
 
     const handleEditClick = () => {
         setIsEditing(!isEditing);
@@ -2032,6 +2001,7 @@ const OverlayRecord = (mobileNumber) => {
     };
 
     const handleRangeOfMotionChange = (joint, motion, side, value) => {
+        console.log("lklklklkl::::::", joint, motion, side, value)
         setPatient((prevPatient) => {
             const updatedRangeOfMotion = { ...prevPatient.rangeOfMotion };
             const motionIndex = rangeOfMotionItems.findIndex((item) => item.name === motion);
@@ -2059,6 +2029,7 @@ const OverlayRecord = (mobileNumber) => {
     };
 
     const handleMusclePowerChange = (muscleType, side, category, value) => {
+
         setPatient((prevPatient) => ({
             ...prevPatient,
             musclePower: {
@@ -2607,59 +2578,27 @@ const OverlayRecord = (mobileNumber) => {
     };
     const handleSearch = async () => {
         setCloseDetails(false);
-    
-        try {
-            // Replace 'http://localhost:3000/api/find_basic_record' with your actual endpoint
 
-            const response = await axios.get('http://localhost:3000/api/find_basic_record', {
-                    params: {
-                        mobileNo// Filter by institute_name
-                    }
-                });            // Assuming the backend returns the patient record
-            const foundPatientBasicRecord = response.data;
-            setPatientBasicRecord(foundPatientBasicRecord);
-            // Introduce a delay of 500 milliseconds (adjust as needed)
-            await delay(500);
-    
-            await fetchPatienRecord(foundPatientBasicRecord.mobileNo);
-            setError('');
-            console.log("search");
-        } catch (error) {
-            setPatientBasicRecord(null);
-            setError('Patient record not found. Please check the mobile number.');
-        }
-    };
-    
-    const fetchPatienRecord = async (mobileNo) => {
         try {
-            console.log("fetching rec");
-            // Replace 'http://localhost:3000/api/find_record' with your actual endpoint
-            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_record', {
+            // Replace 'https://saai-physio-api.vercel.app/api/find_record' with your actual endpoint
+            // Assuming the backend returns the patient record
+            const response = await axios.get('https://saai-physio-api.vercel.app/api/find_basic_record', {
                 params: {
                     mobileNo// Filter by institute_name
                 }
-            });            // Assuming the backend returns the patient record
-            const foundPatientRecord = response.data;
-    
-            if (foundPatientRecord && foundPatientRecord !== "kulukulu") {
-                setPatient(foundPatientRecord);
-                console.log("rec fou : ", foundPatientRecord);
-    
-                // Introduce a delay of 500 milliseconds (adjust as needed)
-                await delay(500);
-    
-                setFirstRow(foundPatientRecord.planTreatment[0].patientType === "");
-                console.log("rec fr : ", firstRow);
-                setFounded(true);
-                setError('');
-            } else {
-                // Adjust the condition as needed based on the actual response
-                console.log("not working");
-                // Handle the error or status here, for example:
-                setError('Patient not found');
-            }
-    
+            });
+            foundPatientBasicRecord = response.data;
+
+            setFounded(true);
+            setFirstRow(foundPatientBasicRecord.planTreatment[0].patientType === "choose type");
+            console.log("patient ::::", foundPatientBasicRecord);
+            setPatient(foundPatientBasicRecord);
+            // Introduce a delay of 500 milliseconds (adjust as needed)
+            await delay(500);
+            // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
+            setError('');
         } catch (error) {
+            alert("poda venna");
             setPatientBasicRecord(null);
             setError('Patient record not found. Please check the mobile number.');
         }
@@ -2701,833 +2640,831 @@ const OverlayRecord = (mobileNumber) => {
     console.log("sorted rows", sortedRows);
 
     return (
+        
         <div className='new-record-main-container'>
-            
-            
-
-            <div className="container">
-
-            </div>
-            <div className="post-medical-history">
-                <div className="title">Post Medical History</div>
-                <br /><br />
-                <div className="checkbox-grid">
-                    {Object.keys(patient.postMedicalHistory).map((area) => (
-                        <label key={area} className="checkbox">
-                            <input
-                                type="checkbox"
-                                name="area"
-                                value={area}
-                                checked={patient.postMedicalHistory[area]}
-                                onChange={() => handlePostMedicalHistoryCheckboxChange(area)}
-                            />
-                            <p className="box">{area}</p>
-                        </label>
-                    ))}
-                </div>
-            </div>
-            <div className="assessment">
-                <div className="title">Pain Assessment Scale</div>
-                <form>
-                    <legend>Choose the level of pain:</legend>
-                    <div className="range-value-container">
-                        <input
-                            type="range"
-                            name="painLevel"
-                            min="0"
-                            max="10"
-                            value={patient.painAssessment.beforeTreatment.level}
-                            step="1"
-                            onChange={handlePainLevelChange}
-                        />                        <div className="scale">
-                            <div className="scale-value" style={{ "--value": 0 }}>
-                                <p>0</p>
-                                <img src="./uploads/pain-level-0.png" />
-                                <p>no pain</p>
-                            </div>
-
-                            <div className="scale-value" style={{ "--value": 1 }}>1</div>
-                            <div className="scale-value" style={{ "--value": 2 }}>
-                                <p>2</p>
-                                <img src="./uploads/pain-level-2.png" />
-                                <p>mild</p>
-
-                            </div>
-                            <div className="scale-value" style={{ "--value": 3 }}>3</div>
-                            <div className="scale-value" style={{ "--value": 4 }}>
-                                <p>4</p>
-                                <img src="./uploads/pain-level-4.png" />
-                                <p>moderate</p>
-
-                            </div>
-                            <div className="scale-value" style={{ "--value": 5 }}>5</div>
-                            <div className="scale-value" style={{ "--value": 6 }}>
-                                <p>6</p>
-                                <img src="./uploads/pain-level-6.png" />
-                                <p>severe</p>
-
-                            </div>
-                            <div className="scale-value" style={{ "--value": 7 }}>7</div>
-                            <div className="scale-value" style={{ "--value": 8 }}>
-                                <p>8</p>
-                                <img src="./uploads/pain-level-8.png" />
-                                <p>very severe</p>
-
-                            </div>
-                            <div className="scale-value" style={{ "--value": 9 }}>9</div>
-                            <div className="scale-value" style={{ "--value": 10 }}>
-                                <p>10</p>
-                                <img src="./uploads/pain-level-10.png" />
-                                <p>worst pain</p>
-                            </div>
+                <div>
+                    <div className="post-medical-history">
+                        <div className="title">Post Medical History</div>
+                        <br /><br />
+                        <div className="checkbox-grid">
+                            {Object.keys(patient.postMedicalHistory).map((area) => (
+                                <label key={area} className="checkbox">
+                                    <input
+                                        type="checkbox"
+                                        name="area"
+                                        value={area}
+                                        checked={patient.postMedicalHistory[area]}
+                                        onChange={() => handlePostMedicalHistoryCheckboxChange(area)}
+                                    />
+                                    <p className="box">{area}</p>
+                                </label>
+                            ))}
                         </div>
                     </div>
-                    <div id="result"></div>
-                </form>
-            </div>
-            <div className="painregion">
-                <div className="title">Pain Region</div>
-                <br />
-                <br />
+                    <div className="assessment">
+                        <div className="title">Pain Assessment Scale</div>
+                        <form>
+                            <legend>Choose the level of pain:</legend>
+                            <div className="range-value-container">
+                                <input
+                                    type="range"
+                                    name="painLevel"
+                                    min="0"
+                                    max="10"
+                                    value={patient.painAssessment.beforeTreatment.level}
+                                    step="1"
+                                    onChange={handlePainLevelChange}
+                                />                        <div className="scale">
+                                    <div className="scale-value" style={{ "--value": 0 }}>
+                                        <p>0</p>
+                                        <img src="./uploads/pain-level-0.png" />
+                                        <p>no pain</p>
+                                    </div>
 
-                <div className="checkbox-grid">
-                    {Object.keys(patient.painRegion).map((area) => (
-                        <label key={area} className="checkbox">
-                            <input
-                                type="checkbox"
-                                name="area"
-                                value={area}
-                                checked={patient.painRegion[area]}
-                                onChange={() => handleCheckboxChange(area)}
-                            />
-                            <p className="box">{area}</p>
-                        </label>
-                    ))}
-                </div>
-                <br />
-                <br />
+                                    <div className="scale-value" style={{ "--value": 1 }}>1</div>
+                                    <div className="scale-value" style={{ "--value": 2 }}>
+                                        <p>2</p>
+                                        <img src="./uploads/pain-level-2.png" />
+                                        <p>mild</p>
 
-                <div className="container-history">
-                    <form action="#">
-                        <div className="form-details">
-                            <div className="form-box">
-                                <span className="requirements">Aggrivating Factor</span>
-                                <input
-                                    type="text"
-                                    name="aggFactor"
-                                    placeholder="Enter your Aggrivating Factor"
-                                    value={patient.aggFactor}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                                    </div>
+                                    <div className="scale-value" style={{ "--value": 3 }}>3</div>
+                                    <div className="scale-value" style={{ "--value": 4 }}>
+                                        <p>4</p>
+                                        <img src="./uploads/pain-level-4.png" />
+                                        <p>moderate</p>
+
+                                    </div>
+                                    <div className="scale-value" style={{ "--value": 5 }}>5</div>
+                                    <div className="scale-value" style={{ "--value": 6 }}>
+                                        <p>6</p>
+                                        <img src="./uploads/pain-level-6.png" />
+                                        <p>severe</p>
+
+                                    </div>
+                                    <div className="scale-value" style={{ "--value": 7 }}>7</div>
+                                    <div className="scale-value" style={{ "--value": 8 }}>
+                                        <p>8</p>
+                                        <img src="./uploads/pain-level-8.png" />
+                                        <p>very severe</p>
+
+                                    </div>
+                                    <div className="scale-value" style={{ "--value": 9 }}>9</div>
+                                    <div className="scale-value" style={{ "--value": 10 }}>
+                                        <p>10</p>
+                                        <img src="./uploads/pain-level-10.png" />
+                                        <p>worst pain</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-box">
-                                <span className="requirements">Relieving Factor</span>
-                                <input
-                                    type="text"
-                                    name="relFactor"
-                                    placeholder="Enter your Relieving Factor"
-                                    value={patient.relFactor}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-box">
-                                <span className="requirements">Duration</span>
-                                <input
-                                    type="text"
-                                    name="duration"
-                                    placeholder="Enter your duration of pain"
-                                    value={patient.duration}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-box">
-                                <span className="requirements">Onset</span>
-                                <select
-                                    id="onset"
-                                    name="onset"
-                                    value={patient.onset}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="choose">Choose</option>
-                                    <option value="sudden">Sudden</option>
-                                    <option value="gradual">Gradual</option>
-                                </select>
-                            </div>
+                            <div id="result"></div>
+                        </form>
+                    </div>
+                    <div className="painregion">
+                        <div className="title">Pain Region</div>
+                        <br />
+                        <br />
+
+                        <div className="checkbox-grid">
+                            {Object.keys(patient.painRegion).map((area) => (
+                                <label key={area} className="checkbox">
+                                    <input
+                                        type="checkbox"
+                                        name="area"
+                                        value={area}
+                                        checked={patient.painRegion[area]}
+                                        onChange={() => handleCheckboxChange(area)}
+                                    />
+                                    <p className="box">{area}</p>
+                                </label>
+                            ))}
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div className="container-vitalsign">
-                <div className="title">Vital Sign</div>
-                <form action="#">
-                    <div className="user-data">
-                        <div className="input-value">
-                            <span className="data">BP</span>
-                            <input
-                                type="text"
-                                name="BP"
-                                placeholder="Enter your bp"
-                                value={patient.vitalSign.BP}
-                                onChange={handleVitalInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="input-value">
-                            <span className="data">RR</span>
-                            <input
-                                type="text"
-                                name="RR"
-                                placeholder="Enter your rr"
-                                value={patient.vitalSign.RR}
-                                onChange={handleVitalInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="input-value">
-                            <span className="data">HR</span>
-                            <input
-                                type="text"
-                                name="HR"
-                                placeholder="Enter your hr"
-                                value={patient.vitalSign.HR}
-                                onChange={handleVitalInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="input-value">
-                            <span className="data">SPO2</span>
-                            <input
-                                type="text"
-                                name="SPO2"
-                                placeholder="Enter your spo2"
-                                value={patient.vitalSign.SPO2}
-                                onChange={handleVitalInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="input-value">
-                            <span className="data">TEMP</span>
-                            <input
-                                type="text"
-                                name="TEMP"
-                                placeholder="Enter your temp"
-                                value={patient.vitalSign.TEMP}
-                                onChange={handleVitalInputChange}
-                                required
-                            />
+                        <br />
+                        <br />
+
+                        <div className="container-history">
+                            <form action="#">
+                                <div className="form-details">
+                                    <div className="form-box">
+                                        <span className="requirements">Aggrivating Factor</span>
+                                        <input
+                                            type="text"
+                                            name="aggFactor"
+                                            placeholder="Enter your Aggrivating Factor"
+                                            value={patient.aggFactor}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-box">
+                                        <span className="requirements">Relieving Factor</span>
+                                        <input
+                                            type="text"
+                                            name="relFactor"
+                                            placeholder="Enter your Relieving Factor"
+                                            value={patient.relFactor}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-box">
+                                        <span className="requirements">Duration</span>
+                                        <input
+                                            type="text"
+                                            name="duration"
+                                            placeholder="Enter your duration of pain"
+                                            value={patient.duration}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-box">
+                                        <span className="requirements">Onset</span>
+                                        <select
+                                            id="onset"
+                                            name="onset"
+                                            value={patient.onset}
+                                            onChange={handleInputChange}
+                                            required
+                                        >
+                                            <option value="choose">Choose</option>
+                                            <option value="sudden">Sudden</option>
+                                            <option value="gradual">Gradual</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div className="observation-palpation-container">
-                <div className="title">On Observation</div>
-                <br />
-                <br />
+                    <div className="container-vitalsign">
+                        <div className="title">Vital Sign</div>
+                        <form action="#">
+                            <div className="user-data">
+                                <div className="input-value">
+                                    <span className="data">BP</span>
+                                    <input
+                                        type="text"
+                                        name="BP"
+                                        placeholder="Enter your bp"
+                                        value={patient.vitalSign.BP}
+                                        onChange={handleVitalInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-value">
+                                    <span className="data">RR</span>
+                                    <input
+                                        type="text"
+                                        name="RR"
+                                        placeholder="Enter your rr"
+                                        value={patient.vitalSign.RR}
+                                        onChange={handleVitalInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-value">
+                                    <span className="data">HR</span>
+                                    <input
+                                        type="text"
+                                        name="HR"
+                                        placeholder="Enter your hr"
+                                        value={patient.vitalSign.HR}
+                                        onChange={handleVitalInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-value">
+                                    <span className="data">SPO2</span>
+                                    <input
+                                        type="text"
+                                        name="SPO2"
+                                        placeholder="Enter your spo2"
+                                        value={patient.vitalSign.SPO2}
+                                        onChange={handleVitalInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="input-value">
+                                    <span className="data">TEMP</span>
+                                    <input
+                                        type="text"
+                                        name="TEMP"
+                                        placeholder="Enter your temp"
+                                        value={patient.vitalSign.TEMP}
+                                        onChange={handleVitalInputChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div className="observation-palpation-container">
+                        <div className="title">On Observation</div>
+                        <br />
+                        <br />
 
-                <div className="column-one">
-                    {["SkinColor", "Deformity", "Redness", "ShinySkin", "OpenWounds"].map((observationItem) => (
-                        <label key={observationItem} className="checkBox">
-                            <input
-                                type="checkbox"
-                                name={observationItem.toLowerCase()}
-                                value={observationItem}
-                                checked={patient.observation.onObservation[observationItem]}
-                                onChange={(e) => handleObservationCheckboxChange("onObservation", e.target.value)}
-                            />
-                            <p className="box-value">{observationItem}</p>
-                        </label>
-                    ))}
-                </div>
-                <br />
-                <br />
-                <br />
+                        <div className="column-one">
+                            {["SkinColor", "Deformity", "Redness", "ShinySkin", "OpenWounds"].map((observationItem) => (
+                                <label key={observationItem} className="checkBox">
+                                    <input
+                                        type="checkbox"
+                                        name={observationItem.toLowerCase()}
+                                        value={observationItem}
+                                        checked={patient.observation.onObservation[observationItem]}
+                                        onChange={(e) => handleObservationCheckboxChange("onObservation", e.target.value)}
+                                    />
+                                    <p className="box-value">{observationItem}</p>
+                                </label>
+                            ))}
+                        </div>
+                        <br />
+                        <br />
+                        <br />
 
-                <div className="title">On Palpation</div>
-                <br />
-                <br />
+                        <div className="title">On Palpation</div>
+                        <br />
+                        <br />
 
-                <div className="column-two">
-                    {["Tenderness", "Warmth", "Swelling", "Odema"].map((palpationItem) => (
-                        <label key={palpationItem} className="checkBox">
-                            <input
-                                type="checkbox"
-                                name={palpationItem.toLowerCase()}
-                                value={palpationItem}
-                                checked={patient.observation.onPalpation[palpationItem]}
-                                onChange={(e) => handleObservationCheckboxChange("onPalpation", e.target.value)}
-                            />
-                            <p className="box-value">{palpationItem}</p>
-                        </label>
-                    ))}
-                </div>
-            </div>
-            <div className="on-examination-container">
-                <div className="title">On Examination:</div>
-                <div className="physical-exam-container">
-                    <table className="range-of-motion-table">
-                        <caption>RANGE OF MOTION</caption>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {rangeOfMotionJoints.map((joint) => (
-                                    <React.Fragment key={joint}>
-                                        <th colSpan="2">{joint.toUpperCase()}</th>
-                                    </React.Fragment>
-                                ))}
-                            </tr>
-                            <tr>
-                                <th></th>
-                                {rangeOfMotionJoints.map((joint) => (
-                                    <React.Fragment key={joint}>
-                                        <th>RT</th>
-                                        <th>LT</th>
-                                    </React.Fragment>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {['flexion', 'extension', 'abduction', 'adduction', 'eversion', 'inversion', 'externalRotation', 'internalRotation', 'dorsiFlexion', 'plantarFlexion', 'supination', 'pronation', 'lateralRotation'].map((motion, index) => (
-                                <tr key={motion}>
-                                    <td>{motion.toUpperCase()}</td>
-                                    {rangeOfMotionJoints.map((joint) => (
-                                        <React.Fragment key={joint}>
-                                            {['rt', 'lt'].map((side) => (
-                                                <React.Fragment key={side}>
-                                                    <td>
-                                                        {founded && (
-                                                            <>
+                        <div className="column-two">
+                            {["Tenderness", "Warmth", "Swelling", "Odema"].map((palpationItem) => (
+                                <label key={palpationItem} className="checkBox">
+                                    <input
+                                        type="checkbox"
+                                        name={palpationItem.toLowerCase()}
+                                        value={palpationItem}
+                                        checked={patient.observation.onPalpation[palpationItem]}
+                                        onChange={(e) => handleObservationCheckboxChange("onPalpation", e.target.value)}
+                                    />
+                                    <p className="box-value">{palpationItem}</p>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="on-examination-container">
+                        <div className="title">On Examination:</div>
+                        <div className="physical-exam-container">
+                            <table className="range-of-motion-table">
+                                <caption>RANGE OF MOTION</caption>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        {rangeOfMotionJoints.map((joint) => (
+                                            <React.Fragment key={joint}>
+                                                <th colSpan="2">{joint.toUpperCase()}</th>
+                                            </React.Fragment>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        {rangeOfMotionJoints.map((joint) => (
+                                            <React.Fragment key={joint}>
+                                                <th>RT</th>
+                                                <th>LT</th>
+                                            </React.Fragment>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {['flexion', 'extension', 'abduction', 'adduction', 'eversion', 'inversion', 'externalRotation', 'internalRotation', 'dorsiFlexion', 'plantarFlexion', 'supination', 'pronation', 'lateralRotation'].map((motion, index) => (
+                                        <tr key={motion}>
+                                            <td>{motion.toUpperCase()}</td>
+                                            {rangeOfMotionJoints.map((joint) => (
+                                                <React.Fragment key={joint}>
+                                                    {['rt', 'lt'].map((side) => (
+                                                        <React.Fragment key={side}>
+                                                            <td>
+                                                                {founded && (
+                                                                    <>
 
-                                                                <input
-                                                                    type="number"
-                                                                    name={joint + '-' + motion + '-' + side}
-                                                                    value={patient.rangeOfMotion[joint][index][motion][side]}
-                                                                    onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
-                                                                    placeholder={allowedMotions[joint] && allowedMotions[joint].includes(motion) ? "0" : "-"}
-                                                                    disabled={!allowedMotions[joint] || !allowedMotions[joint].includes(motion)}
-                                                                />
-                                                            </>
-                                                        )}
-                                                        {!founded && (
-                                                            <input
-                                                                type="number"
-                                                                name={joint + '-' + motion + '-' + side}
-                                                                onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
-                                                                placeholder={allowedMotions[joint] && allowedMotions[joint].includes(motion) ? "0" : "-"}
-                                                                disabled={!allowedMotions[joint] || !allowedMotions[joint].includes(motion)}
-                                                            />
-                                                        )}
-                                                    </td>
+                                                                        <input
+                                                                            type="number"
+                                                                            name={joint + '-' + motion + '-' + side}
+                                                                            value={patient.rangeOfMotion[joint][index][motion][side] ? patient.rangeOfMotion[joint][index][motion][side] : 0}
+                                                                            onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
+                                                                            placeholder={allowedMotions[joint] && allowedMotions[joint].includes(motion) ? "0" : "-"}
+                                                                            disabled={!allowedMotions[joint] || !allowedMotions[joint].includes(motion)}
+                                                                        />
+                                                                    </>
+                                                                )}
+                                                                {!founded && (
+                                                                    <input
+                                                                        type="number"
+                                                                        name={joint + '-' + motion + '-' + side}
+                                                                        onChange={(e) => handleRangeOfMotionChange(joint, motion, side, parseInt(e.target.value))}
+                                                                        placeholder={allowedMotions[joint] && allowedMotions[joint].includes(motion) ? "0" : "-"}
+                                                                        disabled={!allowedMotions[joint] || !allowedMotions[joint].includes(motion)}
+                                                                    />
+                                                                )}
+                                                            </td>
 
+                                                        </React.Fragment>
+                                                    ))}
                                                 </React.Fragment>
                                             ))}
-                                        </React.Fragment>
+                                        </tr>
                                     ))}
+                                </tbody>
+                            </table>
+                            <table className="muscle-power-table">
+                                <caption>MUSCLE POWER</caption>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th colSpan="2">MOTOR</th>
+                                        <th colSpan="2">SENSORY</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>RT</th>
+                                        <th>LT</th>
+                                        <th>RT</th>
+                                        <th>LT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {musclePowerItems.map((item) => (
+                                        <tr key={item.label}>
+                                            <td>{item.label}</td>
+                                            {["motor", "sensory"].map((category) => (
+                                                ["rt", "lt"].map((side) => (
+                                                    <React.Fragment key={category + side}>
+                                                        <td>
+                                                            <input
+                                                                type="number"
+                                                                name={item.name + "-" + side + "-" + category}
+                                                                value={patient.musclePower[item.name][side][category]}
+                                                                onChange={(e) => handleMusclePowerChange(item.name, side, category, parseInt(e.target.value))}
+                                                                placeholder="0"
+                                                            />
+                                                        </td>
+
+                                                    </React.Fragment>
+                                                ))
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div className="coordination-container">
+                        <table className="coordination-table">
+
+                            <caption>COORDINATION</caption>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Normal</th>
+                                    <th>Abnormal</th>
+                                    <th>Remarks</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <table className="muscle-power-table">
-                        <caption>MUSCLE POWER</caption>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th colSpan="2">MOTOR</th>
-                                <th colSpan="2">SENSORY</th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th>RT</th>
-                                <th>LT</th>
-                                <th>RT</th>
-                                <th>LT</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {musclePowerItems.map((item) => (
-                                <tr key={item.label}>
-                                    <td>{item.label}</td>
-                                    {["motor", "sensory"].map((category) => (
-                                        ["rt", "lt"].map((side) => (
-                                            <React.Fragment key={category + side}>
-                                                <td>
+                            </thead>
+                            <tbody>
+                                {coordinationItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
+                                        {['normal', 'abnormal'].map((column) => (
+                                            <td key={column}>
+                                                <input
+                                                    type="checkbox"
+                                                    name={item.name + '-' + column}
+                                                    checked={patient.coordination[item.name][column]}
+                                                    onChange={() => handleCoordinationCheckboxChange(item.name, column)}
+                                                />
+                                            </td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="text"
+                                                value={patient.coordination[item.name].remarks}
+                                                onChange={(event) => handleRemarksChange(item.name, event)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
+                        <br></br>
+                        <br></br>
+                        <br></br>
+
+                        <table className="standing-walking-table">
+                            <caption>STANDING AND WALKING</caption>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Normal</th>
+                                    <th>Abnormal</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {standingWalkingItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
+                                        {['normal', 'abnormal'].map((column) => (
+                                            <td key={column}>
+                                                <input
+                                                    type="checkbox"
+                                                    name={item.name + '-' + column}
+                                                    checked={patient.standingWalking[item.name][column]}
+                                                    onChange={() => handleStandingWalkingCheckboxChange(item.name, column)}
+                                                />
+                                            </td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="text"
+                                                value={patient.standingWalking[item.name].remarks}
+                                                onChange={(event) => handleEquilibriumRemarksChange(item.name, event)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div className="balance-container">
+                        <div className="title">ON CHECKING</div>
+
+                        <table className="balance-table">
+                            <caption>BALANCE</caption>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Normal</th>
+                                    <th>Abnormal</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {balanceItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
+                                        {['normal', 'abnormal'].map((column) => (
+                                            <td key={column}>
+                                                <input
+                                                    type="checkbox"
+                                                    name={item.name + '-' + column}
+                                                    checked={patient.balance[item.name][column]}
+                                                    onChange={() => handleBalanceCheckboxChange(item.name, column)}
+                                                />
+                                            </td>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="text"
+                                                value={patient.balance[item.name].remarks}
+                                                onChange={(event) => handleBalanceRemarksChange(item.name, event)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
+                        <div className='hand-function-container'>
+                            <table className="hand-function-table">
+                                <caption>HAND FUNCTION</caption>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Normal</th>
+                                        <th>Abnormal</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {handFunctionItems.map((item) => (
+                                        <tr key={item.label}>
+                                            <td>{item.label}</td>
+                                            {['normal', 'abnormal'].map((column) => (
+                                                <React.Fragment key={column}>
+                                                    <td>
+                                                        <input
+                                                            type="checkbox"
+                                                            name={item.name + '-' + column}
+                                                            checked={patient.handFunction[item.name][column]}
+                                                            onChange={() => handleHandFunctionCheckboxChange(item.name, column)}
+                                                        />
+                                                    </td>
+                                                </React.Fragment>
+                                            ))}
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    value={patient.handFunction[item.name].remarks}
+                                                    onChange={(event) => handleHandFunctionRemarksChange(item.name, event)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+
+                            </table>
+                            <table className="prehension-table">
+                                <caption>PREHENSION</caption>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Normal</th>
+                                        <th>Abnormal</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {prehensionItems.map((item) => (
+                                        <tr key={item.label}>
+                                            <td>{item.label}</td>
+                                            {['normal', 'abnormal'].map((column) => (
+                                                <React.Fragment key={column}>
+                                                    <td>
+                                                        <input
+                                                            type="checkbox"
+                                                            name={item.name + '-' + column}
+                                                            checked={patient.prehension[item.name][column]}
+                                                            onChange={() => handlePrehensionCheckboxChange(item.name, column)}
+                                                        />
+                                                    </td>
+                                                </React.Fragment>
+                                            ))}
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    value={patient.prehension[item.name].remarks}
+                                                    onChange={(event) => handlePrehensionRemarksChange(item.name, event)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div className="subjective-assessment-container">
+                        <div className="title">SUBJECTIVE ASSESSMENT</div>
+                        <table className="subjective-assessment-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Duration</th>
+                                    <th>Severity</th>
+                                    <th>Pattern</th>
+                                    <th>Associated factors</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.keys(patient.subjectiveAssessment).map((symptom) => (
+                                    <tr key={symptom}>
+                                        <td>{symptom}</td>
+                                        {['duration', 'severity', 'pattern', 'associatedFactors'].map((field) => (
+                                            <td key={field}>
+                                                {field === 'severity' ? (
+                                                    <select
+                                                        value={patient.subjectiveAssessment[symptom][field]}
+                                                        onChange={(event) => handleSeverityChange(symptom, event)}
+                                                    >
+                                                        <option value="">   Severity</option>
+                                                        {severityOptions.map((option) => (
+                                                            <option key={option} value={option.toLowerCase()}>
+                                                                {option}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                ) : field === 'duration' ? (
                                                     <input
-                                                        type="number"
-                                                        name={item.name + "-" + side + "-" + category}
-                                                        onChange={(e) => handleMusclePowerChange(item.name, side, category, parseInt(e.target.value))}
-                                                        placeholder="0"
+                                                        type="text"
+                                                        value={patient.subjectiveAssessment[symptom][field]}
+                                                        onChange={(event) => handleTextChange(symptom, field, event)}
                                                     />
-                                                </td>
-                                            </React.Fragment>
-                                        ))
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div className="coordination-container">
-                <table className="coordination-table">
-
-                    <caption>COORDINATION</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Normal</th>
-                            <th>Abnormal</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {coordinationItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
-                                {['normal', 'abnormal'].map((column) => (
-                                    <td key={column}>
-                                        <input
-                                            type="checkbox"
-                                            name={item.name + '-' + column}
-                                            checked={patient.coordination[item.name][column]}
-                                            onChange={() => handleCoordinationCheckboxChange(item.name, column)}
-                                        />
-                                    </td>
-                                ))}
-                                <td>
-                                    <input
-                                        type="text"
-                                        value={patient.coordination[item.name].remarks}
-                                        onChange={(event) => handleRemarksChange(item.name, event)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-
-                </table>
-                <br></br>
-                <br></br>
-                <br></br>
-
-                <table className="standing-walking-table">
-                    <caption>STANDING AND WALKING</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Normal</th>
-                            <th>Abnormal</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {standingWalkingItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
-                                {['normal', 'abnormal'].map((column) => (
-                                    <td key={column}>
-                                        <input
-                                            type="checkbox"
-                                            name={item.name + '-' + column}
-                                            checked={patient.standingWalking[item.name][column]}
-                                            onChange={() => handleStandingWalkingCheckboxChange(item.name, column)}
-                                        />
-                                    </td>
-                                ))}
-                                <td>
-                                    <input
-                                        type="text"
-                                        value={patient.standingWalking[item.name].remarks}
-                                        onChange={(event) => handleEquilibriumRemarksChange(item.name, event)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-
-                </table>
-            </div>
-            <div className="balance-container">
-                <div className="title">ON CHECKING</div>
-
-                <table className="balance-table">
-                    <caption>BALANCE</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Normal</th>
-                            <th>Abnormal</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {balanceItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
-                                {['normal', 'abnormal'].map((column) => (
-                                    <td key={column}>
-                                        <input
-                                            type="checkbox"
-                                            name={item.name + '-' + column}
-                                            checked={patient.balance[item.name][column]}
-                                            onChange={() => handleBalanceCheckboxChange(item.name, column)}
-                                        />
-                                    </td>
-                                ))}
-                                <td>
-                                    <input
-                                        type="text"
-                                        value={patient.balance[item.name].remarks}
-                                        onChange={(event) => handleBalanceRemarksChange(item.name, event)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-
-                </table>
-                <div className='hand-function-container'>
-                    <table className="hand-function-table">
-                        <caption>HAND FUNCTION</caption>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Normal</th>
-                                <th>Abnormal</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {handFunctionItems.map((item) => (
-                                <tr key={item.label}>
-                                    <td>{item.label}</td>
-                                    {['normal', 'abnormal'].map((column) => (
-                                        <React.Fragment key={column}>
-                                            <td>
-                                                <input
-                                                    type="checkbox"
-                                                    name={item.name + '-' + column}
-                                                    checked={patient.handFunction[item.name][column]}
-                                                    onChange={() => handleHandFunctionCheckboxChange(item.name, column)}
-                                                />
+                                                ) : field === 'associatedFactors' && symptom === 'sputumHemoptysis' ? (
+                                                    <select
+                                                        value={patient.subjectiveAssessment.sputumHemoptysis.hemoptysisType}
+                                                        onChange={(e) => handleHemoptysisTypeChange("sputumHemoptysis", e)}
+                                                    >
+                                                        <option value="">Type</option>
+                                                        {hemoptysisOptions.map((option) => (
+                                                            <option key={option} value={option.toLowerCase()}>
+                                                                {option}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                ) : (
+                                                    <input
+                                                        type="text"
+                                                        value={patient.subjectiveAssessment[symptom][field]}
+                                                        onChange={(event) => handleTextChange(symptom, field, event)}
+                                                    />
+                                                )}
                                             </td>
-                                        </React.Fragment>
-                                    ))}
-                                    <td>
-                                        <input
-                                            type="text"
-                                            value={patient.handFunction[item.name].remarks}
-                                            onChange={(event) => handleHandFunctionRemarksChange(item.name, event)}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-
-                    </table>
-                    <table className="prehension-table">
-                        <caption>PREHENSION</caption>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Normal</th>
-                                <th>Abnormal</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {prehensionItems.map((item) => (
-                                <tr key={item.label}>
-                                    <td>{item.label}</td>
-                                    {['normal', 'abnormal'].map((column) => (
-                                        <React.Fragment key={column}>
-                                            <td>
-                                                <input
-                                                    type="checkbox"
-                                                    name={item.name + '-' + column}
-                                                    checked={patient.prehension[item.name][column]}
-                                                    onChange={() => handlePrehensionCheckboxChange(item.name, column)}
-                                                />
-                                            </td>
-                                        </React.Fragment>
-                                    ))}
-                                    <td>
-                                        <input
-                                            type="text"
-                                            value={patient.prehension[item.name].remarks}
-                                            onChange={(event) => handlePrehensionRemarksChange(item.name, event)}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-            <div className="subjective-assessment-container">
-                <div className="title">SUBJECTIVE ASSESSMENT</div>
-                <table className="subjective-assessment-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Duration</th>
-                            <th>Severity</th>
-                            <th>Pattern</th>
-                            <th>Associated factors</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.keys(patient.subjectiveAssessment).map((symptom) => (
-                            <tr key={symptom}>
-                                <td>{symptom}</td>
-                                {['duration', 'severity', 'pattern', 'associatedFactors'].map((field) => (
-                                    <td key={field}>
-                                        {field === 'severity' ? (
-                                            <select
-                                                value={patient.subjectiveAssessment[symptom][field]}
-                                                onChange={(event) => handleSeverityChange(symptom, event)}
-                                            >
-                                                <option value="">   Severity</option>
-                                                {severityOptions.map((option) => (
-                                                    <option key={option} value={option.toLowerCase()}>
-                                                        {option}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        ) : field === 'duration' ? (
-                                            <input
-                                                type="text"
-                                                value={patient.subjectiveAssessment[symptom][field]}
-                                                onChange={(event) => handleTextChange(symptom, field, event)}
-                                            />
-                                        ) : field === 'associatedFactors' && symptom === 'sputumHemoptysis' ? (
-                                            <select
-                                                value={patient.subjectiveAssessment.sputumHemoptysis.hemoptysisType}
-                                                onChange={(e) => handleHemoptysisTypeChange("sputumHemoptysis", e)}
-                                            >
-                                                <option value="">Type</option>
-                                                {hemoptysisOptions.map((option) => (
-                                                    <option key={option} value={option.toLowerCase()}>
-                                                        {option}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        ) : (
-                                            <input
-                                                type="text"
-                                                value={patient.subjectiveAssessment[symptom][field]}
-                                                onChange={(event) => handleTextChange(symptom, field, event)}
-                                            />
-                                        )}
-                                    </td>
+                                        ))}
+                                    </tr>
                                 ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="rpe-table-container">
-                <div className="title">RATE OF PERCEIVED EXERTION</div>
-                <table className="rpe-table">
-                    <thead>
-                        <tr>
-                            <th>Point</th>
-                            <th>Effort</th>
-                            <th>Description</th>
-                            <th>% of Max HR</th>
-                            <th>Point Got</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rpeData.map((data) => (
-                            <tr key={data.point}>
-                                <td>{data.point}</td>
-                                <td>{data.effort}</td>
-                                <td>{data.description}</td>
-                                <td>{data.maxHRPercentage}</td>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name={`point${data.point}`}
-                                        checked={patient.rpe[`point${data.point}`]}
-                                        onChange={() => handlePointCheckboxChange(`point${data.point}`)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-
-                <div className="title">BORD RATE OF PERCEIVED EXERTION (BRPE SCALE)</div>
-
-                <table className="brpe-table">
-                    <thead>
-                        <tr>
-                            <th>Rating</th>
-                            <th>Description</th>
-                            <th>Effort%</th>
-                            <th>Rating Got</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {brpeData.map((data) => (
-                            <tr key={data.rating}>
-                                <td>{data.rating}</td>
-                                <td>{data.description}</td>
-                                <td>{data.effortPercentage}</td>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name={`rating${data.rating}`}
-                                        checked={patient.brpe[`rating${data.rating}`]}
-                                        onChange={() => handleBordRatingCheckboxChange(`rating${data.rating}`)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="objective-assessment-container">
-                <div className="title">OBJECTIVE ASSESSMENT</div>
-                <table className="general-observation-table">
-                    <caption>General Observation</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Normal</th>
-                            <th>Abnormal</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {generalObservationItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
-                                {['normal', 'abnormal'].map((category) => (
-                                    <React.Fragment key={category}>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="rpe-table-container">
+                        <div className="title">RATE OF PERCEIVED EXERTION</div>
+                        <table className="rpe-table">
+                            <thead>
+                                <tr>
+                                    <th>Point</th>
+                                    <th>Effort</th>
+                                    <th>Description</th>
+                                    <th>% of Max HR</th>
+                                    <th>Point Got</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rpeData.map((data) => (
+                                    <tr key={data.point}>
+                                        <td>{data.point}</td>
+                                        <td>{data.effort}</td>
+                                        <td>{data.description}</td>
+                                        <td>{data.maxHRPercentage}</td>
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                name={item.name + `-${category}`}
-                                                checked={patient.generalObservation[item.name][category]}
-                                                onChange={() => handleGeneralObservationCheckboxChange(item.name, category)}
+                                                name={`point${data.point}`}
+                                                checked={patient.rpe[`point${data.point}`]}
+                                                onChange={() => handlePointCheckboxChange(`point${data.point}`)}
                                             />
                                         </td>
-                                    </React.Fragment>
+                                    </tr>
                                 ))}
-                                <td>
-                                    <input
-                                        type="text"
-                                        name={item.name + '-remarks'}
-                                        value={patient.generalObservation[item.name].remarks}
-                                        onChange={(e) => setPatient((prevPatient) => ({
-                                            ...prevPatient,
-                                            generalObservation: {
-                                                ...prevPatient.generalObservation,
-                                                [item.name]: {
-                                                    ...prevPatient.generalObservation[item.name],
-                                                    remarks: e.target.value,
-                                                },
-                                            },
-                                        }))}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
+                            </tbody>
+                        </table>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
 
-                </table>
-                <table className="chest-observation-table">
-                    <caption>Observation of Chest</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Normal</th>
-                            <th>Abnormal</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {chestObservationItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name={item.name + '-normal'}
-                                        checked={patient.chestObservation[item.name].normal}
-                                        onChange={() => handleChestObservationCheckboxChange(item.name, 'normal')}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name={item.name + '-abnormal'}
-                                        checked={patient.chestObservation[item.name].abnormal}
-                                        onChange={() => handleChestObservationCheckboxChange(item.name, 'abnormal')}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        name={item.name + '-remarks'}
-                                        value={patient.chestObservation[item.name].remarks}
-                                        onChange={(e) => setPatient((prevPatient) => ({
-                                            ...prevPatient,
-                                            chestObservation: {
-                                                ...prevPatient.chestObservation,
-                                                [item.name]: {
-                                                    ...prevPatient.chestObservation[item.name],
-                                                    remarks: e.target.value,
-                                                },
-                                            },
-                                        }))}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        <div className="title">BORD RATE OF PERCEIVED EXERTION (BRPE SCALE)</div>
 
-                <img className='chest-shapes-img' src="./uploads/chest-shapes.PNG" />
-                <table className="chest-observation-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            {chestShapeObservationItems.map((item) => (
-                                <th key={item.name}>{item.label}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Chest Shape</td>
-                            {chestShapeObservationItems.map((item) => (
-                                <td key={item.name}>
-                                    <input
-                                        type="checkbox"
-                                        name={`chestShape-${item.name}`}
-                                        checked={patient.chestShapeObservation.chestShape[item.name]}
-                                        onChange={() => handleChestShapeObservationCheckboxChange(item.name)}
-                                    />
-                                </td>
-                            ))}
-                        </tr>
-                    </tbody>
-                </table>
-                <br />
-                <br />
-                <br />
-                {/*<table className="chest-motion-observation-table">
+                        <table className="brpe-table">
+                            <thead>
+                                <tr>
+                                    <th>Rating</th>
+                                    <th>Description</th>
+                                    <th>Effort%</th>
+                                    <th>Rating Got</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {brpeData.map((data) => (
+                                    <tr key={data.rating}>
+                                        <td>{data.rating}</td>
+                                        <td>{data.description}</td>
+                                        <td>{data.effortPercentage}</td>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={`rating${data.rating}`}
+                                                checked={patient.brpe[`rating${data.rating}`]}
+                                                onChange={() => handleBordRatingCheckboxChange(`rating${data.rating}`)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="objective-assessment-container">
+                        <div className="title">OBJECTIVE ASSESSMENT</div>
+                        <table className="general-observation-table">
+                            <caption>General Observation</caption>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Normal</th>
+                                    <th>Abnormal</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {generalObservationItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
+                                        {['normal', 'abnormal'].map((category) => (
+                                            <React.Fragment key={category}>
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        name={item.name + `-${category}`}
+                                                        checked={patient.generalObservation[item.name][category]}
+                                                        onChange={() => handleGeneralObservationCheckboxChange(item.name, category)}
+                                                    />
+                                                </td>
+                                            </React.Fragment>
+                                        ))}
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name={item.name + '-remarks'}
+                                                value={patient.generalObservation[item.name].remarks}
+                                                onChange={(e) => setPatient((prevPatient) => ({
+                                                    ...prevPatient,
+                                                    generalObservation: {
+                                                        ...prevPatient.generalObservation,
+                                                        [item.name]: {
+                                                            ...prevPatient.generalObservation[item.name],
+                                                            remarks: e.target.value,
+                                                        },
+                                                    },
+                                                }))}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
+                        <table className="chest-observation-table">
+                            <caption>Observation of Chest</caption>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Normal</th>
+                                    <th>Abnormal</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {chestObservationItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item.name + '-normal'}
+                                                checked={patient.chestObservation[item.name].normal}
+                                                onChange={() => handleChestObservationCheckboxChange(item.name, 'normal')}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                name={item.name + '-abnormal'}
+                                                checked={patient.chestObservation[item.name].abnormal}
+                                                onChange={() => handleChestObservationCheckboxChange(item.name, 'abnormal')}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name={item.name + '-remarks'}
+                                                value={patient.chestObservation[item.name].remarks}
+                                                onChange={(e) => setPatient((prevPatient) => ({
+                                                    ...prevPatient,
+                                                    chestObservation: {
+                                                        ...prevPatient.chestObservation,
+                                                        [item.name]: {
+                                                            ...prevPatient.chestObservation[item.name],
+                                                            remarks: e.target.value,
+                                                        },
+                                                    },
+                                                }))}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <img className='chest-shapes-img' src="./uploads/chest-shapes.PNG" />
+                        <table className="chest-observation-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {chestShapeObservationItems.map((item) => (
+                                        <th key={item.name}>{item.label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Chest Shape</td>
+                                    {chestShapeObservationItems.map((item) => (
+                                        <td key={item.name}>
+                                            <input
+                                                type="checkbox"
+                                                name={`chestShape-${item.name}`}
+                                                checked={patient.chestShapeObservation.chestShape[item.name]}
+                                                onChange={() => handleChestShapeObservationCheckboxChange(item.name)}
+                                            />
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                        <br />
+                        <br />
+                        {/*<table className="chest-motion-observation-table">
                         <caption>Observation of Chest Motion</caption>
                         <thead>
                             <tr>
@@ -3603,165 +3540,163 @@ const OverlayRecord = (mobileNumber) => {
     
                                         </table>*/}
 
-                <table className="chest-motion-observation-table">
-                    <caption>Observation of Chest Motion</caption>
-                    <thead>
-                        <tr>
-                            <th>MOTION TYPE</th>
-                            {chestMotionItems.map((item) => (
-                                <th key={item.name}>{item.label}</th>
-                            ))}
-                            <th>Values</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Middle Lobe & Lingula Motion</td>
-                            {chestMotionItems.map((item) => (
-                                <td key={item.name}>
-                                    <input
-                                        type="radio"
-                                        name="middleLobeLingulaMotion"
-                                        value={item.name}
-                                        checked={patient.chestMotionObservation.middleLobeLingulaMotion === item.name}
-                                        onChange={() => handleChestMotionCheckboxChange('middleLobeLingulaMotion', item.name)}
-                                    />
-                                </td>
-                            ))}
-                            <td>
-                                <input
-                                    type="text"
-                                    name="middleLobeLingulaValues"
-                                    value={patient.chestMotionObservation.middleLobeLingulaValues}
-                                    onChange={(e) => handleChestMotionInputChange('middleLobeLingulaValues', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="text"
-                                    name="middleLobeLingulaRemarks"
-                                    value={patient.chestMotionObservation.middleLobeLingulaRemarks}
-                                    onChange={(e) => handleChestMotionInputChange('middleLobeLingulaRemarks', e.target.value)}
-                                />
-                            </td>
-                        </tr>
+                        <table className="chest-motion-observation-table">
+                            <caption>Observation of Chest Motion</caption>
+                            <thead>
+                                <tr>
+                                    <th>MOTION TYPE</th>
+                                    {chestMotionItems.map((item) => (
+                                        <th key={item.name}>{item.label}</th>
+                                    ))}
+                                    <th>Values</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Middle Lobe & Lingula Motion</td>
+                                    {chestMotionItems.map((item) => (
+                                        <td key={item.name}>
+                                            <input
+                                                type="radio"
+                                                name="middleLobeLingulaMotion"
+                                                value={item.name}
+                                                checked={patient.chestMotionObservation.middleLobeLingulaMotion === item.name}
+                                                onChange={() => handleChestMotionCheckboxChange('middleLobeLingulaMotion', item.name)}
+                                            />
+                                        </td>
+                                    ))}
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="middleLobeLingulaValues"
+                                            value={patient.chestMotionObservation.middleLobeLingulaValues}
+                                            onChange={(e) => handleChestMotionInputChange('middleLobeLingulaValues', e.target.value)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="middleLobeLingulaRemarks"
+                                            value={patient.chestMotionObservation.middleLobeLingulaRemarks}
+                                            onChange={(e) => handleChestMotionInputChange('middleLobeLingulaRemarks', e.target.value)}
+                                        />
+                                    </td>
+                                </tr>
 
-                        <tr>
-                            <td>Upper Lobe Motion</td>
-                            {chestMotionItems.map((item) => (
-                                <td key={item.name}>
-                                    <input
-                                        type="radio"
-                                        name="upperLobeMotion"
-                                        value={item.name}
-                                        checked={patient.chestMotionObservation.upperLobeMotion === item.name}
-                                        onChange={() => handleChestMotionCheckboxChange('upperLobeMotion', item.name)}
-                                    />
-                                </td>
-                            ))}
-                            <td>
-                                <input
-                                    type="text"
-                                    name="upperLobeValues"
-                                    value={patient.chestMotionObservation.upperLobeValues}
-                                    onChange={(e) => handleChestMotionInputChange('upperLobeValues', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="text"
-                                    name="upperLobeRemarks"
-                                    value={patient.chestMotionObservation.upperLobeRemarks}
-                                    onChange={(e) => handleChestMotionInputChange('upperLobeRemarks', e.target.value)}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Lower Lobe Motion</td>
-                            {chestMotionItems.map((item) => (
-                                <td key={item.name}>
-                                    <input
-                                        type="radio"
-                                        name="lowerLobeMotion"
-                                        value={item.name}
-                                        checked={patient.chestMotionObservation.lowerLobeMotion === item.name}
-                                        onChange={() => handleChestMotionCheckboxChange('lowerLobeMotion', item.name)}
-                                    />
-                                </td>
-                            ))}
-                            <td>
-                                <input
-                                    type="text"
-                                    name="lowerLobeValues"
-                                    value={patient.chestMotionObservation.lowerLobeValues}
-                                    onChange={(e) => handleChestMotionInputChange('lowerLobeValues', e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="text"
-                                    name="lowerLobeRemarks"
-                                    value={patient.chestMotionObservation.lowerLobeRemarks}
-                                    onChange={(e) => handleChestMotionInputChange('lowerLobeRemarks', e.target.value)}
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <tr>
+                                    <td>Upper Lobe Motion</td>
+                                    {chestMotionItems.map((item) => (
+                                        <td key={item.name}>
+                                            <input
+                                                type="radio"
+                                                name="upperLobeMotion"
+                                                value={item.name}
+                                                checked={patient.chestMotionObservation.upperLobeMotion === item.name}
+                                                onChange={() => handleChestMotionCheckboxChange('upperLobeMotion', item.name)}
+                                            />
+                                        </td>
+                                    ))}
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="upperLobeValues"
+                                            value={patient.chestMotionObservation.upperLobeValues}
+                                            onChange={(e) => handleChestMotionInputChange('upperLobeValues', e.target.value)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="upperLobeRemarks"
+                                            value={patient.chestMotionObservation.upperLobeRemarks}
+                                            onChange={(e) => handleChestMotionInputChange('upperLobeRemarks', e.target.value)}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Lower Lobe Motion</td>
+                                    {chestMotionItems.map((item) => (
+                                        <td key={item.name}>
+                                            <input
+                                                type="radio"
+                                                name="lowerLobeMotion"
+                                                value={item.name}
+                                                checked={patient.chestMotionObservation.lowerLobeMotion === item.name}
+                                                onChange={() => handleChestMotionCheckboxChange('lowerLobeMotion', item.name)}
+                                            />
+                                        </td>
+                                    ))}
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="lowerLobeValues"
+                                            value={patient.chestMotionObservation.lowerLobeValues}
+                                            onChange={(e) => handleChestMotionInputChange('lowerLobeValues', e.target.value)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="lowerLobeRemarks"
+                                            value={patient.chestMotionObservation.lowerLobeRemarks}
+                                            onChange={(e) => handleChestMotionInputChange('lowerLobeRemarks', e.target.value)}
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                <img className='lobe-img' src="./uploads/lobe.PNG" />
-            </div>
-            <div className="barthel-index-container">
-                <div className="title">The Barthel Index</div>
-                <table className="barthel-index-table">
-                    <thead>
-                        <tr>
-                            <th>Activity</th>
-                            <th>Range</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {barthelIndexItems.map((item) => (
-                            <tr key={item.label}>
-                                <td>{item.label}</td>
+                        <img className='lobe-img' src="./uploads/lobe.PNG" />
+                    </div>
+                    <div className="barthel-index-container">
+                        <div className="title">The Barthel Index</div>
+                        <table className="barthel-index-table">
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Range</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {barthelIndexItems.map((item) => (
+                                    <tr key={item.label}>
+                                        <td>{item.label}</td>
 
-                                <td>{item.range}</td>
-                                <td>
-                                    <select
-                                        value={patient.barthelIndex[item.name].score}
-                                        onChange={(e) => handleScoreChange(item.name, parseInt(e.target.value))}
-                                    >
-                                        {Array.from({ length: patient.barthelIndex[item.name].maxScore + 1 }, (_, index) => index).map(
-                                            (score) => (
-                                                <option key={score} value={score}>
-                                                    {score}
-                                                </option>
-                                            )
-                                        )}
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
-                        <tr>
-                            <td></td>
-                            <td>Total Scores</td>
-                            <td>
-                                {Object.values(patient.barthelIndex).reduce((total, activity) => total + activity.score, 0)}
-                            </td>
+                                        <td>{item.range}</td>
+                                        <td>
+                                            <select
+                                                value={patient.barthelIndex[item.name].score}
+                                                onChange={(e) => handleScoreChange(item.name, parseInt(e.target.value))}
+                                            >
+                                                {Array.from({ length: patient.barthelIndex[item.name].maxScore + 1 }, (_, index) => index).map(
+                                                    (score) => (
+                                                        <option key={score} value={score}>
+                                                            {score}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr>
+                                    <td></td>
+                                    <td>Total Scores</td>
+                                    <td>
+                                        {Object.values(patient.barthelIndex).reduce((total, activity) => total + activity.score, 0)}
+                                    </td>
 
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <>
-                <h4>Plan Of Treatment</h4>
-                <button onClick={handleEditClick}>
-                    {isEditing ? "Done Editing" : "Edit"}
-                </button>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <>
+                        <h4>Plan Of Treatment</h4>
 
-                {/*{isEditing && (
+
+                        {/*{isEditing && (
         <div>
           <label>
             Patient Type:
@@ -3778,395 +3713,949 @@ const OverlayRecord = (mobileNumber) => {
       )}*/}
 
 
-                <div>
-                    {isEditing &&
-                        <button onClick={handleAddRow}>Add Row</button>
-                    }
-                    {patient && (
-                        <>
-                            {firstRow ? (
-                                <table className="treatment-table">
-                                    {console.log("1st row", patient.planTreatment[0])}
-                                    <caption>Treatment Details</caption>
-                                    <thead>
+                        <div>
+                            {patient && (
+                                <>
+                                    {firstRow ? (
+                                        <table className="treatment-table">
 
-                                        <tr>
+                                            <caption>Treatment Details</caption>
+                                            <thead>
 
-                                            <th>Date</th>
-                                            <th>No. of Days</th>
-                                            <th>Patient Type</th>
-                                            {patient.planTreatment[0].patientType === 'inpatient' ? (
-                                                Object.keys(patient.planTreatment[0]).slice(4).map((category, index) => (
-                                                    <th key={index}>{category}</th>
-                                                ))
-                                            ) : (
-                                                Object.keys(patient.planTreatment[0]).slice(4, -1).map((category, index) => (
-                                                    <th key={index}>{category}</th>
-                                                ))
-                                            )
-                                            }
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {patient.planTreatment.map((plan, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    {/*<input
+                                                <tr>
+                                                    {console.log("first ")}
+
+                                                    <th>Date</th>
+                                                    <th>No. of Days</th>
+                                                    <th>Patient Type</th>
+                                                    {patient.planTreatment[0].patientType === 'inpatient' ? (
+                                                        Object.keys(patient.planTreatment[0]).slice(4).map((category, index) => (
+                                                            <th key={index}>{category}</th>
+                                                        ))
+                                                    ) : (
+                                                        Object.keys(patient.planTreatment[0]).slice(4, -1).map((category, index) => (
+                                                            <th key={index}>{category}</th>
+                                                        ))
+                                                    )
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {patient.planTreatment.map((plan, index) => (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            {/*<input
                                                 type="date"
                                                 name={`date_${index}`}
                                                 value={plan.date}
                                                 onChange={(e) => handlePlanChange(index, 'date', e.target.value)}
                                             />*/}
-                                                    {plan.patientType !== "inpatient" && (
-                                                        <label>
-                                                            Appointment Date:
-                                                            <input
-                                                                type="date"
-                                                                name="appointmentDate"
-                                                                value={plan.appointmentDate}
-                                                                onChange={handleOutPatientInputChange}
-                                                            />
-                                                        </label>
-                                                    )}
-                                                    {plan.patientType === "inpatient" && (
-                                                        <div>
-                                                            <label>
-                                                                Admission Date:
-                                                                <input
-                                                                    type="date"
-                                                                    name="admissionDate"
-                                                                    value={plan.admissionDate}
-                                                                    onChange={handleInPatientInputChange}
-                                                                />
-                                                            </label>
-                                                            <label>
-                                                                Discharge Date:
-                                                                <input
-                                                                    type="date"
-                                                                    name="dischargeDate"
-                                                                    value={patient.inPatientBill[0].dischargeDate}
-                                                                    onChange={handleInPatientInputChange}
-                                                                />
-                                                            </label>
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    {/*<input
+                                                            {plan.patientType !== "inpatient" && plan.patientType !== "choose type" && (
+                                                                <label>
+                                                                    Appointment Date:
+                                                                    <input
+                                                                        type="date"
+                                                                        name="appointmentDate"
+                                                                        value={patient.outPatientBill[0].appointmentDate}
+                                                                        onChange={handleOutPatientInputChange}
+                                                                    />
+                                                                </label>
+                                                            )}
+                                                            {plan.patientType === "inpatient" && (
+                                                                <div>
+                                                                    <label>
+                                                                        Admission Date:
+                                                                        <input
+                                                                            type="date"
+                                                                            name="admissionDate"
+                                                                            value={patient.inPatientBill[0].admissionDate}
+                                                                            onChange={handleInPatientInputChange}
+                                                                        />
+                                                                    </label>
+                                                                    <label>
+                                                                        Discharge Date:
+                                                                        <input
+                                                                            type="date"
+                                                                            name="dischargeDate"
+                                                                            value={patient.inPatientBill[0].dischargeDate}
+                                                                            onChange={handleInPatientInputChange}
+                                                                        />
+                                                                    </label>
+                                                                </div>
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            {/*<input
                                                 type="text"
                                                 name={`days${index}`}
                                                 value={plan.days}
                                                 onChange={(e) => handlePlanChange(index, 'days', e.target.value)}
                                             />*/}
-                                                    {plan.patientType !== "inpatient" && (
-                                                        <input
-                                                            type="text"
-                                                            value={1}
-                                                        // onChange={(e) => handleInputChange(index, "days", 1)}
-                                                        />
-                                                    )}
-                                                    {plan.patientType === "inpatient" && (
-                                                        <input
-                                                            type="text"
-                                                            value={patient.inPatientBill[0].totalDays}
-                                                            onChange={handleInPatientInputChange}
-                                                        />
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    <select
-                                                        value={plan.patientType}
-                                                        onChange={(e) => handlePatientTypeChange(e.target.value)}
-                                                    >
-                                                        <option value="">Select Patient Type</option>
-                                                        <option value="outpatient">Out-Patient</option>
-                                                        <option value="inpatient">In-Patient</option>
-                                                    </select>
-
-                                                </td>
-                                                {patient.planTreatment[0].patientType === 'inpatient' ? (
-                                                    Object.keys(plan).slice(4).map((category, colIndex) => (
-                                                        <td key={colIndex}>
-                                                            <input
-                                                                type="checkbox"
-                                                                name={`${category}_${index}`}
-                                                                checked={plan[category]}
-                                                                onChange={() => handlePlanCheckboxChange(index, category)}
-                                                            />
-                                                        </td>
-                                                    ))
-                                                ) : (
-                                                    Object.keys(plan).slice(4, -1).map((category, colIndex) => (
-                                                        <td key={colIndex}>
-                                                            <input
-                                                                type="checkbox"
-                                                                name={`${category}_${index}`}
-                                                                checked={plan[category]}
-                                                                onChange={() => handlePlanCheckboxChange(index, category)}
-                                                            />
-                                                        </td>
-                                                    ))
-                                                )
-                                                }
-                                                <td>
-                                                    <div>
-                                                        <button onClick={() => handleCreateFreshBill(plan.patientType)}>Create Fresh Bill</button>
-
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) :
-                                (
-                                    <table className="planed-treatment">
-                                        <caption>Planned Treatment</caption>
-                                        {console.log("fetched rows", patient.planTreatment)}
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>No of Days</th>
-                                                <th>Patient Type</th>
-                                                <th>UST</th>
-                                                <th>IFT</th>
-                                                <th>SWD</th>
-                                                <th>TR</th>
-                                                <th>Wax</th>
-                                                <th>EST</th>
-                                                <th>SHT</th>
-                                                <th>LASER</th>
-                                                <th>EXS</th>
-                                                <th>REHAB</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {patient.planTreatment.map((plan, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        {!plan.isNewRow && plan.patientType === 'inpatient' && (
-                                                            <div>
-                                                                <label>
-                                                                    Admission Date:
-                                                                    <input
-                                                                        type="date"
-                                                                        value={plan.startDate}
-                                                                        onChange={(e) =>
-                                                                            handleInOutInputChange(index, "date", e.target.value)
-                                                                        }
-                                                                    />
-                                                                </label>
-                                                                <label>
-                                                                    Discharge Date:
-                                                                    <input
-                                                                        type="date"
-                                                                        value={plan.endDate}
-                                                                        onChange={(e) =>
-                                                                            handleInOutInputChange(index, "date", e.target.value)
-                                                                        }
-                                                                    />
-                                                                </label>
-                                                            </div>
-                                                        )}
-                                                        {!plan.isNewRow && plan.patientType === 'outpatient' && (
-                                                            <label>
-                                                                Appointment Date:
+                                                            {plan.patientType !== "inpatient" && plan.patientType !== "choose type" && (
                                                                 <input
-                                                                    type="date"
-                                                                    value={plan.startDate}
-                                                                    onChange={(e) =>
-                                                                        handleInOutInputChange(index, "date", e.target.value)
-                                                                    }
+                                                                    type="text"
+                                                                    value={1}
+                                                                // onChange={(e) => handleInputChange(index, "days", 1)}
                                                                 />
-                                                            </label>
-                                                        )}
-                                                        {nextRowPatientType !== "inpatient" && plan.isNewRow && (
-                                                            <label>
-                                                                Appointment Date:
+                                                            )}
+                                                            {plan.patientType === "inpatient" && (
                                                                 <input
-                                                                    type="date"
-                                                                    name="appointmentDate"
-                                                                    value={outPatientBillDetails.outBill[0].appointmentDate}
-                                                                    onChange={handleIOOutPatientInputChange}
+                                                                    type="text"
+                                                                    value={patient.inPatientBill[0].totalDays}
+                                                                    onChange={handleInPatientInputChange}
                                                                 />
-                                                            </label>
-                                                        )}
-                                                        {nextRowPatientType === "inpatient" && plan.isNewRow && (
-                                                            <div>
-                                                                <label>
-                                                                    Admission Date:
-                                                                    <input
-                                                                        type="date"
-                                                                        name="admissionDate"
-                                                                        value={inPatientBillDetails.inBill[0].admissionDate}
-                                                                        onChange={handleIOInPatientInputChange}
-                                                                    />
-                                                                </label>
-                                                                <label>
-                                                                    Discharge Date:
-                                                                    <input
-                                                                        type="date"
-                                                                        name="dischargeDate"
-                                                                        value={inPatientBillDetails.inBill[0].dischargeDate}
-                                                                        onChange={handleIOInPatientInputChange}
-                                                                    />
-                                                                </label>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        {!plan.isNewRow && (
-                                                            <input
-                                                                type="text"
-                                                                value={plan.days}
-                                                                onChange={(e) => handleInOutInputChange(index, "days", e.target.value)}
-                                                            />
-                                                        )}
-                                                        {nextRowPatientType !== "inpatient" && plan.isNewRow && (
-                                                            <input
-                                                                type="text"
-                                                                value={1}
-                                                            // onChange={(e) => handleInOutInputChange(index, "days", 1)}
-                                                            />
-                                                        )}
-                                                        {nextRowPatientType === "inpatient" && plan.isNewRow && (
-                                                            <input
-                                                                type="text"
-                                                                value={inPatientBillDetails.inBill[0].totalDays}
-                                                                onChange={handleIOInPatientInputChange}
-                                                            />
-                                                        )}
-                                                    </td>
-                                                    <td>
-                                                        {!plan.isNewRow &&
-                                                            plan.patientType}
-                                                        {plan.isNewRow &&
+                                                            )}
+                                                        </td>
+                                                        <td>
                                                             <select
-                                                                value={nextRowPatientType}
-                                                                onChange={(e) => handleInOutPatientTypeChange(e.target.value)}
+                                                                value={plan.patientType}
+                                                                onChange={(e) => handlePatientTypeChange(e.target.value)}
                                                             >
                                                                 <option value="">Select Patient Type</option>
                                                                 <option value="outpatient">Out-Patient</option>
                                                                 <option value="inpatient">In-Patient</option>
                                                             </select>
+
+                                                        </td>
+                                                        {patient.planTreatment[0].patientType === 'inpatient' ? (
+                                                            Object.keys(plan).slice(4).map((category, colIndex) => (
+                                                                <td key={colIndex}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        name={`${category}_${index}`}
+                                                                        checked={plan[category]}
+                                                                        onChange={() => handlePlanCheckboxChange(index, category)}
+                                                                    />
+                                                                </td>
+                                                            ))
+                                                        ) : (
+                                                            Object.keys(plan).slice(4, -1).map((category, colIndex) => (
+                                                                <td key={colIndex}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        name={`${category}_${index}`}
+                                                                        checked={plan[category]}
+                                                                        onChange={() => handlePlanCheckboxChange(index, category)}
+                                                                    />
+                                                                </td>
+                                                            ))
+                                                        )
                                                         }
-
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.ust}
-                                                            onChange={() => handleInOutCheckboxChange(index, "ust")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.ift}
-                                                            onChange={() => handleInOutCheckboxChange(index, "ift")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.swd}
-                                                            onChange={() => handleInOutCheckboxChange(index, "swd")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.tr}
-                                                            onChange={() => handleInOutCheckboxChange(index, "tr")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.wax}
-                                                            onChange={() => handleInOutCheckboxChange(index, "wax")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.est}
-                                                            onChange={() => handleInOutCheckboxChange(index, "est")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.sht}
-                                                            onChange={() => handleInOutCheckboxChange(index, "sht")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.laser}
-                                                            onChange={() => handleInOutCheckboxChange(index, "laser")}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={plan.exs}
-                                                            onChange={() => handleInOutCheckboxChange(index, "exs")}
-                                                        />
-                                                    </td>
-
-                                                    {nextRowPatientType === "inpatient" || plan.patientType === "inpatient" ? (
-                                                        <>
-                                                            <td>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={plan.rehab}
-                                                                    onChange={() => handleInOutCheckboxChange(index, "rehab")}
-                                                                />
-                                                            </td>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <td>
-
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                    <td>
-                                                        {!plan.isNewRow && index > 0 &&
-                                                            patient.planTreatment[index - 1].startDate === plan.startDate
-                                                            ? null
-                                                            : (
-                                                                <>
-                                                                    {!plan.isNewRow && (
-                                                                        <>
-                                                                            <button onClick={() => handleViewBill(index)}>
-                                                                                View Bill
-                                                                            </button>
-                                                                            <button onClick={() => { handleInOutCreateNewInBill("inpatient", plan.startDate, plan.endDate) }}>
-                                                                                Create New Inpatient Bill
-                                                                            </button>
-                                                                            <button onClick={() => { handleInOutCreateNewOutBill("outpatient", plan.startDate) }}>
-                                                                                Create New Outpatient Bill
-                                                                            </button>
-
-                                                                        </>
-                                                                    )}
-                                                                </>
-                                                            )}
-                                                        {isEditing && plan.isNewRow && (
+                                                        <td>
                                                             <div>
-                                                                <button onClick={() => handleDeleteRow(index)}>
-                                                                    Delete
-                                                                </button>
-                                                                <button onClick={handleInOutCreateBill}>
-                                                                    Create Bill
-                                                                </button>
-                                                                <button onClick={handleInOutUpdate}>
-                                                                    Update
-                                                                </button>
+                                                                <button onClick={() => handleCreateFreshBill(plan.patientType)}>Create Fresh Bill</button>
                                                             </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) :
+                                        (
+                                            <>
+                                                <button onClick={handleEditClick}>
+                                                    {isEditing ? "Done Editing" : "Edit"}
+                                                </button>
+                                                {isEditing &&
+                                                    <button onClick={handleAddRow}>Add Row</button>
+                                                }
+                                                <table className="planed-treatment">
+                                                    <caption>Planned Treatment</caption>
+                                                    {console.log("fetched rows", patient.planTreatment)}
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>No of Days</th>
+                                                            <th>Patient Type</th>
+                                                            <th>UST</th>
+                                                            <th>IFT</th>
+                                                            <th>SWD</th>
+                                                            <th>TR</th>
+                                                            <th>Wax</th>
+                                                            <th>EST</th>
+                                                            <th>SHT</th>
+                                                            <th>LASER</th>
+                                                            <th>EXS</th>
+                                                            <th>REHAB</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {patient.planTreatment.map((plan, index) => (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    {/*console.log("Rendering - isNewRow:", plan.isNewRow)*/}
+                                                                    {!plan.isNewRow && plan.patientType === 'inpatient' && (
+                                                                        <div>
+                                                                            <label>
+                                                                                Admission Date:
+                                                                                <input
+                                                                                    type="date"
+                                                                                    value={plan.startDate}
+                                                                                    onChange={(e) =>
+                                                                                        handleInOutInputChange(index, "date", e.target.value)
+                                                                                    }
+                                                                                />
+                                                                            </label>
+                                                                            <label>
+                                                                                Discharge Date:
+                                                                                <input
+                                                                                    type="date"
+                                                                                    value={plan.endDate}
+                                                                                    onChange={(e) =>
+                                                                                        handleInOutInputChange(index, "date", e.target.value)
+                                                                                    }
+                                                                                />
+                                                                            </label>
+                                                                        </div>
+                                                                    )}
+                                                                    {!plan.isNewRow && plan.patientType === 'outpatient' && (
+                                                                        <label>
+                                                                            Appointment Date:
+                                                                            <input
+                                                                                type="date"
+                                                                                value={plan.startDate}
+                                                                                onChange={(e) =>
+                                                                                    handleInOutInputChange(index, "date", e.target.value)
+                                                                                }
+                                                                            />
+                                                                        </label>
+                                                                    )}
+                                                                    {nextRowPatientType !== "inpatient" && plan.isNewRow && (
+                                                                        <label>
+                                                                            Appointment Date:
+                                                                            <input
+                                                                                type="date"
+                                                                                name="appointmentDate"
+                                                                                value={outPatientBillDetails.outBill[0].appointmentDate}
+                                                                                onChange={handleIOOutPatientInputChange}
+                                                                            />
+                                                                        </label>
+                                                                    )}
+                                                                    {nextRowPatientType === "inpatient" && plan.isNewRow && (
+                                                                        <div>
+                                                                            <label>
+                                                                                Admission Date:
+                                                                                <input
+                                                                                    type="date"
+                                                                                    name="admissionDate"
+                                                                                    value={inPatientBillDetails.inBill[0].admissionDate}
+                                                                                    onChange={handleIOInPatientInputChange}
+                                                                                />
+                                                                            </label>
+                                                                            <label>
+                                                                                Discharge Date:
+                                                                                <input
+                                                                                    type="date"
+                                                                                    name="dischargeDate"
+                                                                                    value={inPatientBillDetails.inBill[0].dischargeDate}
+                                                                                    onChange={handleIOInPatientInputChange}
+                                                                                />
+                                                                            </label>
+                                                                        </div>
+                                                                    )}
+                                                                </td>
+                                                                <td>
+                                                                    {!plan.isNewRow && (
+                                                                        <input
+                                                                            type="text"
+                                                                            value={plan.days}
+                                                                            onChange={(e) => handleInOutInputChange(index, "days", e.target.value)}
+                                                                        />
+                                                                    )}
+                                                                    {nextRowPatientType !== "inpatient" && plan.isNewRow && (
+                                                                        <input
+                                                                            type="text"
+                                                                            value={1}
+                                                                        // onChange={(e) => handleInOutInputChange(index, "days", 1)}
+                                                                        />
+                                                                    )}
+                                                                    {nextRowPatientType === "inpatient" && plan.isNewRow && (
+                                                                        <input
+                                                                            type="text"
+                                                                            value={inPatientBillDetails.inBill[0].totalDays}
+                                                                            onChange={handleIOInPatientInputChange}
+                                                                        />
+                                                                    )}
+                                                                </td>
+                                                                <td>
+                                                                    {!plan.isNewRow &&
+                                                                        plan.patientType}
+                                                                    {plan.isNewRow &&
+                                                                        <select
+                                                                            value={nextRowPatientType}
+                                                                            onChange={(e) => handleInOutPatientTypeChange(e.target.value)}
+                                                                        >
+                                                                            <option value="choose type">Select Patient Type</option>
+                                                                            <option value="outpatient">Out-Patient</option>
+                                                                            <option value="inpatient">In-Patient</option>
+                                                                        </select>
+                                                                    }
+
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.ust}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "ust")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.ift}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "ift")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.swd}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "swd")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.tr}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "tr")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.wax}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "wax")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.est}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "est")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.sht}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "sht")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.laser}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "laser")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={plan.exs}
+                                                                        onChange={() => handleInOutCheckboxChange(index, "exs")}
+                                                                    />
+                                                                </td>
+
+                                                                {nextRowPatientType === "inpatient" || plan.patientType === "inpatient" ? (
+                                                                    <>
+                                                                        <td>
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={plan.rehab}
+                                                                                onChange={() => handleInOutCheckboxChange(index, "rehab")}
+                                                                            />
+                                                                        </td>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <td>
+
+                                                                        </td>
+                                                                    </>
+                                                                )}
+                                                                <td>
+                                                                    {/*console.log("isEditing:", isEditing, "isNewRow:", plan.isNewRow)*/}
+                                                                    {!plan.isNewRow && index > 0 &&
+                                                                        patient.planTreatment[index - 1].startDate === plan.startDate
+                                                                        ? null
+                                                                        : (
+                                                                            <>
+                                                                                {!plan.isNewRow && (
+                                                                                    <>
+                                                                                        <button onClick={() => handleViewBill(index)}>
+                                                                                            View Bill
+                                                                                        </button>
+                                                                                        <button onClick={() => { handleInOutCreateNewInBill("inpatient", plan.startDate, plan.endDate) }}>
+                                                                                            Create New Inpatient Bill
+                                                                                        </button>
+                                                                                        <button onClick={() => { handleInOutCreateNewOutBill("outpatient", plan.startDate) }}>
+                                                                                            Create New Outpatient Bill
+                                                                                        </button>
+
+                                                                                    </>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    {isEditing && plan.isNewRow && (
+                                                                        <div>
+                                                                            <button onClick={() => handleDeleteRow(index)}>
+                                                                                Delete
+                                                                            </button>
+                                                                            <button onClick={handleInOutCreateBill}>
+                                                                                Create Bill
+                                                                            </button>
+                                                                            <button onClick={handleInOutUpdate}>
+                                                                                Update
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </>
+                                        )}
+                                </>
+                            )}
+                        </div>
+                        {/* 
+                {console.log("next", nextRowPatientType)}
+                {console.log("curr", currentRowPatientType)}
+                {console.log("createoverlay", createoverlayVisible)}
+                {console.log("plan", patient.planTreatment[0].patientType)} */}
+
+
+                        {createoverlayVisible && (
+                            <>
+                                {(nextRowPatientType === "outpatient" || currentRowPatientType === "outpatient") && (
+                                    <div>
+                                        {console.log("newxtrowoverlay")}
+                                        <div className="in-patient-bill-container">
+                                            <h2>Out-Patient Billing</h2>
+
+                                            {/* Patient Details */}
+                                            <div className="patient-details"></div>
+
+                                            {/* Out-Patient Specific Information */}
+                                            <div className="out-patient-info">
+                                                {/*<label>
+                    Appointment Date:
+                    <input
+                      type="date"
+                      name="appointmentDate"
+                      value={outPatientBillDetails.outBill.appointmentDate}
+                      onChange={handleIOOutPatientInputChange}
+                    />
+          </label>*/}
+                                                <label>
+                                                    Service Name:
+                                                    <input
+                                                        type="text"
+                                                        name="serviceName"
+                                                        value={outPatientBillDetails.outBill[0].serviceName}
+                                                        onChange={handleIOOutPatientInputChange}
+                                                    />
+                                                </label>
+                                            </div>
+
+                                            {/* Billing Information */}
+                                            <div className="billing-info">
+                                                <label>
+                                                    Payment Mode:
+                                                    <select
+                                                        name="paymentMode"
+                                                        value={outPatientBillDetails.outBill[0].paymentMode}
+                                                        onChange={handleIOOutPatientInputChange}
+                                                    >
+                                                        <option value="">Select Payment Mode</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="Credit Card">Credit Card</option>
+                                                        <option value="Debit Card">Debit Card</option>
+                                                        <option value="Net Banking">Net Banking</option>
+                                                    </select>
+                                                </label>
+                                                <label>
+                                                    Bill Amount:
+                                                    <input
+                                                        type="text"
+                                                        name="billAmount"
+                                                        value={outPatientBillDetails.outBill[0].billAmount}
+                                                        onChange={handleIOOutPatientInputChange}
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {currentRowPatientType && (
+                                            <button onClick={handleInOutUpdateOutBill}>Update Out Bill</button>
+                                        )}
+                                        <button onClick={closeBill}>Close Bill</button>
+                                    </div>
+                                )}
+
+                                {(nextRowPatientType === "inpatient" || currentRowPatientType === "inpatient") && (
+                                    <div>
+                                        {console.log("newxtrowoverlay")}
+                                        <div className="in-patient-bill-container">
+                                            <h2>In-Patient Billing</h2>
+                                            {/* Patient Details */}
+
+                                            {/* In-Patient Specific Information */}
+                                            <div className="in-patient-info">
+                                                <div className="patient-details">
+                                                    <label>
+                                                        Room Number:
+                                                        <input
+                                                            type="text"
+                                                            name="roomNumber"
+                                                            value={inPatientBillDetails.inBill[0].roomNumber}
+                                                            onChange={handleIOInPatientInputChange}
+                                                        />
+                                                    </label>
+                                                </div>
+                                                {currentRowPatientType && (
+                                                    <div className="billing-info">
+                                                        <label>
+                                                            Admission Date:
+                                                            <input
+                                                                type="date"
+                                                                name="admissionDate"
+                                                                value={selectedRowStartDate}
+                                                                onChange={handleNewInPatientInputChange}
+
+                                                            />
+                                                        </label>
+                                                        <label>
+                                                            Discharge Date:
+                                                            <input
+                                                                type="date"
+                                                                name="dischargeDate"
+                                                                value={selectedRowEndDate}
+                                                                onChange={handleNewInPatientInputChange}
+                                                            />
+                                                        </label>
+                                                        <label>
+                                                            Total Days:
+                                                            <input
+                                                                type="text"
+                                                                name="totalDays"
+                                                                value={inPatientBillDetails.inBill[0].totalDays}
+                                                                onChange={handleNewInPatientInputChange}
+                                                                readOnly
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                )}
+
+                                                <label className="amount-per-day-label">
+                                                    Amount Per Day:
+                                                    <div className="bill-section">
+                                                        <div>
+                                                            <p>Visiting Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="visitingBill"
+                                                                value={inPatientBillDetails.inBill[0].visitingBill}
+                                                                onChange={handleIOInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Physio Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="physioBill"
+                                                                value={inPatientBillDetails.inBill[0].physioBill}
+                                                                onChange={handleIOInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Nursing Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="nursingBill"
+                                                                value={inPatientBillDetails.inBill[0].nursingBill}
+                                                                onChange={handleIOInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Other Expenses</p>
+                                                            <input
+                                                                type="text"
+                                                                name="otherExpenses"
+                                                                value={inPatientBillDetails.inBill[0].otherExpenses}
+                                                                onChange={handleIOInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            {/* Billing Information */}
+                                            <div>
+                                                <label className="billing-info">
+                                                    <p>Payment Mode:</p>
+                                                    <select
+                                                        name="paymentMode"
+                                                        value={inPatientBillDetails.inBill[0].paymentMode}
+                                                        onChange={handleIOInPatientInputChange}
+                                                    >
+                                                        <option value="">Select Payment Mode</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="Credit Card">Credit Card</option>
+                                                        <option value="Debit Card">Debit Card</option>
+                                                        <option value="Net Banking">Net Banking</option>
+
+                                                        {/* Add more options as needed */}
+                                                    </select>
+                                                </label>
+                                                <label>
+                                                    Bill Amount:
+                                                    <input
+                                                        type="text"
+                                                        name="billAmount"
+                                                        value={inPatientBillDetails.inBill[0].billAmount}
+                                                        readOnly
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {currentRowPatientType && (
+                                            <button onClick={handleInOutUpdateInBill}>Update In Bill</button>
+                                        )}
+                                        <button onClick={closeBill}>Close Bill</button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {createFreshOverlayVisible && (
+                            <>
+
+                                {(patient.planTreatment[0].patientType === "outpatient" && patient.planTreatment.length == 1 && !patient.planTreatment.isNewRow) && (
+                                    <div>
+                                        {console.log("patienttype overlay")}
+                                        <div className="in-patient-bill-container">
+                                            <h2>Out-Patient Billing</h2>
+
+                                            {/* Patient Details */}
+                                            <div className="patient-details"></div>
+
+                                            {/* Out-Patient Specific Information */}
+                                            <div className="out-patient-info">
+                                                {/*<label>
+                    Appointment Date:
+                    <input
+                      type="date"
+                      name="appointmentDate"
+                      value={outPatientBillDetails.outBill.appointmentDate}
+                      onChange={handleIOOutPatientInputChange}
+                    />
+          </label>*/}
+                                                <label>
+                                                    Service Name:
+                                                    <input
+                                                        type="text"
+                                                        name="serviceName"
+                                                        value={patient.outPatientBill[0].serviceName}
+                                                        onChange={handleOutPatientInputChange}
+                                                    />
+                                                </label>
+                                            </div>
+
+                                            {/* Billing Information */}
+                                            <div className="billing-info">
+                                                <label>
+                                                    Payment Mode:
+                                                    <select
+                                                        name="paymentMode"
+                                                        value={patient.outPatientBill[0].paymentMode}
+                                                        onChange={handleOutPatientInputChange}
+                                                    >
+                                                        <option value="">Select Payment Mode</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="Credit Card">Credit Card</option>
+                                                        <option value="Debit Card">Debit Card</option>
+                                                        <option value="Net Banking">Net Banking</option>
+                                                    </select>
+                                                </label>
+                                                <label>
+                                                    Bill Amount:
+                                                    <input
+                                                        type="text"
+                                                        name="billAmount"
+                                                        value={patient.outPatientBill[0].billAmount}
+                                                        onChange={handleOutPatientInputChange}
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {currentRowPatientType && (
+                                            <button onClick={handleInOutUpdateOutBill}>Update Out Bill</button>
+                                        )}
+                                        <button onClick={closeBill}>Close Bill</button>
+                                    </div>
+                                )}
+
+                                {(patient.planTreatment[0].patientType === "inpatient" && patient.planTreatment.length == 1 && !patient.planTreatment[0].isNewRow) && (
+                                    <div>
+                                        {console.log("patienttype overlay")}
+                                        <div className="in-patient-bill-container">
+                                            <h2>In-Patient Billing</h2>
+                                            {/* Patient Details */}
+
+                                            {/* In-Patient Specific Information */}
+                                            <div className="in-patient-info">
+                                                <div className="patient-details">
+                                                    <label>
+                                                        Room Number:
+                                                        <input
+                                                            type="text"
+                                                            name="roomNumber"
+                                                            value={patient.inPatientBill[0].roomNumber}
+                                                            onChange={handleInPatientInputChange}
+                                                        />
+                                                    </label>
+                                                </div>
+                                                {currentRowPatientType && (
+                                                    <div className="billing-info">
+                                                        <label>
+                                                            Admission Date:
+                                                            <input
+                                                                type="date"
+                                                                name="admissionDate"
+                                                                value={patient.inPatientBill[0].admissionDate}
+                                                                onChange={handleInPatientInputChange}
+
+                                                            />
+                                                        </label>
+                                                        <label>
+                                                            Discharge Date:
+                                                            <input
+                                                                type="date"
+                                                                name="dischargeDate"
+                                                                value={patient.inPatientBill[0].dischargeDate}
+                                                                onChange={handleInPatientInputChange}
+                                                            />
+                                                        </label>
+                                                        <label>
+                                                            Total Days:
+                                                            <input
+                                                                type="text"
+                                                                name="totalDays"
+                                                                value={patient.inPatientBill[0].totalDays}
+                                                                onChange={handleInPatientInputChange}
+                                                                readOnly
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                )}
+
+                                                <label className="amount-per-day-label">
+                                                    Amount Per Day:
+                                                    <div className="bill-section">
+                                                        <div>
+                                                            <p>Visiting Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="visitingBill"
+                                                                value={patient.inPatientBill[0].visitingBill}
+                                                                onChange={handleInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Physio Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="physioBill"
+                                                                value={patient.inPatientBill[0].physioBill}
+                                                                onChange={handleInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Nursing Bill</p>
+                                                            <input
+                                                                type="text"
+                                                                name="nursingBill"
+                                                                value={patient.inPatientBill[0].nursingBill}
+                                                                onChange={handleInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <p>Other Expenses</p>
+                                                            <input
+                                                                type="text"
+                                                                name="otherExpenses"
+                                                                value={patient.inPatientBill[0].otherExpenses}
+                                                                onChange={handleInPatientInputChange}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            {/* Billing Information */}
+                                            <div>
+                                                <label className="billing-info">
+                                                    <p>Payment Mode:</p>
+                                                    <select
+                                                        name="paymentMode"
+                                                        value={patient.inPatientBill[0].paymentMode}
+                                                        onChange={handleInPatientInputChange}
+                                                    >
+                                                        <option value="">Select Payment Mode</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="Credit Card">Credit Card</option>
+                                                        <option value="Debit Card">Debit Card</option>
+                                                        <option value="Net Banking">Net Banking</option>
+
+                                                        {/* Add more options as needed */}
+                                                    </select>
+                                                </label>
+                                                <label>
+                                                    Bill Amount:
+                                                    <input
+                                                        type="text"
+                                                        name="billAmount"
+                                                        value={patient.inPatientBill[0].billAmount}
+                                                        readOnly
+                                                    />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {currentRowPatientType && (
+                                            <button onClick={handleInOutUpdateInBill}>Update In Bill</button>
+                                        )}
+                                        <button onClick={closeBill}>Close Bill</button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                        {viewoverlayVisible && (
+                            <div className="overlay">
+                                <div className="overlay-content">
+                                    {viewoverlayContent}
+                                    <button onClick={closeOverlay}>Close</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {isEditing && (
+                            <button onClick={handleAddInvestRow}>Add new investigation Row</button>
+                        )}
+
+                        {patient && (
+                            <>
+                                {firstRow ? (
+                                    <table>
+                                        <caption>Investigation</caption>
+                                        {console.log("firstrowinvets", patient.investigation)}
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>X-ray</th>
+                                                <th>MRI</th>
+                                                <th>Others</th>
+                                                <th>Provisional Diagnosis</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {patient.investigation.map((invest, index) => (
+                                                <tr key={index}>
+                                                    <td><input
+                                                        type="date"
+                                                        name={`date_${index}`}
+                                                        value={invest.date}
+                                                        onChange={(e) => handleInvestigationChange(index, 'date', e.target.value)}
+                                                    /></td>
+                                                    <td><textarea maxLength={50} name='xray' value={invest.xray} onChange={handleInputChange}></textarea></td>
+                                                    <td><textarea maxLength={50} name='mri' value={invest.mri} onChange={handleInputChange}></textarea></td>
+                                                    <td><textarea maxLength={50} name='others' value={invest.others} onChange={handleInputChange}></textarea></td>
+                                                    <td><textarea maxLength={50} name='provisionalDiagnosis' value={invest.provisionalDiagnosis} onChange={handleInputChange}></textarea></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <table className="investigation-treatment">
+                                        <caption>Investigation Treatment</caption>
+                                        {console.log("newrowinvets", patient.investigation)}
+
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>X-ray</th>
+                                                <th>MRI</th>
+                                                <th>Others</th>
+                                                <th>Provisional Diagnosis</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {patient.investigation.map((invest, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <input
+                                                            type="date"
+                                                            value={invest.date}
+                                                            onChange={(e) =>
+                                                                handleInOutInvestigationChange(index, "date", e.target.value)
+                                                            }
+                                                            readOnly={!invest.isNewInvestRow} // Read-only for existing rows
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <textarea
+                                                            maxLength={50}
+                                                            name="xray"
+                                                            value={invest.xray}
+                                                            onChange={(e) =>
+                                                                handleInOutTextareaChange("xray", e.target.value)
+                                                            }
+                                                            readOnly={!invest.isNewInvestRow} // Read-only for existing rows
+                                                        ></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <textarea
+                                                            maxLength={50}
+                                                            name="mri"
+                                                            value={invest.mri}
+                                                            onChange={(e) =>
+                                                                handleInOutTextareaChange("mri", e.target.value)
+                                                            }
+                                                            readOnly={!invest.isNewInvestRow} // Read-only for existing rows
+                                                        ></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <textarea
+                                                            maxLength={50}
+                                                            name="others"
+                                                            value={invest.others}
+                                                            onChange={(e) =>
+                                                                handleInOutTextareaChange("others", e.target.value)
+                                                            }
+                                                            readOnly={!invest.isNewInvestRow} // Read-only for existing rows
+                                                        ></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <textarea
+                                                            maxLength={50}
+                                                            name="provisionalDiagnosis"
+                                                            value={invest.provisionalDiagnosis}
+                                                            onChange={(e) =>
+                                                                handleInOutTextareaChange(
+                                                                    "provisionalDiagnosis",
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                            readOnly={!invest.isNewInvestRow} // Read-only for existing rows
+                                                        ></textarea>
+                                                    </td>
+                                                    <td>
+                                                        {isEditing && invest.isNewInvestRow && (
+                                                            <button onClick={() => handleDeleteInvestRow(index)}>
+                                                                Delete
+                                                            </button>
                                                         )}
                                                     </td>
                                                 </tr>
@@ -4174,570 +4663,26 @@ const OverlayRecord = (mobileNumber) => {
                                         </tbody>
                                     </table>
                                 )}
-                        </>
-                    )}
-                </div>
+                            </>
 
-                {/* {console.log("next", nextRowPatientType)}
-                {console.log("curr", currentRowPatientType)}
-                {console.log("createoverlay", createoverlayVisible)}
-                {console.log("plan", patient.planTreatment[0].patientType)} */}
+                        )}
 
-
-                {createoverlayVisible && (
-                    <>
-                        {(nextRowPatientType === "outpatient" || currentRowPatientType === "outpatient") && (
+                        {isEditing && (
                             <div>
-                                {console.log("newxtrowoverlay")}
-                                <div className="in-patient-bill-container">
-                                    <h2>Out-Patient Billing</h2>
-
-                                    {/* Patient Details */}
-                                    <div className="patient-details"></div>
-
-                                    {/* Out-Patient Specific Information */}
-                                    <div className="out-patient-info">
-                                        {/*<label>
-                    Appointment Date:
-                    <input
-                      type="date"
-                      name="appointmentDate"
-                      value={outPatientBillDetails.outBill.appointmentDate}
-                      onChange={handleIOOutPatientInputChange}
-                    />
-          </label>*/}
-                                        <label>
-                                            Service Name:
-                                            <input
-                                                type="text"
-                                                name="serviceName"
-                                                value={outPatientBillDetails.outBill[0].serviceName}
-                                                onChange={handleIOOutPatientInputChange}
-                                            />
-                                        </label>
-                                    </div>
-
-                                    {/* Billing Information */}
-                                    <div className="billing-info">
-                                        <label>
-                                            Payment Mode:
-                                            <select
-                                                name="paymentMode"
-                                                value={outPatientBillDetails.outBill[0].paymentMode}
-                                                onChange={handleIOOutPatientInputChange}
-                                            >
-                                                <option value="">Select Payment Mode</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="UPI">UPI</option>
-                                                <option value="Credit Card">Credit Card</option>
-                                                <option value="Debit Card">Debit Card</option>
-                                                <option value="Net Banking">Net Banking</option>
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Bill Amount:
-                                            <input
-                                                type="text"
-                                                name="billAmount"
-                                                value={outPatientBillDetails.outBill[0].billAmount}
-                                                onChange={handleIOOutPatientInputChange}
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                                {currentRowPatientType && (
-                                    <button onClick={handleInOutUpdateOutBill}>Update Out Bill</button>
-                                )}
-                                <button onClick={closeBill}>Close Bill</button>
+                                <button onClick={handleInOutUpdateInvestigation}>
+                                    Update Investigation
+                                </button>
                             </div>
                         )}
 
-                        {(nextRowPatientType === "inpatient" || currentRowPatientType === "inpatient") && (
-                            <div>
-                                {console.log("newxtrowoverlay")}
-                                <div className="in-patient-bill-container">
-                                    <h2>In-Patient Billing</h2>
-                                    {/* Patient Details */}
-
-                                    {/* In-Patient Specific Information */}
-                                    <div className="in-patient-info">
-                                        <div className="patient-details">
-                                            <label>
-                                                Room Number:
-                                                <input
-                                                    type="text"
-                                                    name="roomNumber"
-                                                    value={inPatientBillDetails.inBill[0].roomNumber}
-                                                    onChange={handleIOInPatientInputChange}
-                                                />
-                                            </label>
-                                        </div>
-                                        {currentRowPatientType && (
-                                            <div className="billing-info">
-                                                <label>
-                                                    Admission Date:
-                                                    <input
-                                                        type="date"
-                                                        name="admissionDate"
-                                                        value={selectedRowStartDate}
-                                                        onChange={handleNewInPatientInputChange}
-
-                                                    />
-                                                </label>
-                                                <label>
-                                                    Discharge Date:
-                                                    <input
-                                                        type="date"
-                                                        name="dischargeDate"
-                                                        value={selectedRowEndDate}
-                                                        onChange={handleNewInPatientInputChange}
-                                                    />
-                                                </label>
-                                                <label>
-                                                    Total Days:
-                                                    <input
-                                                        type="text"
-                                                        name="totalDays"
-                                                        value={inPatientBillDetails.inBill[0].totalDays}
-                                                        onChange={handleNewInPatientInputChange}
-                                                        readOnly
-                                                    />
-                                                </label>
-                                            </div>
-                                        )}
-
-                                        <label className="amount-per-day-label">
-                                            Amount Per Day:
-                                            <div className="bill-section">
-                                                <div>
-                                                    <p>Visiting Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="visitingBill"
-                                                        value={inPatientBillDetails.inBill[0].visitingBill}
-                                                        onChange={handleIOInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Physio Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="physioBill"
-                                                        value={inPatientBillDetails.inBill[0].physioBill}
-                                                        onChange={handleIOInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Nursing Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="nursingBill"
-                                                        value={inPatientBillDetails.inBill[0].nursingBill}
-                                                        onChange={handleIOInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Other Expenses</p>
-                                                    <input
-                                                        type="text"
-                                                        name="otherExpenses"
-                                                        value={inPatientBillDetails.inBill[0].otherExpenses}
-                                                        onChange={handleIOInPatientInputChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    {/* Billing Information */}
-                                    <div>
-                                        <label className="billing-info">
-                                            <p>Payment Mode:</p>
-                                            <select
-                                                name="paymentMode"
-                                                value={inPatientBillDetails.inBill[0].paymentMode}
-                                                onChange={handleIOInPatientInputChange}
-                                            >
-                                                <option value="">Select Payment Mode</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="UPI">UPI</option>
-                                                <option value="Credit Card">Credit Card</option>
-                                                <option value="Debit Card">Debit Card</option>
-                                                <option value="Net Banking">Net Banking</option>
-
-                                                {/* Add more options as needed */}
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Bill Amount:
-                                            <input
-                                                type="text"
-                                                name="billAmount"
-                                                value={inPatientBillDetails.inBill[0].billAmount}
-                                                readOnly
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                                {currentRowPatientType && (
-                                    <button onClick={handleInOutUpdateInBill}>Update In Bill</button>
-                                )}
-                                <button onClick={closeBill}>Close Bill</button>
-                            </div>
-                        )}
                     </>
-                )}
-
-                {createFreshOverlayVisible && (
-                    <>
-
-                        {(patient.planTreatment[0].patientType === "outpatient" && patient.planTreatment.length == 1 && !patient.planTreatment.isNewRow) && (
-                            <div>
-                                {console.log("patienttype overlay")}
-                                <div className="in-patient-bill-container">
-                                    <h2>Out-Patient Billing</h2>
-
-                                    {/* Patient Details */}
-                                    <div className="patient-details"></div>
-
-                                    {/* Out-Patient Specific Information */}
-                                    <div className="out-patient-info">
-                                        {/*<label>
-                    Appointment Date:
-                    <input
-                      type="date"
-                      name="appointmentDate"
-                      value={outPatientBillDetails.outBill.appointmentDate}
-                      onChange={handleIOOutPatientInputChange}
-                    />
-          </label>*/}
-                                        <label>
-                                            Service Name:
-                                            <input
-                                                type="text"
-                                                name="serviceName"
-                                                value={patient.outPatientBill[0].serviceName}
-                                                onChange={handleOutPatientInputChange}
-                                            />
-                                        </label>
-                                    </div>
-
-                                    {/* Billing Information */}
-                                    <div className="billing-info">
-                                        <label>
-                                            Payment Mode:
-                                            <select
-                                                name="paymentMode"
-                                                value={patient.outPatientBill[0].paymentMode}
-                                                onChange={handleOutPatientInputChange}
-                                            >
-                                                <option value="">Select Payment Mode</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="UPI">UPI</option>
-                                                <option value="Credit Card">Credit Card</option>
-                                                <option value="Debit Card">Debit Card</option>
-                                                <option value="Net Banking">Net Banking</option>
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Bill Amount:
-                                            <input
-                                                type="text"
-                                                name="billAmount"
-                                                value={patient.outPatientBill[0].billAmount}
-                                                onChange={handleOutPatientInputChange}
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                                {currentRowPatientType && (
-                                    <button onClick={handleInOutUpdateOutBill}>Update Out Bill</button>
-                                )}
-                                <button onClick={closeBill}>Close Bill</button>
-                            </div>
-                        )}
-
-                        {(patient.planTreatment[0].patientType === "inpatient" && patient.planTreatment.length == 1 && !patient.planTreatment[0].isNewRow) && (
-                            <div>
-                                {console.log("patienttype overlay")}
-                                <div className="in-patient-bill-container">
-                                    <h2>In-Patient Billing</h2>
-                                    {/* Patient Details */}
-
-                                    {/* In-Patient Specific Information */}
-                                    <div className="in-patient-info">
-                                        <div className="patient-details">
-                                            <label>
-                                                Room Number:
-                                                <input
-                                                    type="text"
-                                                    name="roomNumber"
-                                                    value={patient.inPatientBill[0].roomNumber}
-                                                    onChange={handleInPatientInputChange}
-                                                />
-                                            </label>
-                                        </div>
-                                        {currentRowPatientType && (
-                                            <div className="billing-info">
-                                                <label>
-                                                    Admission Date:
-                                                    <input
-                                                        type="date"
-                                                        name="admissionDate"
-                                                        value={patient.inPatientBill[0].admissionDate}
-                                                        onChange={handleInPatientInputChange}
-
-                                                    />
-                                                </label>
-                                                <label>
-                                                    Discharge Date:
-                                                    <input
-                                                        type="date"
-                                                        name="dischargeDate"
-                                                        value={patient.inPatientBill[0].dischargeDate}
-                                                        onChange={handleInPatientInputChange}
-                                                    />
-                                                </label>
-                                                <label>
-                                                    Total Days:
-                                                    <input
-                                                        type="text"
-                                                        name="totalDays"
-                                                        value={patient.inPatientBill[0].totalDays}
-                                                        onChange={handleInPatientInputChange}
-                                                        readOnly
-                                                    />
-                                                </label>
-                                            </div>
-                                        )}
-
-                                        <label className="amount-per-day-label">
-                                            Amount Per Day:
-                                            <div className="bill-section">
-                                                <div>
-                                                    <p>Visiting Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="visitingBill"
-                                                        value={patient.inPatientBill[0].visitingBill}
-                                                        onChange={handleInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Physio Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="physioBill"
-                                                        value={patient.inPatientBill[0].physioBill}
-                                                        onChange={handleInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Nursing Bill</p>
-                                                    <input
-                                                        type="text"
-                                                        name="nursingBill"
-                                                        value={patient.inPatientBill[0].nursingBill}
-                                                        onChange={handleInPatientInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <p>Other Expenses</p>
-                                                    <input
-                                                        type="text"
-                                                        name="otherExpenses"
-                                                        value={patient.inPatientBill[0].otherExpenses}
-                                                        onChange={handleInPatientInputChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    {/* Billing Information */}
-                                    <div>
-                                        <label className="billing-info">
-                                            <p>Payment Mode:</p>
-                                            <select
-                                                name="paymentMode"
-                                                value={patient.inPatientBill[0].paymentMode}
-                                                onChange={handleInPatientInputChange}
-                                            >
-                                                <option value="">Select Payment Mode</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="UPI">UPI</option>
-                                                <option value="Credit Card">Credit Card</option>
-                                                <option value="Debit Card">Debit Card</option>
-                                                <option value="Net Banking">Net Banking</option>
-
-                                                {/* Add more options as needed */}
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Bill Amount:
-                                            <input
-                                                type="text"
-                                                name="billAmount"
-                                                value={patient.inPatientBill[0].billAmount}
-                                                readOnly
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                                {currentRowPatientType && (
-                                    <button onClick={handleInOutUpdateInBill}>Update In Bill</button>
-                                )}
-                                <button onClick={closeBill}>Close Bill</button>
-                            </div>
-                        )}
-                    </>
-                )}
-                {viewoverlayVisible && (
-                    <div className="overlay">
-                        <div className="overlay-content">
-                            {viewoverlayContent}
-                            <button onClick={closeOverlay}>Close</button>
-                        </div>
-                    </div>
-                )}
-
-                {isEditing && (
-                    <button onClick={handleAddInvestRow}>Add new investigation Row</button>
-                )}
-
-                {patient && (
-                    <>
-                        {firstRow ? (
-                            <table>
-                                <caption>Investigation</caption>
-                                {console.log("firstrowinvets",patient.investigation)}
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>X-ray</th>
-                                        <th>MRI</th>
-                                        <th>Others</th>
-                                        <th>Provisional Diagnosis</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {patient.investigation.map((invest, index) => (
-                                        <tr key={index}>
-                                            <td><input
-                                                type="date"
-                                                name={`date_${index}`}
-                                                value={invest.date}
-                                                onChange={(e) => handleInvestigationChange(index, 'date', e.target.value)}
-                                            /></td>
-                                            <td><textarea maxLength={50} name='xray' value={invest.xray} onChange={handleInputChange}></textarea></td>
-                                            <td><textarea maxLength={50} name='mri' value={invest.mri} onChange={handleInputChange}></textarea></td>
-                                            <td><textarea maxLength={50} name='others' value={invest.others} onChange={handleInputChange}></textarea></td>
-                                            <td><textarea maxLength={50} name='provisionalDiagnosis' value={invest.provisionalDiagnosis} onChange={handleInputChange}></textarea></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <table className="investigation-treatment">
-                                <caption>Investigation Treatment</caption>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>X-ray</th>
-                                        <th>MRI</th>
-                                        <th>Others</th>
-                                        <th>Provisional Diagnosis</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {patient.investigation.map((invest, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                                <input
-                                                    type="date"
-                                                    value={invest.date}
-                                                    onChange={(e) =>
-                                                        handleInOutInvestigationChange(index, "date", e.target.value)
-                                                    }
-                                                    readOnly={!invest.isNewInvestRow} // Read-only for existing rows
-                                                />
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    maxLength={50}
-                                                    name="xray"
-                                                    value={invest.xray}
-                                                    onChange={(e) =>
-                                                        handleInOutTextareaChange("xray", e.target.value)
-                                                    }
-                                                    readOnly={!invest.isNewInvestRow} // Read-only for existing rows
-                                                ></textarea>
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    maxLength={50}
-                                                    name="mri"
-                                                    value={invest.mri}
-                                                    onChange={(e) =>
-                                                        handleInOutTextareaChange("mri", e.target.value)
-                                                    }
-                                                    readOnly={!invest.isNewInvestRow} // Read-only for existing rows
-                                                ></textarea>
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    maxLength={50}
-                                                    name="others"
-                                                    value={invest.others}
-                                                    onChange={(e) =>
-                                                        handleInOutTextareaChange("others", e.target.value)
-                                                    }
-                                                    readOnly={!invest.isNewInvestRow} // Read-only for existing rows
-                                                ></textarea>
-                                            </td>
-                                            <td>
-                                                <textarea
-                                                    maxLength={50}
-                                                    name="provisionalDiagnosis"
-                                                    value={invest.provisionalDiagnosis}
-                                                    onChange={(e) =>
-                                                        handleInOutTextareaChange(
-                                                            "provisionalDiagnosis",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    readOnly={!invest.isNewInvestRow} // Read-only for existing rows
-                                                ></textarea>
-                                            </td>
-                                            <td>
-                                                {isEditing && invest.isNewInvestRow && (
-                                                    <button onClick={() => handleDeleteInvestRow(index)}>
-                                                        Delete
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-
-                )}
-
-
-
-                {isEditing && (
                     <div>
-                        <button onClick={handleInOutUpdateInvestigation}>
-                            Update Investigation
-                        </button>
+                        <button onClick={createPatientRecord}>Create record</button>
                     </div>
-                )}
+                    <p>{appMessage}</p>
+                </div>
+            
 
-            </>
-            <div>
-                <button onClick={createPatientRecord}>Create record</button>
-            </div>
-            <p>{appMessage}</p>
         </div>
     );
 

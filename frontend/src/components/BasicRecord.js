@@ -32,7 +32,24 @@ const BasicRecord = () => {
         complaint: '',
         uhid: '',
         doc: '',
-
+        planTreatment: [
+            {
+                patientType: 'choose type',
+                startDate: '',
+                endDate: '',
+                days: '',
+                ust: false,
+                ift: false,
+                swd: false,
+                tr: false,
+                wax: false,
+                est: false,
+                sht: false,
+                laser: false,
+                exs: false,
+                rehab: false,
+            },
+        ],
     });
 
     const setInputClasses = (fieldName, isValid) => {
@@ -58,11 +75,11 @@ const BasicRecord = () => {
 
         // Add similar checks for other fields
 
-        // Check if any field is empty and show an alert
-        if (!Object.values(patient).every(value => !!value.trim())) {
-            alert('Please fill all the fields');
-            return;
-        }
+        // // Check if any field is empty and show an alert
+        // if (!Object.values(patient).every(value => !!value.trim())) {
+        //     alert('Please fill all the fields');
+        //     return;
+        // }
 
         // Validate the mobile number
         if (!validateMobileNumber(patient.mobileNo)) {

@@ -1300,13 +1300,7 @@ const UpdateRecord = () => {
 
     //     }
     // }, [patient]);
-    if (founded) {
-
-        console.log("row rjvcjndyoe", patient.planTreatment[0].patientType === "" ? "yesss" : "nooooo")
-
-    } else {
-        console.log("noooooooo");
-    }
+    
 
     const closeOverlay = () => {
         /*setCreateOverlayVisible(false);
@@ -2677,29 +2671,29 @@ const UpdateRecord = () => {
 
     // Utility function to introduce delays using Promise
 
-    useEffect(() => {
-        if (foundPatientBasicRecord.planTreatment[0].patientType!=='') {
-            const sort = patient.planTreatment
-                .filter((plan) => !plan.isNewRow)
-                .sort((a, b) => {
-                    if (a.startDate !== b.startDate) {
-                        return a.startDate > b.startDate ? 1 : -1;
-                    }
-                    return a.patientType.localeCompare(b.patientType);
-                });
+    // useEffect(() => {
+    //     if (foundPatientBasicRecord.planTreatment[0].patientType!=='') {
+    //         const sort = patient.planTreatment
+    //             .filter((plan) => !plan.isNewRow)
+    //             .sort((a, b) => {
+    //                 if (a.startDate !== b.startDate) {
+    //                     return a.startDate > b.startDate ? 1 : -1;
+    //                 }
+    //                 return a.patientType.localeCompare(b.patientType);
+    //             });
 
-            const newRow = patient.planTreatment.find((plan) => plan.isNewRow);
-            if (newRow) {
-                sort.push(newRow);
-            }
+    //         const newRow = patient.planTreatment.find((plan) => plan.isNewRow);
+    //         if (newRow) {
+    //             sort.push(newRow);
+    //         }
 
-            setSortedRows(sort);
-            setPatient((prevPatient) => ({
-                ...prevPatient,
-                planTreatment: sort,
-            }));
-        }
-    }, [founded, newNextRow]);
+    //         setSortedRows(sort);
+    //         setPatient((prevPatient) => ({
+    //             ...prevPatient,
+    //             planTreatment: sort,
+    //         }));
+    //     }
+    // }, [founded, newNextRow]);
 
 
     console.log("in patient billlllllllll", foundPatientBasicRecord, patient, founded, firstRow);

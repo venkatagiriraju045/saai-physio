@@ -391,6 +391,7 @@ const basicDetails = new mongoose.Schema({
             mobileNumber: { type: String, default: '' },
             roomNumber: { type: String, default: '' },
             admissionDate: { type: Date, default: ''},
+            
             dischargeDate: { type: Date, default: '' },
             totalDays: { type: Number, default: 0 },
             visitingBill: { type: Number, default: 0 },
@@ -399,6 +400,8 @@ const basicDetails = new mongoose.Schema({
             otherExpenses: { type: Number, default: 0 },
             paymentMode: { type: String, default: '' },
             billAmount: { type: Number, default: 0 },
+            amountPerDay: { type: Number, default: 0 },
+
         },
     ],
     outPatientBill: [
@@ -801,6 +804,7 @@ app.post('/api/update_bill_plantreatment', async (req, res) => {
           totalDays: inBillDetails.totalDays,
           visitingBill: inBillDetails.visitingBill,
           physioBill: inBillDetails.physioBill,
+          amountPerDay: inBillDetails.amountPerDay,
           nursingBill: inBillDetails.nursingBill,
           otherExpenses: inBillDetails.otherExpenses,
           paymentMode: inBillDetails.paymentMode,
@@ -854,6 +858,7 @@ app.post('/api/update_bill_plantreatment', async (req, res) => {
             visitingBill: patient.visitingBill,
             physioBill: patient.physioBill,
             nursingBill: patient.nursingBill,
+            amountPerDay: patient.amountPerDay,
             otherExpenses: patient.otherExpenses,
             paymentMode: patient.paymentMode,
             billAmount: patient.billAmount,

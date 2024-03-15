@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './CSS/create-record.css';
 const BasicRecord = () => {
     const [mobileNo, setMobileNo] = useState(false);
 
@@ -10,7 +10,6 @@ const BasicRecord = () => {
     const [appMessage, setAppMessage] = useState('');
     const [selectedPatientType, setSelectedPatientType] = useState('');
     const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
-
     const [inputValidation, setInputValidation] = useState({
         name: true,
         gender: true,
@@ -384,118 +383,125 @@ const BasicRecord = () => {
     };
 
     return (
-        <div className='new-record-main-container'>
-            <div className="container">
-                <div className="registration-container">
-                    <div className="title">User Registration Details</div>
-                    <br />
-                    <br />
-                    <form action="#">
-                        <div className="user-details">
-                            <div className={`input-box-name${!inputValidation.name ? '-abnormal' : ''}`}>
-                                <span className="details">Name*</span>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="Enter your name"
-                                    value={patient.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`input-box-gender${!inputValidation.gender ? '-abnormal' : ''}`}>
-                                <span className="details">Gender*</span>
-                                <select
-                                    id="gender"
-                                    name="gender"
-                                    value={patient.gender}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="choose">Choose</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div className={`input-box-age${!inputValidation.age ? '-abnormal' : ''}`}>
-                                <span className="details">Age*</span>
-                                <input
-                                    type="text"
-                                    name="age"
-                                    placeholder="Enter your age"
-                                    value={patient.age}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className={`input-box-mobileNo${!inputValidation.mobileNo ? '-abnormal' : ''}`}>
-                                <span className="details">Mobile No*</span>
-                                <input
-                                    type="text"
-                                    name="mobileNo"
-                                    placeholder="Enter your mobile no"
-                                    value={patient.mobileNo}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`input-box-occupation${!inputValidation.occupation ? '-abnormal' : ''}`}>
-                                <span className="details">Occupation*</span>
-                                <input
-                                    type="text"
-                                    name="occupation"
-                                    placeholder="Enter your occupation"
-                                    value={patient.occupation}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`input-box-uhid${!inputValidation.uhid ? '-abnormal' : ''}`}>
-                                <span className="details">IP/UHID*</span>
-                                <input
-                                    type="text"
-                                    name="uhid"
-                                    placeholder="Enter your IP / UHID"
-                                    value={patient.uhid}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`input-box-complaint${!inputValidation.complaint ? '-abnormal' : ''}`}>
-                                <span className="details">Complaint*</span>
-                                <input
-                                    type="text"
-                                    name="complaint"
-                                    placeholder="Enter your complaint"
-                                    value={patient.complaint}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`input-box-address${!inputValidation.address ? '-abnormal' : ''}`}>
-                                <span className="details">Address*</span>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    placeholder="Enter your address"
-                                    value={patient.address}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+        <div class="create-record-container">
+            <div class="create-record-form-container">
+                <h1 class="create-record-title">Create Record</h1>
+                <div class="create-record-row">
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Name&nbsp;&nbsp;&nbsp;</span>
+                            <input class="create-record-form-field" type="text"
+                                name="name"
+                                placeholder="Patient's name"
+                                value={patient.name}
+                                onChange={handleInputChange}
+                                required />
                         </div>
-                    </form>
+                    </div>
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Gender</span>
+                            <select
+                            className='create-record-form-field'
+                                id="gender"
+                                name="gender"
+                                value={patient.gender}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="choose">Choose</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <button onClick={createPatientRecord}>Create record</button>
+                <div class="create-record-row">
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Age</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="age"
+                                placeholder="Patient's age"
+                                value={patient.age}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Mobile No</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="mobileNo"
+                                placeholder="Patient's mobile no"
+                                value={patient.mobileNo}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                </div>
+                <div class="create-record-row">
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Occupation</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="occupation"
+                                placeholder="Patient's occupation"
+                                value={patient.occupation}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>IP/UHID</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="uhid"
+                                placeholder="Patient's IP / UHID"
+                                value={patient.uhid}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                </div>
+                <div class="create-record-row">
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Complaint</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="complaint"
+                                placeholder="Patient's complaint"
+                                value={patient.complaint}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                    <div class="create-record-col">
+                        <div class="create-record-form-group">
+                            <span>Address</span>
+                            <input class="create-record-form-field"
+                                type="text"
+                                name="address"
+                                placeholder="Enter your address"
+                                value={patient.address}
+                                onChange={handleInputChange}
+                                required/>
+                        </div>
+                    </div>
+                </div>
+
+                <input onClick={createPatientRecord} value="Proceed to Create Record" class="create-record-submit-btn" readOnly/>
+{appMessage}
             </div>
 
-
-            <p>{appMessage}</p>
         </div>
+
     );
 
 };

@@ -95,7 +95,7 @@ li {
 .nav-bar-services:hover .dropdown {
   display: block;
 }
-input[type=checkbox] {
+.nav-links input[type=checkbox] {
   display: none;
 } 
 
@@ -128,7 +128,7 @@ input[type=checkbox] {
     margin-top: 12px;
   }
 
-  input[type=checkbox]:checked ~ .nav-bar-menu {
+  .nav-links input[type=checkbox]:checked ~ .nav-bar-menu {
     display: block;
   }
 
@@ -287,7 +287,8 @@ nav a:hover {
 .nav-bar-services:hover .dropdown {
   display: block;
 }
-input[type=checkbox] {
+
+.nav-links input[type=checkbox] {
   display: none;
 } 
 

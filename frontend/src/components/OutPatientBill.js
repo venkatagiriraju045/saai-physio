@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './CSS/out-patient-billing.css'
 
 const OutPatientBill = () => {
     const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ const OutPatientBill = () => {
                     setAppMessage('');
                 }, 5000);
                 setLoading(false);
-            }  catch (error) {
+            } catch (error) {
                 if (error.response && error.response.status === 404) {
                     setAppMessage('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
                     alert('Patient not found.Only Basic details are present  Do update the patient treamtment details in update record.');
@@ -59,7 +60,7 @@ const OutPatientBill = () => {
                     console.error('Error creating in-patient bill:', error);
                     setAppMessage(`An error occurred while creating the in-patient bill: ${error.message}`);
                 }
-    
+
                 setLoading(false);
             }
         }
@@ -171,11 +172,11 @@ const OutPatientBill = () => {
             try {
                 const response = await axios.get('https://saai-physio-api.vercel.app/api/get_patient_details', {
                     params: {
-                        mobileNumber:patient.mobileNumber,// Filter by institute_name
+                        mobileNumber: patient.mobileNumber,// Filter by institute_name
                     }
                 });
                 const foundPatientRecord = response.data;
-                console.log("fo",foundPatientRecord);
+                console.log("fo", foundPatientRecord);
                 setPatientDetails(foundPatientRecord);
                 setMobileNo(true);
             } catch (error) {
@@ -193,63 +194,86 @@ const OutPatientBill = () => {
 
     return (
         <div>
-            <div className="in-patient-bill-container">
-                <h2>Out-Patient Billing</h2>
+            <div class="out-patient-billing-container">
+                <div class="out-patient-billing-form-container">
+                    <div class="out-patient-billing-row">
+                        <div class="out-patient-billing-col">
+                            <h3 class="out-patient-billing-title">Out-Patient Billing</h3>
+                            {patientDetails.name === '' && (<>
 
-                {/* Patient Details */}
-                <div className="patient-details">
-                    <label>
-                        Mobile Number:
-                        <input type="text" name="mobileNumber" value={patient.mobileNumber} onChange={handleInputChange} />
-                        {patientDetails.name && <p>Name: {patientDetails.name}</p>}
-                        {patientDetails.pid && <p>Patient ID: {patientDetails.pid}</p>}
-                        {patientDetails.gender && <p>Gender: {patientDetails.gender}</p>}
-                        {patientDetails.age && <p>Age: {patientDetails.age}</p>}
-                    </label>
-                    <button onClick={validateMobileNumber} disabled={loading}>
-                        {loading ? 'Searching Patient...' : 'Search Patient'}
-                    </button>
-                </div>
+                            <div class="out-patient-billing-input-box mobile-number">
+                                <span>Mobile Number</span>
+                                <input type="text" name="mobileNumber" pattern="[0-9]{10}" value={patient.mobileNumber} onChange={handleInputChange} className="out-patient-billing-input mobile-input" />
+                                <input type="button" value="Search" className="out-patient-billing-btn-search" onClick={validateMobileNumber} disabled={loading} />
+                            </div>
+                            </>)}
+                            {patientDetails.name !== '' && (<>
+                                <p className="in-patient-billing-patient-details"><span className="in-patient-billing-patient-name">{patientDetails.name}-{patientDetails.age}</span> <span className="in-patient-billing-patient-status">Out-Patient</span></p>
 
-                {/* Out-Patient Specific Information */}
-                <div className="out-patient-info">
-                    <label>
-                        Appointment Date:
-                        <input type="date" name="appointmentDate" value={patient.appointmentDate} onChange={handleInputChange} />
-                    </label>
-                    <label>
-                        Service Name:
-                        <input type="text" name="serviceName" value={patient.serviceName} onChange={handleInputChange} />
-                    </label>
-                </div>
+                            <div class="out-patient-billing-input-box">
+                                <span>Appointment Date</span>
+                                <input type="date" class="out-patient-billing-input" name="appointmentDate" value={patient.appointmentDate} onChange={handleInputChange}/>
+                            </div>
+                            <div class="out-patient-billing-flex">
+                                <div class="out-patient-billing-input-box">
+                                    <span>Service Name</span>
+                                    <input
+                                        type="text"
+                                        placeholder="check-up"
+                                        class="out-patient-billing-input"
+                                        name="serviceName" 
+                                        value={patient.serviceName} 
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <div class="in-patient-billing-inputBox">
+                                    <span>Payment Option</span>
+                                    <div class="in-patient-billing-dropdown">
+                                        <div class="in-patient-billing-input-box">
 
-                {/* Billing Information */}
-                <div className="billing-info">
-                    <label>
-                        Payment Mode:
-                        <select name="paymentMode" value={patient.paymentMode} onChange={handleInputChange}>
-                            <option value="">Select Payment Mode</option>
-                            <option value="Cash">Cash</option>
-                            <option value="UPI">UPI</option>
-                            <option value="Credit Card">Credit Card</option>
-                            <option value="Debit Card">Debit Card</option>
-                            <option value="Net Banking">Net Banking</option>
-                        </select>
-                    </label>
-                    <label>
-                        Bill Amount:
-                        <input type="text" name="billAmount" value={patient.billAmount} onChange={handleInputChange} />
-                    </label>
-                </div>
+                                            <ul class="in-patient-billing-nav">
+                                                <li class="in-patient-billing-button-dropdown">
+                                                    <select class="in-patient-billing-dropdown-menu" name="paymentMode" value={patient.paymentMode} onChange={handleInputChange}>
+                                                        <option class="in-patient-billing-dropdown-toggle" value="">Select Payment Mode</option>
+                                                        <option class="dropdown-item" value="Cash">Cash</option>
+                                                        <option class="dropdown-item" value="UPI">UPI</option>
+                                                        <option class="dropdown-item" value="Credit Card">Credit Card</option>
+                                                        <option class="dropdown-item" value="Debit Card">Debit Card</option>
+                                                        <option class="dropdown-item" value="Net Banking">Net Banking</option>
+                                                    </select>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
 
-                {/* Button to Trigger Billing */}
-                <button onClick={createOutPatientBill} disabled={loading}>
+                                <div class="out-patient-billing-input-box">
+                                    <span>Bill Amount</span>
+                                    <input
+                                        type="text"
+                                        placeholder="0"
+                                        class="out-patient-billing-input"
+                                        name="billAmount" 
+                                        value={patient.billAmount} 
+                                        onChange={handleInputChange} 
+                                    />
+                                </div>
+                            </div>
+                            </>)}
+                        </div>
+                    </div>
+                    {patientDetails.name !== '' && (<>
+                        <br/>             
+                    <button onClick={createOutPatientBill} disabled={loading} class="out-patient-billing-submit-btn">
                     {loading ? 'Creating Bill...' : 'Create Out-Patient Bill'}
                 </button>
-
                 {/* Display Application Messages */}
                 {appMessage && <div className="app-message">{appMessage}</div>}
+                </>)}
+
+                </div>
             </div>
+
         </div>
     );
 };

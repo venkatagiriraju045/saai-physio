@@ -77,7 +77,12 @@
   margin-top: 2vh;
 }
 
-
+.page-6-right-container table{
+  height: 85%;
+}
+.page-6-right-container .remark-input{
+  width:4vw;
+}
 
 .page-6-form-container {
   justify-content: center;

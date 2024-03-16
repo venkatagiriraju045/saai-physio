@@ -1,0 +1,97 @@
+.page-6-upper-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style for image cards */
+.image-card {
+  display: inline-block;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+/* Style for selected image card */
+.image-card.selected {
+  border-color: blue;
+}
+
+/* Style for image inside the card */
+.page-6-form-container img {
+  display: block;
+  height: 15vw;
+  width: 100%;
+}
+
+
+
+.page-6-lower-container {
+  margin-top:2vw;
+  display: flex;
+  justify-content: space-between;
+  gap:2vw;
+}
+
+
+.page-6-left-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-right: 1px solid #ccc;
+  /* Add border between left and right containers */
+}
+
+.page-6-left-container img {
+  display: block;
+  /* Adjust as needed */
+  height: 15vw;
+  width:100%;
+  /* Maintain aspect ratio */
+}
+
+
+
+
+/* Style for the label of the right container */
+.observation-label {
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+
+
+.ur-page3-left-container-title,
+.ur-page3-right-container-tb1-title,
+.ur-page3-right-container-tb2-title {
+  margin-left: 12px;
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+
+}
+
+.saw-table {
+  margin-top: 2vh;
+}
+
+
+
+.page-6-form-container {
+  justify-content: center;
+  display: flex;
+}
+/* Style for containers */
+.page-6-main-form-container, .page-6-left-container, .page-6-right-container{
+  font-size: 20px;
+  font-family: "Quicksand", sans-serif;
+
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  /* Add border */
+  padding: 1% 1%;
+  overflow: hidden;
+  /* Prevent containers from collapsing */
+}

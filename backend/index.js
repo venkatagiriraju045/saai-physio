@@ -376,15 +376,21 @@ const basicDetails = new mongoose.Schema({
         },
     },
     chestMotionObservation: {
-        middleLobeLingulaMotion: { type: String, default: '' }, // Assuming you want to store a string, default: '' value
-        upperLobeMotion: { type: String, default: '' },
-        lowerLobeMotion: { type: String, default: '' },
-        middleLobeLingulaValues: { type: String, default: '' },
-        middleLobeLingulaRemarks: { type: String, default: '' },
-        upperLobeValues: { type: String, default: '' },
-        upperLobeRemarks: { type: String, default: '' },
-        lowerLobeValues: { type: String, default: '' },
-        lowerLobeRemarks: { type: String, default: '' },
+        middleLobeLingulaMotion: { 
+            valueA: {type: String, default: '' },
+            valueB: {type: String, default: '' },
+            remarks: {type: String, default: '' },
+    }, // Assuming you want to store a string, default: '' value
+        upperLobeMotion:{ 
+            valueA: {type: String, default: '' },
+            valueB: {type: String, default: '' },
+            remarks: {type: String, default: '' },
+    }, 
+        lowerLobeMotion:{ 
+            valueA: {type: String, default: '' },
+            valueB: {type: String, default: '' },
+            remarks: {type: String, default: '' },
+    }, 
     },
     inPatientBill: [
         {

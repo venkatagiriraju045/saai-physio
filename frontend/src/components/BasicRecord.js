@@ -49,6 +49,15 @@ const BasicRecord = () => {
                 rehab: false,
             },
         ],
+        investigation: [
+            {
+                date: '',
+                xray: '',
+                mri: '',
+                others: '',
+                provisionalDiagnosis: '',
+            },
+        ],
         rangeOfMotion: {
             cervical: [
                 { flexion: { rt: 0, lt: 0 } },

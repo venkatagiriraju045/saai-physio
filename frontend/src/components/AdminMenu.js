@@ -34,33 +34,6 @@ const AdminMenu = () => {
   const [mobile, setMobile] = useState(false);
 
 
-
-  /* useEffect(() => {
-    const fetchStudentData = async () => {
-      try {
-        const response = await axios.get('https://eduleaves-api.vercel.app/api/students_data', {
-          params: {
-            role: 'student', // Filter by role
-            department: departmentName, // Filter by department
-            instituteName: instituteName, // Filter by institute_name
-          }
-        });
-        setInstitute(instituteName);
-        setDepartment(departmentName);
-        const studentData = response.data;
-        setStudents(studentData); // Set the students state variable
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching student data:', error);
-        setError(error);
-        setLoading(false);
-      }
-    };
- 
-    fetchStudentData();
-  }, []);
-  */
-
   const navigate = useNavigate();
   const handleLogout = () => {
     setShowConfirmationPrompt(false);
@@ -71,14 +44,6 @@ const AdminMenu = () => {
     return <p>Error fetching student data: {error.message}</p>;
   }
 
-  /**
- * Handles the click event for the home button.
- * 
- * This function resets various states and displays elements with the class 'body'.
- * It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
- * 
- * @returns {void}
- */
   const handleHomeButtonClick = () => {
     // Hide record forms and bills
     setShowExistingRecordForm(false);
@@ -116,14 +81,6 @@ const AdminMenu = () => {
     }, 1000);
   };
 
-
-
-  /**
-  
-  Toggles the visibility state of the navigation bar.
-  This function toggles the visibility state of the navigation bar by flipping the value of prevShowNavBar.
-  @returns {void}
-  */
   const handleShowNav = () => {
     setShowNavBar((prevShowNavBar) => !prevShowNavBar);
   };
@@ -384,7 +341,6 @@ const AdminMenu = () => {
           <PatientDetails />
         ) : isHomeButtonClicked && (
           <div className='home-contents'>
-
           </div>)}
       </main>
     </div>

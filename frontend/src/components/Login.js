@@ -171,7 +171,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <a class="flower-btn">
+           {/*  <a class="flower-btn">
                 <div class="flower-wrapper">
 
                     <div class="flower flower1">
@@ -212,6 +212,7 @@ const Login = () => {
                     </div>
                 </div>
             </a>
+            */}
         </div>
     );
 };

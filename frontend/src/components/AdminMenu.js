@@ -1,16 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import html2canvas from 'html2canvas';
-import { useNavigate, useLocation } from 'react-router-dom';
-import UpdateRecord from './UpdateRecord';
-import BasicRecord from './BasicRecord';
-import ExistingRecordForm from './ExistingRecordForm';
-import InPatientBill from './InPatientBill';
-import OutPatientBill from './OutPatientBill';
-import powerButton from './power-button.png';
-import PatientDetails from './PatientDetails';
-import Treatment from './Treatment';
-import './CSS/landing-page.css';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import { useNavigate, useLocation } from "react-router-dom";
+import UpdateRecord from "./UpdateRecord";
+import BasicRecord from "./BasicRecord";
+import ExistingRecordForm from "./ExistingRecordForm";
+import InPatientBill from "./InPatientBill";
+import OutPatientBill from "./OutPatientBill";
+import powerButton from "./power-button.png";
+import PatientDetails from "./PatientDetails";
+import Treatment from "./Treatment";
+//import './CSS/landpage.css';
+import "./CSS/landingpage.css";
+
+import createrecord from "./landing-page-imgs/createrecord.jpg";
+import updaterecord from "./landing-page-imgs/updaterecord.jpg";
+import inpatientbill from "./landing-page-imgs/inpatientbill.jpg";
+import outpatientbill from "./landing-page-imgs/outpatientbill.jpg";
+import record from "./landing-page-imgs/record.jpg";
 
 const AdminMenu = () => {
   const [loading, setLoading] = useState(false);
@@ -28,22 +35,152 @@ const AdminMenu = () => {
   const [showNavBar, setShowNavBar] = useState(false);
   const [showConfirmationPrompt, setShowConfirmationPrompt] = useState(false);
 
-
   const [deviceType, setDeviceType] = useState(null);
-  const overlayClass = `loading-overlay${loading || isLoading ? ' visible' : ''}`;
+  const overlayClass = `loading-overlay${
+    loading || isLoading ? " visible" : ""
+  }`;
   const [mobile, setMobile] = useState(false);
 
+  /* useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        const response = await axios.get('https://eduleaves-api.vercel.app/api/students_data', {
+          params: {
+            role: 'student', // Filter by role
+            department: departmentName, // Filter by department
+            instituteName: instituteName, // Filter by institute_name
+          }
+        });
+        setInstitute(instituteName);
+        setDepartment(departmentName);
+        const studentData = response.data;
+        setStudents(studentData); // Set the students state variable
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching student data:', error);
+        setError(error);
+        setLoading(false);
+      }
+    };
+ 
+    fetchStudentData();
+  }, []);
+  */
+
+  // Refs for DOM elements
+  const slidesRef = useRef([]);
+  const navButtonsRef = useRef([]);
+  const contentsRef = useRef([]);
+
+  useEffect(() => {
+    const intervalId = setInterval(nextSlide, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Populate refs with DOM element references
+    slidesRef.current = document.querySelectorAll(".img-slide");
+    navButtonsRef.current = document.querySelectorAll(".nav-btn");
+    contentsRef.current = document.querySelectorAll(".content");
+  }, []);
+
+  function nextSlide() {
+    // Check if slidesRef and slidesRef.current are defined
+    if (!slidesRef || !slidesRef.current) {
+      console.error("Error: slidesRef or slidesRef.current is not defined.");
+      return;
+    }
+
+    const currentSlideIndex = Array.from(slidesRef.current).findIndex((slide) =>
+      slide.classList.contains("active")
+    );
+
+    // Check if currentSlideIndex is valid
+    if (currentSlideIndex === -1) {
+      console.error("Error: Could not find current slide.");
+      return;
+    }
+
+    const nextSlideIndex = (currentSlideIndex + 1) % slidesRef.current.length;
+
+    // Remove 'active' class from all slides and content
+    slidesRef.current.forEach((slide) => slide.classList.remove("active"));
+    contentsRef.current.forEach((content) =>
+      content.classList.remove("active")
+    );
+
+    // Add 'active' class to next slide and content
+    if (
+      slidesRef.current[nextSlideIndex] &&
+      contentsRef.current[nextSlideIndex]
+    ) {
+      slidesRef.current[nextSlideIndex].classList.add("active");
+      contentsRef.current[nextSlideIndex].classList.add("active");
+    } else {
+      console.error("Error: Next slide or content not found.");
+      return;
+    }
+  }
+
+  useEffect(() => {
+    const dropdowns = document.querySelectorAll(".dropdown");
+
+    if (dropdowns) {
+      dropdowns.forEach((dropdown) => {
+        const navLink = dropdown.querySelector(".nav-link");
+        const dropdownContent = dropdown.querySelector(".dropdown-content");
+
+        if (navLink && dropdownContent) {
+          navLink.addEventListener("click", () => {
+            hideAllDropdowns();
+
+            dropdownContent.classList.toggle("active");
+          });
+        }
+      });
+    }
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".dropdown")) {
+        hideAllDropdowns();
+      }
+    });
+
+    function hideAllDropdowns() {
+      const activeDropdowns = document.querySelectorAll(
+        ".dropdown-content.active"
+      );
+      activeDropdowns.forEach((dropdown) => {
+        dropdown.classList.remove("active");
+      });
+    }
+
+    return () => {
+      document.removeEventListener("click", hideAllDropdowns);
+    };
+  }, []);
 
   const navigate = useNavigate();
   const handleLogout = () => {
     setShowConfirmationPrompt(false);
-    navigate('/');
+    navigate("/");
   };
 
   if (error) {
     return <p>Error fetching student data: {error.message}</p>;
   }
 
+  /**
+   * Handles the click event for the home button.
+   *
+   * This function resets various states and displays elements with the class 'body'.
+   * It sets isLoading state to true initially, then after a delay, sets isLoading state to false and resets other states.
+   *
+   * @returns {void}
+   */
   const handleHomeButtonClick = () => {
     // Hide record forms and bills
     setShowExistingRecordForm(false);
@@ -63,8 +200,8 @@ const AdminMenu = () => {
     setIsLoading(true);
 
     // Display elements with class 'body'
-    document.querySelectorAll('.body').forEach((element) => {
-      element.style.display = 'block';
+    document.querySelectorAll(".body").forEach((element) => {
+      element.style.display = "block";
     });
 
     // After 1000 milliseconds, reset states and loading state
@@ -78,9 +215,15 @@ const AdminMenu = () => {
       setShowNavBar(false);
       setShowOutPatientBill(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
 
+  /**
+  
+  Toggles the visibility state of the navigation bar.
+  This function toggles the visibility state of the navigation bar by flipping the value of prevShowNavBar.
+  @returns {void}
+  */
   const handleShowNav = () => {
     setShowNavBar((prevShowNavBar) => !prevShowNavBar);
   };
@@ -100,9 +243,7 @@ const AdminMenu = () => {
 
     // Hide elements with class 'admin-chart-container'
 
-
     // Create a message element
-
 
     // After 1000 milliseconds, reset states and loading state
     setTimeout(() => {
@@ -115,7 +256,7 @@ const AdminMenu = () => {
       setShowInPatientBill(false);
       setShowOutPatientBill(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
   /**
   
@@ -128,12 +269,12 @@ const AdminMenu = () => {
   @returns {void}
   */
 
-
   const handleBasicRecordClick = () => {
     // Show new record form and hide other elements
     setShowBasicRecord(true);
     setShowUpdateRecord(false);
     setShowExistingRecordForm(false);
+    setIsHomeButtonClicked(false);
     setShowNavBar(false);
     setShowInPatientBill(false);
     setShowOutPatientBill(false);
@@ -142,13 +283,6 @@ const AdminMenu = () => {
     // Set loading state
     setIsLoading(true);
 
-    // Hide elements with class 'admin-chart-container'
-
-
-    // Create a message element
-
-
-    // After 1000 milliseconds, reset states and loading state
     setTimeout(() => {
       setIsLoading(false);
       setShowBasicRecord(true);
@@ -159,7 +293,7 @@ const AdminMenu = () => {
       setShowInPatientBill(false);
       setShowOutPatientBill(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
   const handleExistingRecordClick = () => {
     setShowBasicRecord(false);
@@ -171,7 +305,6 @@ const AdminMenu = () => {
     setShowPatientDetails(false);
     setIsLoading(true);
 
-
     setTimeout(() => {
       setIsLoading(false);
       setShowBasicRecord(false);
@@ -182,7 +315,7 @@ const AdminMenu = () => {
       setShowInPatientBill(false);
       setShowOutPatientBill(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
   const handleInPatientBillClick = () => {
     setShowBasicRecord(false);
@@ -194,7 +327,6 @@ const AdminMenu = () => {
     setShowPatientDetails(false);
     setIsLoading(true);
 
-
     setTimeout(() => {
       setIsLoading(false);
       setShowBasicRecord(false);
@@ -205,7 +337,7 @@ const AdminMenu = () => {
       setShowOutPatientBill(false);
       setIsHomeButtonClicked(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
   const handleOutPatientBillClick = () => {
     setShowBasicRecord(false);
@@ -217,7 +349,6 @@ const AdminMenu = () => {
     setShowPatientDetails(false);
     setIsLoading(true);
 
-
     setTimeout(() => {
       setIsLoading(false);
       setShowBasicRecord(false);
@@ -228,7 +359,7 @@ const AdminMenu = () => {
       setShowOutPatientBill(true);
       setIsHomeButtonClicked(false);
       setShowPatientDetails(false);
-    }, 1000);
+    }, 3000);
   };
   const handlePatientDetails = () => {
     setShowBasicRecord(false);
@@ -240,7 +371,6 @@ const AdminMenu = () => {
     setShowPatientDetails(true);
     setIsLoading(true);
 
-
     setTimeout(() => {
       setIsLoading(false);
       setShowBasicRecord(false);
@@ -251,85 +381,147 @@ const AdminMenu = () => {
       setShowOutPatientBill(false);
       setIsHomeButtonClicked(false);
       setShowPatientDetails(true);
-    }, 1000);
+    }, 3000);
   };
-  if (deviceType === 'mobile') {
+  if (deviceType === "mobile") {
     return (
       <div className="mobile-warning-overlay-message">
-        <p>You are logged in on a mobile device. Please logout from the mobile device to access this page on a computer or laptop.</p>
+        <p>
+          You are logged in on a mobile device. Please logout from the mobile
+          device to access this page on a computer or laptop.
+        </p>
       </div>
     );
   }
+
+  const handleGoBack = () => {
+    if (
+      showBasicRecord ||
+      showUpdateRecord ||
+      showInPatientBill ||
+      showOutPatientBill ||
+      showPatientDetails
+    ) {
+      setShowBasicRecord(false);
+      setShowInPatientBill(false);
+      setShowOutPatientBill(false);
+      setShowUpdateRecord(false);
+      setIsHomeButtonClicked(true);
+      setShowPatientDetails(false);
+    } else {
+      navigate("/");
+    }
+  };
   return (
-    <div className="dep-admin-page-container">
-      <div>
-        {(loading || isLoading) && <div className={overlayClass}>
-          <div className="spinner">
-            <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
+    <div>
+      {showConfirmationPrompt && (
+        <div className="logout-overlay">
+          <div className="confirmation-container">
+            <p>Are you sure you want to logout?</p>
+            <button className="confirm-button" onClick={handleLogout}>
+              Yes
+            </button>
+            <button
+              className="cancel-button"
+              onClick={() => setShowConfirmationPrompt(false)}
+            >
+              No
+            </button>
           </div>
-          <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
-        </div>}
-      </div>
-      <div class="nav-back">
-        <button class="back-button">
-          <div class="back">
+        </div>
+      )}
+      <header>
+        <button class="main-back-button" onClick={handleGoBack}>
+          <div class="main-back">
             <img src="./uploads/back.png" alt="Back" />
           </div>
-          <div class="text">Back</div>
+          <div class="main-back-text">Back</div>
         </button>
-        <nav class="navbar">
-          <ul class="nav-links">
-            <input type="checkbox" id="checkbox_toggle" />
-            <label for="checkbox_toggle" class="hamburger">&#9776;</label>
-            <div class="nav-bar-menu">
-              <li class="nav-bar-services"><a>ACTIONS</a>
-                <ul class="dropdown">
-                  <li><a onClick={handleBasicRecordClick}>CREATE RECORD </a></li>
-                  <li><a onClick={handleUpdateRecordClick}>UPDATE RECORD</a></li>
-                </ul>
-              </li>
-              <li class="nav-bar-services"><a>BILLINGS</a>
-                <ul class="dropdown">
-                  <li><a onClick={handleInPatientBillClick}>IN-PATIENT BILLINGS</a></li>
-                  <li><a onClick={handleOutPatientBillClick}>OUT-PATIENT BILLINGS</a></li>
-                </ul>
-              </li>
-
-              <li><a onClick={handlePatientDetails}>RECORDS</a></li>
-
-              <label  className="power-button" onClick={() => setShowConfirmationPrompt(true)}>
-                <input type="checkbox" checked={showConfirmationPrompt} readOnly />
-                <div className="checkmark-pwr-btn">
-                  <img src={powerButton} alt="Power Button" />
+        <div class="menu-btn">
+          <div class="navigation">
+            <div class="navigation-items">
+              <div class="dropdown">
+                <a href="#" class="nav-link">
+                  Action
+                </a>
+                <div class="dropdown-content">
+                  <a href="#" onClick={handleBasicRecordClick}>
+                    Create Record
+                  </a>
+                  <a href="#" onClick={handleUpdateRecordClick}>
+                    Update Record
+                  </a>
                 </div>
-              </label>
-            </div>
-          </ul>
-          {showConfirmationPrompt && (
-            <div className="logout-overlay">
-              <div className="confirmation-container">
-                <p>Are you sure you want to logout?</p>
-                <button className="confirm-button" onClick={handleLogout}>Yes</button>
-                <button className="cancel-button" onClick={() => setShowConfirmationPrompt(false)}>No</button>
+              </div>
+              <div class="dropdown">
+                <a href="#" class="nav-link">
+                  Billing
+                </a>
+                <div class="dropdown-content">
+                  <a href="#" onClick={handleInPatientBillClick}>
+                    In Patient Billing
+                  </a>
+                  <a href="#" onClick={handleOutPatientBillClick}>
+                    Out Patient Billing
+                  </a>
+                </div>
+              </div>
+              <div class="dropdown">
+                <a href="#" class="nav-link" onClick={handlePatientDetails}>
+                  Records
+                </a>
+              </div>
+              <div class="dropdown">
+                <label
+                  className="power-button"
+                  onClick={() => setShowConfirmationPrompt(true)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={showConfirmationPrompt}
+                    readOnly
+                  />
+                  <div className="checkmark-pwr-btn">
+                    <img src={powerButton} alt="Power Button" />
+                  </div>
+                </label>
               </div>
             </div>
-          )}
-        </nav>
-      </div>
-
+          </div>
+        </div>
+      </header>
 
       <main>
         <div>
-          {(loading || isLoading) && <div className={overlayClass}>
-            <div className="spinner">
-              <img src="./uploads/loading-brand-logo.png" alt="loading-brand-logo" id="loading-brand-logo" />
+          {(loading || isLoading) && (
+            <div className={overlayClass}>
+              <div class="adminmenu-wrapper">
+                <div class="adminmenu-box-wrap">
+                  <div class="adminmenu-box one"></div>
+                  <div class="adminmenu-box two"></div>
+                  <div class="adminmenu-box three"></div>
+                  <div class="adminmenu-box four"></div>
+                  <div class="adminmenu-box five"></div>
+                  <div class="adminmenu-box six"></div>
+                </div>
+              </div>
+              <div class="adminmenu-load-wrapp">
+                <div class="adminmenu-load-6">
+                  <div class="adminmenu-letter-holder">
+                    <div class="l-1 letter">L</div>
+                    <div class="l-2 letter">O</div>
+                    <div class="l-3 letter">A</div>
+                    <div class="l-4 letter">D</div>
+                    <div class="l-5 letter">I</div>
+                    <div class="l-6 letter">N</div>
+                    <div class="l-7 letter">G</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <img src="./uploads/loading-brand-title.png" alt="loading-brand-title" id="loading-brand-title" />
-          </div>}
+          )}
         </div>
-        {showExistingRecordForm ? (
-          <ExistingRecordForm />
-        ) : showUpdateRecord ? (
+        {showUpdateRecord ? (
           <UpdateRecord />
         ) : showBasicRecord ? (
           <BasicRecord />
@@ -339,12 +531,120 @@ const AdminMenu = () => {
           <OutPatientBill />
         ) : showPatientDetails ? (
           <PatientDetails />
-        ) : isHomeButtonClicked && (
-          <div className='home-contents'>
-          </div>)}
+        ) : (
+          isHomeButtonClicked && (
+            <div class="adminmenu-contents-root">
+              <section class="home">
+                <span class="curve"></span>
+                <img
+                  decoding="async"
+                  className="img-slide slide0 active"
+                  src={createrecord}
+                />
+                <img
+                  decoding="async"
+                  className="img-slide slide1 "
+                  src={updaterecord}
+                />
+                <img
+                  decoding="async"
+                  className="img-slide slide2"
+                  src={inpatientbill}
+                />
+                <img
+                  decoding="async"
+                  className="img-slide slide3"
+                  src={outpatientbill}
+                />
+                <img
+                  decoding="async"
+                  className="img-slide slide4"
+                  src={record}
+                />
+                <div class="content active">
+                  <h1>
+                    <span>Create Record</span>
+                  </h1>
+                  <p>
+                    <span>
+                      Creating patients record using their basic details...
+                    </span>
+                  </p>
+                  <span class="Read-more">
+                    <a href="#" onClick={handleBasicRecordClick}>
+                      Click here
+                    </a>
+                  </span>
+                </div>
+                <div class="content">
+                  <h1>
+                    <span>Update Record</span>
+                  </h1>
+                  <p>
+                    <span>
+                      Updating the existing Record with their additional
+                      complaints...
+                    </span>{" "}
+                  </p>
+                  <span class="Read-more">
+                    <a href="#" onClick={handleUpdateRecordClick}>
+                      Click here
+                    </a>
+                  </span>
+                </div>
+                <div class="content">
+                  <h1>
+                    <span>In Patient Billing</span>
+                  </h1>
+                  <p>
+                    <span>Creating the bill for In-Patients...</span>
+                  </p>
+                  <span class="Read-more">
+                    <a href="#" onClick={handleInPatientBillClick}>
+                      Click here
+                    </a>
+                  </span>
+                </div>
+                <div class="content">
+                  <h1>
+                    <span>Out Patient Billing</span>
+                  </h1>
+                  <p>
+                    <span>Creating the bill for Out-Patients...</span>
+                  </p>
+                  <span class="Read-more">
+                    <a href="#" onClick={handleOutPatientBillClick}>
+                      Click here
+                    </a>
+                  </span>
+                </div>
+                <div class="content">
+                  <h1>
+                    <span>Patient Info</span>
+                  </h1>
+                  <p>
+                    <span>Searching for all the patients records...</span>
+                  </p>
+                  <span class="Read-more">
+                    <a href="#" onClick={handlePatientDetails}>
+                      Click here
+                    </a>
+                  </span>
+                </div>
+
+                <div className="slider-navigation" style={{ display: "none" }}>
+                  <div class="nav-btn active"></div>
+                  <div class="nav-btn"></div>
+                  <div class="nav-btn"></div>
+                  <div class="nav-btn"></div>
+                  <div class="nav-btn"></div>
+                </div>
+              </section>
+            </div>
+          )
+        )}
       </main>
     </div>
-
   );
 };
 export default AdminMenu;

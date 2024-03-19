@@ -3,7 +3,16 @@
   display: flex;
   flex-direction: column;
 }
-
+.ur-page6-main-container{
+  width: 100vw;
+  height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ur-page6-container{
+  width: 90vw;
+}
 /* Style for image cards */
 .image-card {
   display: inline-block;
@@ -28,8 +37,7 @@
 .page-6-lower-container {
   margin-top:2vw;
   display: flex;
-  justify-content: space-between;
-  gap:2vw;
+  justify-content: space-between; 
 }
 
 
@@ -99,4 +107,93 @@
   padding: 1% 1%;
   overflow: hidden;
   /* Prevent containers from collapsing */
+}
+/* .planed-treatment{
+  max-height: 30vh;
+  overflow-y: auto;
+  text-align: center;
+  width: 100%;
+} */
+.planed-treatment table td input{
+border: none;
+outline: none;
+font-size:14px;
+}
+.planed-treatment {
+  max-height: 30vh;
+  overflow-y: auto;
+  text-align: center;
+  width: 100%;
+}
+
+.planed-treatment::-webkit-scrollbar {
+  margin-top: 20px;
+  width: 7px; 
+}
+
+/* Track */
+.planed-treatment::-webkit-scrollbar-track {
+  background: #f1f1f100; /* Color of the scrollbar track */
+}
+
+/* Handle */
+.planed-treatment::-webkit-scrollbar-thumb {
+  background: #00cccc; /* Color of the scrollbar handle */
+  border-radius: 6px;
+/* Rounded corners of the scrollbar handle */
+}
+
+.fresh-bill-admis-dis-date{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.page-7-main-container{
+  height: 93vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+width: 80vw;
+}
+.page-7-main-container table td{
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 14px;
+}
+.page-7-main-container table .view-add-flexer-page-7{
+  padding-right: 30px;
+  text-align: center;
+  font-size: 14px;
+}
+.investigation-treatment {
+padding: 0;
+width: 100%;
+box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.10), 0px 10px 20px rgba(0, 0, 0, 0.05), 0px 20px 20px rgba(0, 0, 0, 0.05), 0px 30px 20px rgba(0, 0, 0, 0.05);
+margin: 0;
+}
+.page-7-main-container table input, .page-7-main-container table select {
+  border: none;
+  outline: none;
+
+}
+.page-7-main-container table img {
+  width: 30px;
+  height:30px;
+}
+label{
+  font-size: 14px;
+}
+.add-plus-button-page-6{
+  float: right;
+}
+.admis-dis-flexer{
+  display: flex;
+  flex-direction: column;
+}
+.page-7-super-container{
+  width:100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

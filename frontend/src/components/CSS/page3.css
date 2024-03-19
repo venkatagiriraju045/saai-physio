@@ -1,7 +1,14 @@
-
+.main-container-page-3{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height:100vh;
+  width:100vw;
+}
 .ur-page3-container {
     display: flex;
-    gap: 1%;
+    gap: 3%;
+    width:89vw;
   }
   
   .ur-page3-left-container {
@@ -30,7 +37,7 @@ table {
     margin: 10px auto;
     border-collapse: collapse;
     border: 1px solid #eee;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid #00cccc;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.10),
         0px 10px 20px rgba(0, 0, 0, 0.05),
         0px 20px 20px rgba(0, 0, 0, 0.05),
@@ -45,6 +52,7 @@ th,
 td {
     font-size: 12px;
     color: #999;
+    border: none;
     border: 1px solid #eee;
     padding: 4px 10px;
     border-collapse: collapse;

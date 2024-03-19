@@ -1,0 +1,144 @@
+/* .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 999; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+}
+.patient-details-sub-main-container{
+height: 90vh;
+width:100%;
+margin-left: 1vw;
+align-items: center;
+}
+.patient-details-main-container{
+    height: 100vh;
+    width:98vw;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.overlay-content {
+    background-color: white; 
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 90%;
+    max-height: 90%; 
+}
+
+
+.overlay-close-button {
+    position: fixed;
+    top: 30px;
+    right: 80px;
+}
+
+ */
+.patient-details-sub-main-container{
+    width: 100vw;
+    height: 82vh;
+}
+ .patient-details-main-container {
+    margin-left: 2vw;
+    height: 100vh; /* Set height of the main container to full viewport height */
+    width: 96vw; /* Adjust width as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Hide overflow to prevent page scrolling */
+}
+
+.overlay-content {
+    background-color: white; /* White background for the content */
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 90%; /* Adjust max-width as needed */
+    max-height: calc(100% - 40px); /* Adjust max-height to fit the viewport */
+    overflow-y: auto; /* Enable vertical scrolling for the content */
+}
+.no-rec-found{
+    margin-left: 5vw;
+}
+.all-patients-record-table{
+}
+
+.all-patients-record-table table {
+    width: 100%; /* Ensure table fills its container */
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+
+}
+
+.all-patients-record-table th, .all-patients-record-table td {
+    padding: 12px 15px; /* Adjust padding as needed */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Add bottom border to separate rows */
+}
+
+.all-patients-record-table th {
+    /* position: sticky; */
+    top: 0; /* Use existing theme color for sticky header */
+    z-index: 1; /* Ensure header is above content */
+}
+
+.all-patients-record-table tbody {
+    display: block;
+    max-height: calc(100vh - 200px); /* Adjust max-height to fit the viewport */
+    overflow-y: auto; /* Enable vertical scrolling for tbody */
+}
+
+.all-patients-record-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Fix table layout */
+}
+
+.all-patients-record-table td {
+    word-wrap: break-word; /* Wrap long text in cells */
+}
+
+/* Apply custom styles to the scrollbar */
+.all-patients-record-table tbody::-webkit-scrollbar {
+    width: 7px; /* Set width of the scrollbar */
+}
+
+.all-patients-record-table tbody::-webkit-scrollbar-thumb {
+    background-color: #00cccc; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Border radius of the scrollbar thumb */
+}
+
+.filter {
+    margin-left: 2vw;
+}
+
+.filter label {
+    font-size: 20px;
+    color: #00cccc; /* Use existing theme color for label */
+    margin-right: 10px; /* Adjust margin as needed */
+}
+
+.filter-by-mob {
+    height: 35px; /* Adjust height as needed */
+    width: 200px; /* Adjust width as needed */
+    padding: 6px; /* Adjust padding as needed */
+    border: 1px solid #00cccc; /* Use existing theme color for border */
+    border-radius: 4px; /* Adjust border radius as needed */
+    font-size: 16px; /* Adjust font size as needed */
+}
+
+.filter-by-mob:focus {
+    outline: none; /* Remove focus outline */
+    border-color: #007a7a; /* Change border color on focus */
+}
+
+.all-patients-heading{
+    margin-left: 2vw;
+}

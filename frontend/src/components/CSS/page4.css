@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
@@ -7,36 +8,36 @@ body, html {
 
 .page-4-container {
   width: 100%;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
 }
 
 .page-4-content {
+  margin-left: 3vw;
   display: flex;
   flex-direction: column;
+  width: 97vw;
   align-items: center;
   justify-content: center;
 }
 
-.remark>*{
+.remark > * {
   width: 100%;
   height: 100%;
 }
 
-h2{
-  font-size: 14px;
-}
-
-.page-4-form-top, .page-4-form-bottom {
+.page-4-form-top,
+.page-4-form-bottom {
   display: flex;
-  flex: 1; 
-/* Distribute remaining space equally */
+  flex: 1;
+  /* Distribute remaining space equally */
 }
-.page-4-form-top{
+.page-4-form-top {
   height: 35vh;
-  width: 90%;
+  width: 89%;
 
   display: flex;
   justify-content: space-between;
@@ -44,7 +45,7 @@ h2{
 .section {
   flex: 1; /* Distribute remaining space equally */
 }
-td{
+td {
   text-wrap: nowrap;
 
   padding: 0%;
@@ -52,29 +53,26 @@ td{
 
 .page-4-content table {
   border-collapse: collapse;
-
 }
 
-.page-4-form-bottom .content-table{
-
+.page-4-form-bottom .content-table {
   height: 37vh;
 }
-.page-4-form-top .content-table{
+.page-4-form-top .content-table {
   height: 23vh;
-
 }
-.Breathing-Pattern-table td{
+.Breathing-Pattern-table td {
   padding: 4.7px;
-
 }
-.Prehension-table td{
+.Prehension-table td {
   padding: 12.5px;
 }
-.content-table th, .content-table td {
+.content-table th,
+.content-table td {
   position: relative;
   border: 1px solid #ddd;
 }
-.page-4-content .co-ordination-table td{
+.page-4-content .co-ordination-table td {
   padding: none;
 }
 .page-4-content .content-table th {
@@ -103,39 +101,36 @@ td{
 }
 
 input[type="radio"]:checked {
-  background: #007bff;
-  border-color: #007bff;
+  background: #00cccc;
+  border-color: #00cccc;
 }
 
 .remark-input {
-  width:100%;
-/* Adjusted width for better responsiveness */
+  width: 100%;
+  /* Adjusted width for better responsiveness */
 
   box-sizing: border-box;
   border: none;
   outline: none;
 }
-.page-4-form-top{
+.page-4-form-top {
 }
-.page-4-form-bottom
-{
+.page-4-form-bottom {
   position: relative;
   display: flex;
   width: 90%;
   height: 100%;
 }
-.page-4-form-bottom .section-hand-function{
-   
-   height: 100%;
+.page-4-form-bottom .section-hand-function {
+  height: 100%;
 }
-.page-4-form-bottom .section-hand-function td{
-  padding-top:15px;
-  padding-bottom:15px;
-
+.page-4-form-bottom .section-hand-function td {
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
-.page-4-form-bottom .section-subjective-Assessment{
+.page-4-form-bottom .section-subjective-Assessment {
   flex: 1;
 }
-.co-ordination-table{
+.co-ordination-table {
   flex: 1;
 }

@@ -21,45 +21,45 @@ const Login = () => {
     const handleLoginIDChange = (e) => {
         setLoginID(e.target.value);
     };
-    useEffect(() => {
-        // Detect device type and set the state
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        isMobile ? setMobile(true) : setMobile(false);
+    // useEffect(() => {
+    //     // Detect device type and set the state
+    //     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    //     isMobile ? setMobile(true) : setMobile(false);
 
-        // Initialize BVAmbient object
-        const demo1 = new bvambient({
-            selector: "#ambient",
-            fps: 60,
-            max_transition_speed: 12000,
-            min_transition_speed: 8000,
-            particle_number: 30,
-            particle_maxwidth: 60,
-            particle_minwidth: 10,
-            particle_radius: 50,
-            particle_opacity: true,
-            particle_colision_change: true,
-            particle_background: "#48cae4",
-            refresh_onfocus: true,
-            particle_image: {
-                image: false,
-                src: ""
-            },
-            responsive: [
-                {
-                    breakpoint: 768,
-                    settings: {
-                        particle_number: "15"
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    settings: {
-                        particle_number: "10"
-                    }
-                }
-            ]
-        });
-    }, []); // Empty dependency array to run only once when the component mounts
+    //     // Initialize BVAmbient object
+    //     const demo1 = new bvambient({
+    //         selector: "#ambient",
+    //         fps: 60,
+    //         max_transition_speed: 12000,
+    //         min_transition_speed: 8000,
+    //         particle_number: 30,
+    //         particle_maxwidth: 60,
+    //         particle_minwidth: 10,
+    //         particle_radius: 50,
+    //         particle_opacity: true,
+    //         particle_colision_change: true,
+    //         particle_background: "#48cae4",
+    //         refresh_onfocus: true,
+    //         particle_image: {
+    //             image: false,
+    //             src: ""
+    //         },
+    //         responsive: [
+    //             {
+    //                 breakpoint: 768,
+    //                 settings: {
+    //                     particle_number: "15"
+    //                 }
+    //             },
+    //             {
+    //                 breakpoint: 480,
+    //                 settings: {
+    //                     particle_number: "10"
+    //                 }
+    //             }
+    //         ]
+    //     });
+    // }, []); // Empty dependency array to run only once when the component mounts
 
 
 
@@ -104,7 +104,7 @@ const Login = () => {
 
     return (
         <div>
-            <div id="ambient" style={{ overflow: 'hidden', position: 'absolute', width: '100vw', height: '100vh' }}></div>
+            {/* <div id="ambient" style={{ overflow: 'hidden', position: 'absolute', width: '100vw', height: '100vh' }}></div>*/}
             <div className="user-login-signup-container">
                 <div className="container" id="container">
                     <div className="form-container sign-in-container">

@@ -45,12 +45,10 @@ const OverlayRecord = (mobileNumber) => {
   const [createFreshOverlayVisible, setCreateFreshOverlayVisible] =
     useState(false);
   const [firstRow, setFirstRow] = useState(false);
-  const overlayClass = `loading-overlay${
-    loading || isLoading ? " visible" : ""
-  }`;
-  const msgoverlay = `loading-overlay${
-    !loading && appMessage ? " visible" : ""
-  }`;
+  const overlayClass = `loading-overlay${loading || isLoading ? " visible" : ""
+    }`;
+  const msgoverlay = `loading-overlay${!loading && appMessage ? " visible" : ""
+    }`;
   const [patient, setPatient] = useState({
     mobileNo: "",
     painRegion: {
@@ -536,13 +534,13 @@ const OverlayRecord = (mobileNumber) => {
 
         const inBillDetails =
           patient.planTreatment[0].patientType === "inpatient" &&
-          isBillDetailsInPatientFilled()
+            isBillDetailsInPatientFilled()
             ? patient.inPatientBill[0]
             : undefined;
 
         const outBillDetails =
           patient.planTreatment[0].patientType === "outpatient" &&
-          isBillDetailsOutPatientFilled()
+            isBillDetailsOutPatientFilled()
             ? patient.outPatientBill[0]
             : undefined;
 
@@ -1113,7 +1111,7 @@ const OverlayRecord = (mobileNumber) => {
 
     const outBillDetails =
       nextRowPatientType === "outpatient" &&
-      isBillDetailsInOutOutPatientFilled()
+        isBillDetailsInOutOutPatientFilled()
         ? outPatientBillDetails.outBill[0]
         : undefined;
 
@@ -3196,22 +3194,6 @@ const OverlayRecord = (mobileNumber) => {
         {page1 && (
           <>
             <header class="update-record-header">
-              <div class="update-record-search-bar">
-                <input
-                  required
-                  placeholder="Mobile Number"
-                  id="mobileNo"
-                  value={mobileNo}
-                  onChange={handleMobileNumberChange}
-                />
-                <button
-                  class="update-record-invite-btn"
-                  onClick={handleSearch}
-                  type="button"
-                >
-                  Search
-                </button>
-              </div>
               {founded && page1 && (
                 <div class="update-record-patient-details">
                   <h3 class="update-record-patient">{patient.name}</h3>
@@ -3219,10 +3201,9 @@ const OverlayRecord = (mobileNumber) => {
                     {patient.gender === "male"
                       ? "M"
                       : patient.gender === "female"
-                      ? "F"
-                      : "O"}
+                        ? "F"
+                        : "O"}
                   </h3>
-
                   <h3 class="update-record-patient">{patient.age}</h3>
                 </div>
               )}
@@ -3899,7 +3880,7 @@ const OverlayRecord = (mobileNumber) => {
                                               }
                                               value={
                                                 patient.rangeOfMotion[joint][
-                                                  index
+                                                index
                                                 ][motion][side] || ""
                                               }
                                               onChange={(e) =>
@@ -3943,7 +3924,6 @@ const OverlayRecord = (mobileNumber) => {
                                             }
                                           />
                                         )}
-                                                   
                                       </td>
                                     </React.Fragment>
                                   ))}
@@ -3964,233 +3944,237 @@ const OverlayRecord = (mobileNumber) => {
         )}
         {page3 && (
           <>
-            <div class="ur-page3-container">
-              <div className="ur-page3-left-container">
-                <h2 className="ur-page3-left-container-title">Muscle Power</h2>
-                <table className="muscle-power-table">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th colSpan="2">MOTOR</th>
-                      <th colSpan="2">SENSORY</th>
-                    </tr>
-                    <tr>
-                      <th></th>
-                      <th>RT</th>
-                      <th>LT</th>
-                      <th>RT</th>
-                      <th>LT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {musclePowerItems.map((item) => (
-                      <tr key={item.name}>
-                        <td>{item.label}</td>
-                        {["motor", "sensory"].map((category) =>
-                          ["rt", "lt"].map((side) => (
-                            <React.Fragment key={item.name + side + category}>
-                              <td>
-                                <input
-                                  class="mp-custom-input"
-                                  type="text"
-                                  value={
-                                    patient.musclePower[item.name][side][
-                                      category
-                                    ]
-                                  }
-                                  onChange={(e) =>
-                                    handleMusclePowerChange(
-                                      item.name,
-                                      side,
-                                      category,
-                                      parseInt(e.target.value) || 0
-                                    )
-                                  }
-                                />
-                              </td>
-                            </React.Fragment>
-                          ))
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div class="ur-page3-right-container">
-                <div class="co-ordination-table">
-                  <h2 class="ur-page3-right-container-tb1-title">
-                    Co-Ordination
-                  </h2>
-                  <table>
+            <div className="main-container-page-3">
+
+              <div class="ur-page3-container">
+                <div className="ur-page3-left-container">
+                  <h2 className="ur-page3-left-container-title">Muscle Power</h2>
+                  <table className="muscle-power-table">
                     <thead>
                       <tr>
                         <th></th>
-                        <th>Normal</th>
-                        <th>Abnormal</th>
-                        <th>Remarks</th>
+                        <th colSpan="2">MOTOR</th>
+                        <th colSpan="2">SENSORY</th>
+                      </tr>
+                      <tr>
+                        <th></th>
+                        <th>RT</th>
+                        <th>LT</th>
+                        <th>RT</th>
+                        <th>LT</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {coordinationItems.map((item) => (
-                        <tr key={item.label}>
+                      {musclePowerItems.map((item) => (
+                        <tr key={item.name}>
                           <td>{item.label}</td>
-                          {["normal", "abnormal"].map((column) => (
-                            <td key={column}>
-                              <input
-                                type="radio"
-                                checked={
-                                  patient.coordination[item.name][column]
-                                }
-                                onChange={() =>
-                                  handleCoordinationCheckboxChange(
-                                    item.name,
-                                    column
-                                  )
-                                }
-                              />
-                            </td>
-                          ))}
-                          <td>
-                            <input
-                              type="text"
-                              value={patient.coordination[item.name].remarks}
-                              onChange={(event) =>
-                                handleRemarksChange(item.name, event)
-                              }
-                            />
-                          </td>
+                          {["motor", "sensory"].map((category) =>
+                            ["rt", "lt"].map((side) => (
+                              <React.Fragment key={item.name + side + category}>
+                                <td>
+                                  <input
+                                    class="mp-custom-input"
+                                    type="text"
+                                    value={
+                                      patient.musclePower[item.name][side][
+                                      category
+                                      ]
+                                    }
+                                    onChange={(e) =>
+                                      handleMusclePowerChange(
+                                        item.name,
+                                        side,
+                                        category,
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                  />
+                                </td>
+                              </React.Fragment>
+                            ))
+                          )}
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                <div class="ur-page3-right-container">
+                  <div class="co-ordination-table">
+                    <h2 class="ur-page3-right-container-tb1-title">
+                      Co-Ordination
+                    </h2>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Normal</th>
+                          <th>Abnormal</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {coordinationItems.map((item) => (
+                          <tr key={item.label}>
+                            <td>{item.label}</td>
+                            {["normal", "abnormal"].map((column) => (
+                              <td key={column}>
+                                <input
+                                  type="radio"
+                                  checked={
+                                    patient.coordination[item.name][column]
+                                  }
+                                  onChange={() =>
+                                    handleCoordinationCheckboxChange(
+                                      item.name,
+                                      column
+                                    )
+                                  }
+                                />
+                              </td>
+                            ))}
+                            <td>
+                              <input
+                                type="text"
+                                value={patient.coordination[item.name].remarks}
+                                onChange={(event) =>
+                                  handleRemarksChange(item.name, event)
+                                }
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                <div class="saw-table">
-                  <h2 class="ur-page3-right-container-tb2-title">
-                    Standing and Walking
-                  </h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th>Normal</th>
-                        <th>Abnormal</th>
-                        <th>Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>STANDING: NORMAL POSTURE</td>
-                        <td>
-                          <input
-                            type="radio"
-                            id="sitting-normal"
-                            name="sitting-normal"
-                            class="ur-page2-inp-cbx"
-                            checked={
-                              patient.standingWalking.normalPosture.normal
-                            }
-                            onChange={() =>
-                              handleStandingWalkingCheckboxChange(
-                                "normalPosture",
-                                "normal"
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="radio"
-                            id="sitting-abnormal"
-                            name="sitting-abnormal"
-                            class="ur-page2-inp-cbx"
-                            checked={
-                              patient.standingWalking.normalPosture.abnormal
-                            }
-                            onChange={() =>
-                              handleStandingWalkingCheckboxChange(
-                                "normalPosture",
-                                "abnormal"
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            placeholder="Enter remarks"
-                            class="remark-input"
-                            value={
-                              patient.standingWalking.normalPosture.remarks
-                            }
-                            onChange={(event) =>
-                              handleEquilibriumRemarksChange(
-                                "normalPosture",
-                                event
-                              )
-                            }
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>TANDON WALKING</td>
-                        <td>
-                          <input
-                            type="radio"
-                            id="standing-normal"
-                            name="standing-normal"
-                            class="ur-page2-inp-cbx"
-                            checked={
-                              patient.standingWalking.tandonWalking.normal
-                            }
-                            onChange={() =>
-                              handleStandingWalkingCheckboxChange(
-                                "tandonWalking",
-                                "normal"
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="radio"
-                            id="standing-abnormal"
-                            name="standing-abnormal"
-                            class="ur-page2-inp-cbx"
-                            checked={
-                              patient.standingWalking.tandonWalking.abnormal
-                            }
-                            onChange={() =>
-                              handleStandingWalkingCheckboxChange(
-                                "tandonWalking",
-                                "abnormal"
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            placeholder="Enter remarks"
-                            class="remark-input"
-                            value={
-                              patient.standingWalking.tandonWalking.remarks
-                            }
-                            onChange={(event) =>
-                              handleEquilibriumRemarksChange(
-                                "tandonWalking",
-                                event
-                              )
-                            }
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div class="saw-table">
+                    <h2 class="ur-page3-right-container-tb2-title">
+                      Standing and Walking
+                    </h2>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Normal</th>
+                          <th>Abnormal</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>STANDING: NORMAL POSTURE</td>
+                          <td>
+                            <input
+                              type="radio"
+                              id="sitting-normal"
+                              name="sitting-normal"
+                              class="ur-page2-inp-cbx"
+                              checked={
+                                patient.standingWalking.normalPosture.normal
+                              }
+                              onChange={() =>
+                                handleStandingWalkingCheckboxChange(
+                                  "normalPosture",
+                                  "normal"
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="radio"
+                              id="sitting-abnormal"
+                              name="sitting-abnormal"
+                              class="ur-page2-inp-cbx"
+                              checked={
+                                patient.standingWalking.normalPosture.abnormal
+                              }
+                              onChange={() =>
+                                handleStandingWalkingCheckboxChange(
+                                  "normalPosture",
+                                  "abnormal"
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              placeholder="Enter remarks"
+                              class="remark-input"
+                              value={
+                                patient.standingWalking.normalPosture.remarks
+                              }
+                              onChange={(event) =>
+                                handleEquilibriumRemarksChange(
+                                  "normalPosture",
+                                  event
+                                )
+                              }
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>TANDON WALKING</td>
+                          <td>
+                            <input
+                              type="radio"
+                              id="standing-normal"
+                              name="standing-normal"
+                              class="ur-page2-inp-cbx"
+                              checked={
+                                patient.standingWalking.tandonWalking.normal
+                              }
+                              onChange={() =>
+                                handleStandingWalkingCheckboxChange(
+                                  "tandonWalking",
+                                  "normal"
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="radio"
+                              id="standing-abnormal"
+                              name="standing-abnormal"
+                              class="ur-page2-inp-cbx"
+                              checked={
+                                patient.standingWalking.tandonWalking.abnormal
+                              }
+                              onChange={() =>
+                                handleStandingWalkingCheckboxChange(
+                                  "tandonWalking",
+                                  "abnormal"
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              placeholder="Enter remarks"
+                              class="remark-input"
+                              value={
+                                patient.standingWalking.tandonWalking.remarks
+                              }
+                              onChange={(event) =>
+                                handleEquilibriumRemarksChange(
+                                  "tandonWalking",
+                                  event
+                                )
+                              }
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </>
+
         )}
         {page4 && (
           <>
@@ -4313,7 +4297,7 @@ const OverlayRecord = (mobileNumber) => {
                                       ...prevPatient.chestObservation,
                                       [item.name]: {
                                         ...prevPatient.chestObservation[
-                                          item.name
+                                        item.name
                                         ],
                                         remarks: e.target.value,
                                       },
@@ -4467,7 +4451,7 @@ const OverlayRecord = (mobileNumber) => {
                                     <select
                                       value={
                                         patient.subjectiveAssessment[symptom][
-                                          field
+                                        field
                                         ]
                                       }
                                       onChange={(event) =>
@@ -4515,7 +4499,7 @@ const OverlayRecord = (mobileNumber) => {
                                       type="text"
                                       value={
                                         patient.subjectiveAssessment[symptom][
-                                          field
+                                        field
                                         ]
                                       }
                                       onChange={(event) =>
@@ -4539,353 +4523,360 @@ const OverlayRecord = (mobileNumber) => {
         )}
         {page5 && (
           <>
-            <div class="ur-page5-container">
-              <div class="ur-page5-left-container">
-                <div className="barthel-index-container">
-                  <div className="ur-page5-left-container-title">
-                    The Barthel Index
-                  </div>
-                  <table className="barthel-index-table">
-                    <thead>
-                      <tr>
-                        <th>Activity</th>
-                        <th>Range</th>
-                        <th>Score</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {barthelIndexItems.map((item) => (
-                        <tr key={item.label}>
-                          <td>{item.label}</td>
+            <div className="ur-page5-main-container">
 
-                          <td>{item.range}</td>
+              <div class="ur-page5-container">
+                <div class="ur-page5-left-container">
+                  <div className="barthel-index-container">
+                    <div className="ur-page5-left-container-title">
+                      The Barthel Index
+                    </div>
+                    <table className="barthel-index-table">
+                      <thead>
+                        <tr>
+                          <th>Activity</th>
+                          <th>Range</th>
+                          <th>Score</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {barthelIndexItems.map((item) => (
+                          <tr key={item.label}>
+                            <td>{item.label}</td>
+
+                            <td>{item.range}</td>
+                            <td>
+                              <select
+                                value={patient.barthelIndex[item.name].score}
+                                onChange={(e) =>
+                                  handleScoreChange(
+                                    item.name,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                              >
+                                {Array.from(
+                                  {
+                                    length:
+                                      patient.barthelIndex[item.name].maxScore +
+                                      1,
+                                  },
+                                  (_, index) => index
+                                ).map((score) => (
+                                  <option key={score} value={score}>
+                                    {score}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                          </tr>
+                        ))}
+                        <tr>
+                          <td></td>
+                          <td>Total Scores</td>
                           <td>
-                            <select
-                              value={patient.barthelIndex[item.name].score}
-                              onChange={(e) =>
-                                handleScoreChange(
-                                  item.name,
-                                  parseInt(e.target.value)
-                                )
-                              }
-                            >
-                              {Array.from(
-                                {
-                                  length:
-                                    patient.barthelIndex[item.name].maxScore +
-                                    1,
-                                },
-                                (_, index) => index
-                              ).map((score) => (
-                                <option key={score} value={score}>
-                                  {score}
-                                </option>
-                              ))}
-                            </select>
+                            {Object.values(patient.barthelIndex).reduce(
+                              (total, activity) => total + activity.score,
+                              0
+                            )}
                           </td>
                         </tr>
-                      ))}
-                      <tr>
-                        <td></td>
-                        <td>Total Scores</td>
-                        <td>
-                          {Object.values(patient.barthelIndex).reduce(
-                            (total, activity) => total + activity.score,
-                            0
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-              <div class="ur-page5-right-container">
-                <div class="brpe-table">
-                  <h2 class="ur-page5-right-container-tb1-title">
-                    Bord Rate of Perceived Exertion(BRPE)
-                  </h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Rating</th>
-                        <th>Description</th>
-                        <th>Effort%</th>
-                        <th>Rating Got</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {brpeData.map((data) => (
-                        <tr key={data.rating}>
-                          <td>{data.rating}</td>
-                          <td>{data.description}</td>
-                          <td>{data.effortPercentage}</td>
-                          <td>
-                            <input
-                              type="radio"
-                              name={`rating${data.rating}`}
-                              checked={patient.brpe[`rating${data.rating}`]}
-                              onChange={() =>
-                                handleBordRatingCheckboxChange(
-                                  `rating${data.rating}`
-                                )
-                              }
-                            />
-                          </td>
+                <div class="ur-page5-right-container">
+                  <div class="brpe-table">
+                    <h2 class="ur-page5-right-container-tb1-title">
+                      Bord Rate of Perceived Exertion(BRPE)
+                    </h2>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Rating</th>
+                          <th>Description</th>
+                          <th>Effort%</th>
+                          <th>Rating Got</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {brpeData.map((data) => (
+                          <tr key={data.rating}>
+                            <td>{data.rating}</td>
+                            <td>{data.description}</td>
+                            <td>{data.effortPercentage}</td>
+                            <td>
+                              <input
+                                type="radio"
+                                name={`rating${data.rating}`}
+                                checked={patient.brpe[`rating${data.rating}`]}
+                                onChange={() =>
+                                  handleBordRatingCheckboxChange(
+                                    `rating${data.rating}`
+                                  )
+                                }
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </>
+
         )}
         {page6 && (
           <>
-            <div class="ur-page6-container">
-              <div className="page-6-upper-container">
-                <h2 class="ur-page2-checkbox-title">Choose Chest Type</h2>
+            <div className="ur-page6-main-container">
 
-                <div className="page-6-form-container">
-                  <img
-                    src="./uploads/normal.PNG"
-                    alt="Normal Chest"
-                    onClick={() => handleImageClick("normal")}
-                    className={
-                      patient.chestShapeObservation.chestShape["normal"]
-                        ? "selected"
-                        : ""
-                    }
-                  />
-                  <img
-                    src="./uploads/barrel-chest.PNG"
-                    alt="Barrel Chest"
-                    onClick={() => handleImageClick("barrelChest")}
-                    className={
-                      patient.chestShapeObservation.chestShape["barrelChest"]
-                        ? "selected"
-                        : ""
-                    }
-                  />
-                  <img
-                    src="./uploads/kyphosis.PNG"
-                    alt="Kyphosis"
-                    onClick={() => handleImageClick("kyphosis")}
-                    className={
-                      patient.chestShapeObservation.chestShape["kyphosis"]
-                        ? "selected"
-                        : ""
-                    }
-                  />
-                  <img
-                    src="./uploads/pectus-excavatum.PNG"
-                    alt="Pectus Excavatum"
-                    onClick={() => handleImageClick("pectusExcavatum")}
-                    className={
-                      patient.chestShapeObservation.chestShape[
-                        "pectusExcavatum"
-                      ]
-                        ? "selected"
-                        : ""
-                    }
-                  />
-                  <img
-                    src="./uploads/pectus-carinatum.PNG"
-                    alt="Pectus Carinatum"
-                    onClick={() => handleImageClick("pectusCarinatum")}
-                    className={
-                      patient.chestShapeObservation.chestShape[
-                        "pectusCarinatum"
-                      ]
-                        ? "selected"
-                        : ""
-                    }
-                  />
-                </div>
-              </div>
+              <div class="ur-page6-container">
+                <div className="page-6-upper-container">
+                  <h2 class="ur-page2-checkbox-title">Choose Chest Type</h2>
 
-              <div class="page-6-lower-container">
-                <div class="page-6-left-container">
-                  <img src="./uploads/lobe.PNG" alt="Image" />
+                  <div className="page-6-form-container">
+                    <img
+                      src="./uploads/normal.PNG"
+                      alt="Normal Chest"
+                      onClick={() => handleImageClick("normal")}
+                      className={
+                        patient.chestShapeObservation.chestShape["normal"]
+                          ? "selected"
+                          : ""
+                      }
+                    />
+                    <img
+                      src="./uploads/barrel-chest.PNG"
+                      alt="Barrel Chest"
+                      onClick={() => handleImageClick("barrelChest")}
+                      className={
+                        patient.chestShapeObservation.chestShape["barrelChest"]
+                          ? "selected"
+                          : ""
+                      }
+                    />
+                    <img
+                      src="./uploads/kyphosis.PNG"
+                      alt="Kyphosis"
+                      onClick={() => handleImageClick("kyphosis")}
+                      className={
+                        patient.chestShapeObservation.chestShape["kyphosis"]
+                          ? "selected"
+                          : ""
+                      }
+                    />
+                    <img
+                      src="./uploads/pectus-excavatum.PNG"
+                      alt="Pectus Excavatum"
+                      onClick={() => handleImageClick("pectusExcavatum")}
+                      className={
+                        patient.chestShapeObservation.chestShape[
+                          "pectusExcavatum"
+                        ]
+                          ? "selected"
+                          : ""
+                      }
+                    />
+                    <img
+                      src="./uploads/pectus-carinatum.PNG"
+                      alt="Pectus Carinatum"
+                      onClick={() => handleImageClick("pectusCarinatum")}
+                      className={
+                        patient.chestShapeObservation.chestShape[
+                          "pectusCarinatum"
+                        ]
+                          ? "selected"
+                          : ""
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="page-6-right-container">
-                  <h2 className="ur-page2-checkbox-title">
-                    Observation of Chest Motion
-                  </h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Motion Type</th>
-                        <th>A</th>
-                        <th>B</th>
-                        <th>Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Middle Lobe & Lingula Motion</td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation
-                                .middleLobeLingulaMotion.valueA
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "middleLobeLingulaMotion",
-                                "valueA",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation
-                                .middleLobeLingulaMotion.valueB
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "middleLobeLingulaMotion",
-                                "valueB",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation
-                                .middleLobeLingulaMotion.remarks
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "middleLobeLingulaMotion",
-                                "remarks",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Upper Lobe Motion</td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.upperLobeMotion
-                                .valueA
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "upperLobeMotion",
-                                "valueA",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.upperLobeMotion
-                                .valueB
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "upperLobeMotion",
-                                "valueB",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.upperLobeMotion
-                                .remarks
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "upperLobeMotion",
-                                "remarks",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Lower Lobe Motion</td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.lowerLobeMotion
-                                .valueA
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "lowerLobeMotion",
-                                "valueA",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.lowerLobeMotion
-                                .valueB
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "lowerLobeMotion",
-                                "valueB",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={
-                              patient.chestMotionObservation.lowerLobeMotion
-                                .remarks
-                            }
-                            onChange={(e) =>
-                              handleLobeInputChange(
-                                "lowerLobeMotion",
-                                "remarks",
-                                e.target.value
-                              )
-                            }
-                            className="remark-input"
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+
+                <div class="page-6-lower-container">
+                  <div class="page-6-left-container">
+                    <img src="./uploads/lobe.PNG" alt="Image" />
+                  </div>
+                  <div className="page-6-right-container">
+                    <h2 className="ur-page2-checkbox-title">
+                      Observation of Chest Motion
+                    </h2>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Motion Type</th>
+                          <th>A</th>
+                          <th>B</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Middle Lobe & Lingula Motion</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation
+                                  .middleLobeLingulaMotion.valueA
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "middleLobeLingulaMotion",
+                                  "valueA",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation
+                                  .middleLobeLingulaMotion.valueB
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "middleLobeLingulaMotion",
+                                  "valueB",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation
+                                  .middleLobeLingulaMotion.remarks
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "middleLobeLingulaMotion",
+                                  "remarks",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Upper Lobe Motion</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.upperLobeMotion
+                                  .valueA
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "upperLobeMotion",
+                                  "valueA",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.upperLobeMotion
+                                  .valueB
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "upperLobeMotion",
+                                  "valueB",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.upperLobeMotion
+                                  .remarks
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "upperLobeMotion",
+                                  "remarks",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Lower Lobe Motion</td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.lowerLobeMotion
+                                  .valueA
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "lowerLobeMotion",
+                                  "valueA",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.lowerLobeMotion
+                                  .valueB
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "lowerLobeMotion",
+                                  "valueB",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={
+                                patient.chestMotionObservation.lowerLobeMotion
+                                  .remarks
+                              }
+                              onChange={(e) =>
+                                handleLobeInputChange(
+                                  "lowerLobeMotion",
+                                  "remarks",
+                                  e.target.value
+                                )
+                              }
+                              className="remark-input"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4911,17 +4902,17 @@ const OverlayRecord = (mobileNumber) => {
                               <th>No. of Days</th>
 
                               {patient.planTreatment[0].patientType ===
-                              "inpatient"
+                                "inpatient"
                                 ? Object.keys(patient.planTreatment[0])
-                                    .slice(4)
-                                    .map((category, index) => (
-                                      <th key={index}>{category}</th>
-                                    ))
+                                  .slice(4)
+                                  .map((category, index) => (
+                                    <th key={index}>{category}</th>
+                                  ))
                                 : Object.keys(patient.planTreatment[0])
-                                    .slice(4, -1)
-                                    .map((category, index) => (
-                                      <th key={index}>{category}</th>
-                                    ))}
+                                  .slice(4, -1)
+                                  .map((category, index) => (
+                                    <th key={index}>{category}</th>
+                                  ))}
                               <th>Billing</th>
                             </tr>
                           </thead>
@@ -5013,7 +5004,7 @@ const OverlayRecord = (mobileNumber) => {
                                       <input
                                         type="text"
                                         value={1}
-                                        // onChange={(e) => handleInputChange(index, "days", 1)}
+                                      // onChange={(e) => handleInputChange(index, "days", 1)}
                                       />
                                     )}
                                   {plan.patientType === "inpatient" && (
@@ -5026,41 +5017,41 @@ const OverlayRecord = (mobileNumber) => {
                                 </td>
 
                                 {patient.planTreatment[0].patientType ===
-                                "inpatient"
+                                  "inpatient"
                                   ? Object.keys(plan)
-                                      .slice(4)
-                                      .map((category, colIndex) => (
-                                        <td key={colIndex}>
-                                          <input
-                                            type="checkbox"
-                                            name={`${category}_${index}`}
-                                            checked={plan[category]}
-                                            onChange={() =>
-                                              handlePlanCheckboxChange(
-                                                index,
-                                                category
-                                              )
-                                            }
-                                          />
-                                        </td>
-                                      ))
+                                    .slice(4)
+                                    .map((category, colIndex) => (
+                                      <td key={colIndex}>
+                                        <input
+                                          type="checkbox"
+                                          name={`${category}_${index}`}
+                                          checked={plan[category]}
+                                          onChange={() =>
+                                            handlePlanCheckboxChange(
+                                              index,
+                                              category
+                                            )
+                                          }
+                                        />
+                                      </td>
+                                    ))
                                   : Object.keys(plan)
-                                      .slice(4, -1)
-                                      .map((category, colIndex) => (
-                                        <td key={colIndex}>
-                                          <input
-                                            type="checkbox"
-                                            name={`${category}_${index}`}
-                                            checked={plan[category]}
-                                            onChange={() =>
-                                              handlePlanCheckboxChange(
-                                                index,
-                                                category
-                                              )
-                                            }
-                                          />
-                                        </td>
-                                      ))}
+                                    .slice(4, -1)
+                                    .map((category, colIndex) => (
+                                      <td key={colIndex}>
+                                        <input
+                                          type="checkbox"
+                                          name={`${category}_${index}`}
+                                          checked={plan[category]}
+                                          onChange={() =>
+                                            handlePlanCheckboxChange(
+                                              index,
+                                              category
+                                            )
+                                          }
+                                        />
+                                      </td>
+                                    ))}
                                 <td>
                                   <div class="icon billings">
                                     <span class="tooltip">Add Bill</span>
@@ -5338,7 +5329,7 @@ const OverlayRecord = (mobileNumber) => {
                                         <input
                                           type="text"
                                           value={1}
-                                          // onChange={(e) => handleInOutInputChange(index, "days", 1)}
+                                        // onChange={(e) => handleInOutInputChange(index, "days", 1)}
                                         />
                                       )}
                                     {nextRowPatientType === "inpatient" &&
@@ -6490,8 +6481,10 @@ const OverlayRecord = (mobileNumber) => {
                           )}
                         </div>
                       </div>
+                      <div className='pd-overlay-close-button'>
+                        <button onClick={closeBill}>Discard</button>
 
-                      <button onClick={closeBill}>Discard</button>
+                      </div>
                     </div>
                   </div>
                 </div>

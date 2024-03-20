@@ -513,9 +513,9 @@ body {
 .home-patient-cards .circle2 img,
 .home-patient-cards .circle3 img,
 .home-patient-cards .circle4 img {
-  margin-top: 7vh;
-  width: 6vw;
-  height: 6vw;
+  margin-top: 6vh;
+  width: 5vw;
+  height: 5vw;
   transform: translateZ(0);
 }
 

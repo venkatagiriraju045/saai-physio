@@ -147,9 +147,6 @@ const PatientDetails = () => {
         {/* <h1>Patient Details</h1> */}
 
         <div class="header-container">
-        <div class="all-patients-heading">
-            <h2>All Patient Records</h2>
-          </div>
           <div class="filter">
             <label>Filter by Mobile Number:</label>
             <input
@@ -167,7 +164,7 @@ const PatientDetails = () => {
             <table className="all-patients-record-table">
               <thead>
                 <tr>
-                  <th>Serial Number</th>
+                  <th>Patient ID</th>
                   <th>Mobile Number</th>
                   <th>Name</th>
                   <th>View Details</th>
@@ -176,7 +173,7 @@ const PatientDetails = () => {
               <tbody>
                 {filteredData.map((record, index) => (
                   <tr key={index}>
-                    <td>{index + 1}</td>
+                    <td>{record.pid}</td>
                     <td>{record?.mobileNo}</td>
                     <td>{record?.name}</td>
                     <td>
@@ -196,7 +193,6 @@ const PatientDetails = () => {
         {viewPatientDetails && (
           <div className="overlay">
             <div className="overlay-content">
-              <h2>Patient Details</h2>
               {selectedPatientDetails && (
                 <div>
                   {console.log(
@@ -208,10 +204,9 @@ const PatientDetails = () => {
                   />
                 </div>
               )}
-              <div className="overlay-close-button">
-                <button onClick={() => setViewPatientDetails(false)}>
-                  Close
-                </button>
+              <div className="pd-overlay-close-button">
+                <img src="./uploads/close.png" onClick={() => setViewPatientDetails(false)}/>
+                
               </div>
             </div>
           </div>

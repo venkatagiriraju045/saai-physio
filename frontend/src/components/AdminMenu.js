@@ -13,6 +13,11 @@ import Treatment from "./Treatment";
 //import './CSS/landpage.css';
 import "./CSS/landingpage.css";
 
+import addfile from "./content icons/add-file.png";
+import update from "./content icons/update.png";
+import inbill from "./content icons/transaction.png";
+import outbill from "./content icons/medical.png";
+import search from "./content icons/search.png";
 import createrecord from "./landing-page-imgs/createrecord.jpg";
 import updaterecord from "./landing-page-imgs/updaterecord.jpg";
 import inpatientbill from "./landing-page-imgs/inpatientbill.jpg";
@@ -36,9 +41,8 @@ const AdminMenu = () => {
   const [showConfirmationPrompt, setShowConfirmationPrompt] = useState(false);
 
   const [deviceType, setDeviceType] = useState(null);
-  const overlayClass = `loading-overlay${
-    loading || isLoading ? " visible" : ""
-  }`;
+  const overlayClass = `loading-overlay${loading || isLoading ? " visible" : ""
+    }`;
   const [mobile, setMobile] = useState(false);
 
   /* useEffect(() => {
@@ -534,7 +538,7 @@ const AdminMenu = () => {
         ) : (
           isHomeButtonClicked && (
             <div class="adminmenu-contents-root">
-              <section class="home">
+              {/* <section class="home">
                 <span class="curve"></span>
                 <img
                   decoding="async"
@@ -639,7 +643,155 @@ const AdminMenu = () => {
                   <div class="nav-btn"></div>
                   <div class="nav-btn"></div>
                 </div>
-              </section>
+              </section> */
+              
+              <div className="home-patient-cards">
+                <div className="our-specialities-heading">
+                  <span style={{ "--i": 1 }}>F</span>
+                  <span style={{ "--i": 2 }}>e</span>
+                  <span style={{ "--i": 3 }}>a</span>
+                  <span style={{ "--i": 4 }}>t</span>
+                  <span style={{ "--i": 5 }}>u</span>
+                  <span style={{ "--i": 6 }}>r</span>
+                  <span style={{ "--i": 7 }}>e</span>
+                  <span style={{ "--i": 8 }}>s</span>
+                  {/* <span style={{ "--i": 9 }}>i</span>
+                <span style={{ "--i": 10 }}>a</span>
+                <span style={{ "--i": 11 }}>l</span>
+                <span style={{ "--i": 12 }}>i</span>
+                <span style={{ "--i": 13 }}>t</span>
+                <span style={{ "--i": 14 }}>i</span>
+                <span style={{ "--i": 15 }}>e</span>
+                <span style={{ "--i": 16 }}>s</span> */}
+                </div>
+
+                <div className="home-patient-card1">
+                  <div className="home-patient-slide home-patient-slide1">
+                    <div className="home-patient-content">
+                      <div className="home-patient-icon">
+                        <div className="home-patient-card pain">
+                          <div className="home-patient-overlay"></div>
+                          <div className="circle1">
+                            {/* <img src="./content icons/stomachache.png" />*/}
+                            <img src={addfile} alt="Image" />
+                          </div>
+                          <p>Create Patient Record</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="home-patient-slide home-patient-slide2">
+                    <div className="home-patient-content">
+                      <p>Click below to create the new patient record</p>
+                      <button id="button1" onClick={handleBasicRecordClick}>
+                        <span>Continue</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="home-patient-card1">
+                  <div className="home-patient-slide home-patient-slide1">
+                    <div className="home-patient-content">
+                      <div className="home-patient-icon">
+                        <div className="home-patient-card orthopedic">
+                          <div className="home-patient-overlay"></div>
+                          <div className="circle2">
+                            {/*} <img src="./home-patient-content icons/Orthopedic 2.png" />*/}
+                            <img src={update} alt="Image" />
+                          </div>
+                          <p>Update Patient Record</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="home-patient-slide home-patient-slide2">
+                    <div className="home-patient-content">
+                      <p>Click below to update the patient record with the existing patient details</p>
+                      <button id="button2" onClick={handleUpdateRecordClick} >
+                        <span>Continue</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="home-patient-card1">
+                  <div className="home-patient-slide home-patient-slide1">
+                    <div className="home-patient-content">
+                      <div className="home-patient-icon">
+                        <div className="home-patient-card neurological">
+                          <div className="home-patient-overlay"></div>
+                          <div className="circle3">
+                            {/*<img src="./home-patient-content home-patient-icons/neuron.png" />*/}
+                            <img src={inbill} alt="Image" />
+                          </div>
+                          <p>In Patient Billing</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="home-patient-slide home-patient-slide2">
+                    <div className="home-patient-content">
+                      <p>Click below to create the bill for an In Patients</p>
+                      <button id="button3"  onClick={handleInPatientBillClick}>
+                        <span>Continue</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="home-patient-card1">
+                  <div className="home-patient-slide home-patient-slide1">
+                    <div className="home-patient-content">
+                      <div className="home-patient-icon">
+                        <div className="home-patient-card cardio">
+                          <div className="home-patient-overlay"></div>
+                          <div className="circle4">
+                            {/*<img src="./home-patient-content home-patient-icons/Cardio.png" />*/}
+                            <img src={outbill} alt="Image" />
+                          </div>
+                          <p>Out Patient Billing</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="home-patient-slide home-patient-slide2">
+                    <div className="home-patient-content">
+                      <p>Click below to create the bill for an Out Patients</p>
+                      <button id="button4" onClick={handleOutPatientBillClick} >
+                        <span>Continue</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="home-patient-card1">
+                  <div className="home-patient-slide home-patient-slide1">
+                    <div className="home-patient-content">
+                      <div className="home-patient-icon">
+                        <div className="home-patient-card respiratory">
+                          <div className="home-patient-overlay"></div>
+                          <div className="circle1">
+                            {/*<img src="./home-patient-content home-patient-icons/Respiratory.png" />*/}
+                            <img src={search} alt="Image" />
+                          </div>
+                          <p>All Patients Record</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="home-patient-slide home-patient-slide2">
+                    <div className="home-patient-content">
+                      <p>Click below to find all the patients record</p>
+                      <button id="button5" onClick={handlePatientDetails} >
+                        <span>Continue</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>}
+              
             </div>
           )
         )}

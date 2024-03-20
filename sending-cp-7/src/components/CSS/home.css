@@ -1,0 +1,1405 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background-color: #fff;
+}
+
+.home-root-element nav {
+  position: relative;
+  margin-top: 6vh;
+  transform: translateY(-50%);
+}
+
+.home-root-element nav a {
+  position: relative;
+  width: 33.333%;
+
+  color: #949494;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  transition: 0.2s ease color;
+}
+
+.home-root-element nav a:before,
+.home-root-element nav a:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 0.2s ease transform;
+}
+
+.home-root-element nav a:before {
+  top: 0;
+  left: 10px;
+  width: 6px;
+  height: 6px;
+}
+
+.home-root-element nav a:after {
+  top: 5px;
+  left: 18px;
+  width: 4px;
+  height: 4px;
+}
+
+.home-root-element nav a:nth-child(1):before {
+  background-color: yellow;
+}
+
+.home-root-element nav a:nth-child(1):after {
+  background-color: red;
+}
+
+.home-root-element nav a:nth-child(2):before {
+  background-color: #00e2ff;
+}
+
+.home-root-element nav a:nth-child(2):after {
+  background-color: #89ff00;
+}
+
+.home-root-element nav a:nth-child(3):before {
+  background-color: purple;
+}
+
+.home-root-element nav a:nth-child(3):after {
+  background-color: palevioletred;
+}
+
+.home-root-element nav a:nth-child(4):before {
+  background-color: #00308f;
+}
+
+.home-root-element nav a:nth-child(4):after {
+  background-color: #7cb9e8;
+}
+.home-root-element nav a:nth-child(5):before {
+  background-color: red;
+}
+
+.home-root-element nav a:nth-child(5):after {
+  background-color: yellow;
+}
+
+.home-root-element #indicator {
+  position: absolute;
+  left: 5%;
+  bottom: 0;
+  width: 30px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 5px;
+  transition: 0.2s ease left;
+}
+
+.home-root-element nav a:hover {
+  color: black;
+}
+
+.home-root-element nav a:hover:before,
+.home-root-element nav a:hover:after {
+  transform: scale(1);
+}
+
+.home-root-element nav a:nth-child(1):hover ~ #indicator {
+  background: linear-gradient(130deg, yellow, red);
+}
+
+.home-root-element nav a:nth-child(2):hover ~ #indicator {
+  left: 27%;
+  background: linear-gradient(130deg, #00e2ff, #89ff00);
+}
+
+.home-root-element nav a:nth-child(3):hover ~ #indicator {
+  left: 51%;
+  background: linear-gradient(130deg, purple, palevioletred);
+}
+
+.home-root-element nav a:nth-child(4):hover ~ #indicator {
+  left: 72%;
+  background: linear-gradient(130deg, #00308f, #7cb9e8);
+}
+.home-root-element nav a:nth-child(5):hover ~ #indicator {
+  left: 90%;
+  background: linear-gradient(130deg, red, yellow);
+}
+
+.home-root-element .lp-container {
+  min-height: 100vh;
+  display: flex;
+}
+/* .image-container-lp img {
+  filter: drop-shadow(5px 5px 5px #555);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 100%;
+  width: 100%;
+} */
+.home-root-element .left-container-lp {
+  min-height: 100vh;
+  min-width: 60vw;
+  width: 0%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+.home-root-element .nav-back {
+  display: flex;
+  width: 98vw;
+  justify-content: flex-end;
+  padding-right: 5vw;
+}
+
+
+.home-root-element .main-heading1 h1 {
+  width: 90%;
+
+  font-size: 80px;
+  position: absolute;
+  margin-left: 12vh;
+  margin-top: 8vh;
+}
+.home-root-element .main-heading2 h1 {
+  width: 90%;
+
+  font-size: 80px;
+  position: absolute;
+  margin-left: 12vh;
+  margin-top: 20vh;
+}
+.home-root-element .main-heading3 h1 {
+  width: 90%;
+  font-size: 80px;
+  position: absolute;
+  margin-left: 12vh;
+  margin-top: 32vh;
+}
+
+.home-root-element .sub-main-heading h2 {
+  line-height: 1.5;
+  font-size: 32px;
+  color: #b3b3b3;
+  position: relative;
+  margin-left: 12vh;
+  margin-top: 48vh;
+}
+
+.home-root-element .main-heading1 h1:nth-child(1),
+.home-root-element .main-heading2 h1:nth-child(1),
+.home-root-element .main-heading3 h1:nth-child(1) {
+  color: #ade8f4;
+}
+
+.home-root-element .main-heading1 h1:nth-child(2),
+.home-root-element .main-heading2 h1:nth-child(2),
+.home-root-element .main-heading3 h1:nth-child(2) {
+  color: #ade8f4;
+  opacity: 0.5;
+  animation: animate-heading 3s ease-in-out infinite;
+}
+
+.home-root-element .main-heading1 h1:nth-child(3),
+.home-root-element .main-heading2 h1:nth-child(3),
+.home-root-element .main-heading3 h1:nth-child(3) {
+  color: #90e0ef;
+  animation: animate-heading 6s ease-in-out infinite;
+}
+
+.main-heading1 h1:nth-child(4),
+.main-heading2 h1:nth-child(4),
+.main-heading3 h1:nth-child(4) {
+  color: #48cae4;
+  animation: animate-heading 4s ease-in-out infinite;
+}
+
+@keyframes animate-heading {
+  0%,
+  100% {
+    clip-path: polygon(
+      0% 46%,
+      16% 35%,
+      34% 52%,
+      50% 41%,
+      68% 35%,
+      85% 61%,
+      100% 23%,
+      100% 100%,
+      0% 100%
+    );
+  }
+
+  50% {
+    clip-path: polygon(
+      0% 66%,
+      14% 73%,
+      34% 76%,
+      50% 71%,
+      64% 62%,
+      79% 55%,
+      100% 51%,
+      100% 100%,
+      0% 100%
+    );
+  }
+}
+
+.home-patient-cards {
+  min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3%;
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-icon {
+  border-radius: 10px;
+  position: absolute;
+
+  top: 12vh;
+
+  left: 0;
+
+  width: 250px;
+
+  height: 105px;
+
+  background: #fff;
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-slide {
+  width: 250px;
+
+  height: 287px;
+
+  transition: 0.5s;
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-slide.home-patient-slide1 {
+  border-radius: 10px 10px 0 0;
+  position: relative;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 1;
+
+  transition: 0.7s;
+
+  transform: translateY(100px);
+}
+
+.home-patient-cards .home-patient-card1:hover .home-patient-slide.home-patient-slide1 {
+  transform: translateY(0px);
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-slide.home-patient-slide2 {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  border-radius: 0 0 10px 10px;
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  box-sizing: border-box;
+
+  transition: 0.8s;
+
+  transform: translateY(-100px);
+
+  /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); */
+}
+
+.home-patient-cards .home-patient-card1:hover {
+  border-radius: 0 0 10px 10px;
+}
+
+.home-patient-cards .home-patient-card1:hover .home-patient-slide.home-patient-slide2 {
+  transform: translateY(0);
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-slide.home-patient-slide2::after {
+  content: "";
+
+  position: absolute;
+
+  width: 30px;
+
+  height: 4px;
+
+  bottom: 15px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  background: #2c73df;
+}
+
+.home-patient-cards .home-patient-card1 .home-patient-slide.home-patient-slide2 .home-patient-content p {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-top: 16vh;
+  margin-bottom: 2vh;
+  width: 95%;
+  /* justify-content: center; */
+  color: #414141;
+}
+
+ .home-patient-cards .pain {
+  --bg-color: #00c261c3;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+ .home-patient-cards .orthopedic {
+  --bg-color: #00bbffa1;
+  --bg-color-light: #e2fced;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(184, 249, 211, 0.48);
+}
+
+ .home-patient-cards .neurological {
+  --bg-color: #cdfadb;
+  --bg-color-light: #f0e7ff;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(206, 178, 252, 0.48);
+}
+
+ .home-patient-cards .cardio {
+  --bg-color: #ffd861;
+  --bg-color-light: #f1f7ff;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(220, 233, 255, 0.48);
+}
+
+ .home-patient-cards .respiratory {
+  --bg-color: #b3cfff;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+ .home-patient-cards .sports {
+  --bg-color: #ff8f8f;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+ .home-patient-cards .geriatric {
+  --bg-color: #9ade7b;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+ .home-patient-cards .pediatric {
+  --bg-color: #ffcf96;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+ .home-patient-cards .fitness {
+  --bg-color: #7fc7d9;
+  --bg-color-light: #ffeeba;
+  --text-color-hover: #4c5656;
+  --box-shadow-color: rgba(255, 215, 97, 0.48);
+}
+
+.home-patient-cards .home-patient-card {
+  height: 312px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-out;
+  text-decoration: none;
+}
+
+
+
+.home-patient-cards .home-patient-card:hover .home-patient-overlay{
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+
+  transform: scale(4) translateZ(0);
+
+  transition:transform 0.3s ease-out;
+
+}
+.home-patient-cards .home-patient-card .home-patient-overlay {
+  opacity: 1;
+
+  transform: scale(1) translateZ(0);
+
+}
+.home-patient-cards .home-patient-card:hover .circle {
+  border-color: var(--bg-color-light);
+  background: var(--bg-color);
+}
+
+.home-patient-cards .home-patient-card:hover .circle:after {
+  background: var(--bg-color-light);
+}
+
+.home-patient-cards .home-patient-card:hover p {
+  color: var(--text-color-hover);
+}
+
+.home-patient-cards .home-patient-card:active {
+  transform: scale(1) translateZ(0);
+  /* box-shadow: 0 15px 24px rgba(0, 0, 0, 0.11),
+    0 15px 24px var(--box-shadow-color); */
+}
+
+.home-patient-cards .home-patient-card p {
+  width: 90%;
+  text-align: center;
+  font-size: 19px;
+  color: #4c5656;
+  margin-top: 30px;
+  z-index: 1000;
+  transition: color 0.3s ease-out;
+}
+
+.home-patient-cards .circle {
+  width: 131px;
+  height: 131px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-color);
+  display: flex;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease-out;
+}
+
+.home-patient-cards .circle:after {
+  content: "";
+  width: 118px;
+  height: 118px;
+  display: block;
+  position: absolute;
+  background: var(--bg-color);
+  border-radius: 50%;
+  top: 7px;
+  left: 7px;
+  transition: opacity 0.3s ease-out;
+}
+
+.home-patient-cards .circle1 img,
+.home-patient-cards .circle2 img,
+.home-patient-cards .circle3 img,
+.home-patient-cards .circle4 img {
+  margin-top: 6vh;
+  width: 4vw;
+  height: 4vw;
+  transform: translateZ(0);
+}
+
+.home-patient-cards .home-patient-overlay {
+  width: 90px;
+  position: absolute;
+  height: 90px;
+  border-radius: 34%;
+  background: var(--bg-color);
+  top: 14vh;
+  z-index: 0;
+}
+
+.home-patient-cards .home-patient-slide.home-patient-slide2 .home-patient-content button {
+  box-shadow: 0px 0px 5px white;
+  border-radius: 4px;
+  background: linear-gradient(
+    60deg,
+    rgb(86, 102, 225) 0%,
+    rgba(0, 172, 193, 1) 100%
+  );
+  border: none;
+  color: #fff;
+  text-align: center;
+  font-size: 15px;
+  padding: 11px;
+  width: 120px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin-bottom: 4vh;
+}
+.home-patient-cards .home-patient-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+.home-patient-cards .home-patient-slide.home-patient-slide2 .home-patient-content button {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.home-patient-cards .home-patient-slide.home-patient-slide2 .home-patient-content button:after {
+  content: "»";
+  position: absolute;
+  opacity: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.home-patient-cards .home-patient-slide.home-patient-slide2 .home-patient-content button:hover {
+  padding-right: 24px;
+  padding-left: 8px;
+}
+
+.home-patient-cards .home-patient-slide.home-patient-slide2 .home-patient-content button:hover:after {
+  opacity: 1;
+  right: 10px;
+}
+
+/* .home-root-element .bg-bubble {
+  position: absolute;
+  min-height: 260%;
+  width: 100%;
+}
+
+.home-root-element .bg-bubble div {
+  height: 60px;
+  width: 60px;
+  border: 2px solid rgba(0, 172, 193, 1);
+  border-radius: 50px;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  animation: 4s linear infinite;
+}
+.home-root-element div .dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 20%;
+  right: 20%;
+}
+.home-root-element .bg-bubble div:nth-child(1) {
+  top: 20%;
+  left: 20%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(2) {
+  top: 60%;
+  left: 80%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(3) {
+  top: 40%;
+  left: 40%;
+  animation: animate-bubble 3s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(4) {
+  top: 66%;
+  left: 30%;
+  animation: animate-bubble 7s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(5) {
+  top: 90%;
+  left: 10%;
+  animation: animate-bubble 9s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(6) {
+  top: 30%;
+  left: 60%;
+  animation: animate-bubble 5s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(7) {
+  top: 70%;
+  left: 20%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(8) {
+  top: 75%;
+  left: 60%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(9) {
+  top: 50%;
+  left: 50%;
+  animation: animate-bubble 6s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(10) {
+  top: 45%;
+  left: 20%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(11) {
+  top: 10%;
+  left: 90%;
+  animation: animate-bubble 9s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(12) {
+  top: 20%;
+  left: 70%;
+  animation: animate-bubble 7s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(13) {
+  top: 20%;
+  left: 20%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(14) {
+  top: 60%;
+  left: 5%;
+  animation: animate-bubble 6s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(15) {
+  top: 90%;
+  left: 80%;
+  animation: animate-bubble 9s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(16) {
+  top: 15%;
+  left: 40%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(17) {
+  top: 55%;
+  left: 70%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(18) {
+  top: 35%;
+  left: 25%;
+  animation: animate-bubble 3s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(19) {
+  top: 60%;
+  left: 45%;
+  animation: animate-bubble 7s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(20) {
+  top: 80%;
+  left: 15%;
+  animation: animate-bubble 9s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(21) {
+  top: 25%;
+  left: 50%;
+  animation: animate-bubble 5s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(22) {
+  top: 65%;
+  left: 30%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(23) {
+  top: 70%;
+  left: 75%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(24) {
+  top: 45%;
+  left: 55%;
+  animation: animate-bubble 6s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(25) {
+  top: 40%;
+  left: 25%;
+  animation: animate-bubble 10s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(26) {
+  top: 5%;
+  left: 80%;
+  animation: animate-bubble 9s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(27) {
+  top: 15%;
+  left: 60%;
+  animation: animate-bubble 7s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(28) {
+  top: 15%;
+  left: 40%;
+  animation: animate-bubble 8s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(29) {
+  top: 55%;
+  left: 5%;
+  animation: animate-bubble 6s linear infinite;
+}
+.home-root-element .bg-bubble div:nth-child(30) {
+  top: 80%;
+  left: 70%;
+  animation: animate-bubble 9s linear infinite;
+}
+
+@keyframes animate-bubble {
+  0% {
+    transform: scale(0) translateY(0) rotate(70deg);
+  }
+  100% {
+    transform: scale(1.3) translateY(-100px) rotate(360deg);
+  }
+} */
+
+.home-root-element .patient-cards-heading {
+  position: relative;
+  margin-left: 10vw;
+}
+
+.home-root-element .patient-cards-heading span {
+  position: relative;
+  display: inline-block;
+  font-size: 140px;
+  color: #fff;
+  animation: flip 4s infinite;
+  animation-delay: calc(0.2s * var(--i));
+}
+
+@keyframes flip {
+  0%,
+  80% {
+    transform: rotateY(360deg);
+  }
+}
+
+.home-root-element .our-specialities-heading {
+  letter-spacing: 10px;
+  position: absolute;
+  -webkit-box-reflect: below -20px linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+  font-size: 60px;
+  font-weight: 600;
+}
+.home-root-element .our-specialities-heading span {
+  position: relative;
+  display: inline-block;
+  color: #000;
+  animation: our-specialities-animate 1s infinite;
+  animation-delay: calc(0.1s * var(--i));
+}
+@keyframes our-specialities-animate {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-20px);
+  }
+}
+
+.home-root-element .specialities-desc {
+  margin-top: 5vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 900vh; /* Adjust this if needed */
+}
+
+.home-root-element .image-container1,
+.home-root-element .image-container2,
+.home-root-element .image-container3,
+.home-root-element .image-container4,
+.home-root-element .image-container5,
+.home-root-element .image-container6,
+.home-root-element .image-container7,
+.home-root-element .image-container8,
+.home-root-element .image-container9 {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 730px;
+  width: 90vw;
+  margin-bottom: 10vh;
+}
+
+.home-root-element .image-container1 img,
+.home-root-element .image-container2 img,
+.home-root-element .image-container3 img,
+.home-root-element .image-container4 img,
+.home-root-element .image-container5 img,
+.home-root-element .image-container6 img,
+.home-root-element .image-container7 img,
+.home-root-element .image-container8 img,
+.home-root-element .image-container9 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-root-element .image-container1::before,
+.home-root-element .image-container2::before,
+.home-root-element .image-container3::before,
+.home-root-element .image-container4::before,
+.home-root-element .image-container5::before,
+.home-root-element .image-container6::before,
+.home-root-element .image-container7::before,
+.home-root-element .image-container8::before,
+.home-root-element .image-container9::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: circle(50% at 16% 26%);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 153, 200, 0.532); /* Blue color with 0.5 opacity */
+  border-radius: 10px; /* Apply the same border-radius as the image container */
+}
+
+.home-root-element .image-container1::before {
+  clip-path: circle(50% at 16% 26%);
+}
+.home-root-element .image-container2::before {
+  clip-path: polygon(37% 0, 100% 0, 100% 100%, 53% 100%);
+}
+.home-root-element .image-container3::before {
+  clip-path: polygon(0% 0%, 47% 0, 54% 49%, 48% 100%, 0% 100%);
+}
+.home-root-element .image-container4::before {
+  clip-path: polygon(100% 0, 100% 50%, 100% 100%, 42% 100%, 54% 50%, 42% 0);
+}
+.home-root-element .image-container5::before {
+  clip-path: polygon(
+    0 0,
+    41% 0,
+    51% 26%,
+    48% 62%,
+    55% 100%,
+    0 100%,
+    0% 70%,
+    0% 30%
+  );
+}
+.home-root-element .image-container6::before {
+  clip-path: polygon(
+    46% 0,
+    100% 0%,
+    100% 43%,
+    100% 74%,
+    100% 100%,
+    55% 84%,
+    46% 45%
+  );
+}
+.home-root-element .image-container7::before {
+  clip-path: polygon(
+    0 0,
+    22% 0,
+    53% 0,
+    48% 25%,
+    52% 50%,
+    48% 74%,
+    53% 100%,
+    36% 99%,
+    25% 100%,
+    12% 100%,
+    0 100%,
+    0 51%
+  );
+}
+.home-root-element .image-container8::before {
+  clip-path: polygon(
+    56% 0,
+    100% 0,
+    100% 35%,
+    100% 70%,
+    100% 100%,
+    56% 100%,
+    49% 82%,
+    43% 61%,
+    42% 38%,
+    48% 14%
+  );
+}
+.home-root-element .image-container9::before {
+  clip-path: circle(50% at 16% 26%);
+}
+.home-root-element .image-container1 .text-container {
+  width: 40%;
+  position: relative;
+  bottom: 50vh;
+  left: 23vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container2 .text-container {
+  width: 43%;
+  position: relative;
+  bottom: 48vh;
+  left: 67vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container3 .text-container {
+  width: 40%;
+  position: relative;
+  bottom: 48vh;
+  left: 23vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container4 .text-container {
+  width: 43%;
+  position: relative;
+  bottom: 48vh;
+  left: 69vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container5 .text-container {
+  width: 40%;
+  position: relative;
+  bottom: 48vh;
+  left: 23vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container6 .text-container {
+  width: 43%;
+  position: relative;
+  bottom: 51vh;
+  left: 69vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container7 .text-container {
+  width: 40%;
+  position: relative;
+  bottom: 48vh;
+  left: 23vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container8 .text-container {
+  width: 43%;
+  position: relative;
+  bottom: 48vh;
+  left: 67vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in; /* Use opacity for fade-in effect */
+  opacity: 0;
+}
+
+.home-root-element .image-container9 .text-container {
+  width: 40%;
+  position: relative;
+  bottom: 46vh;
+  left: 21vw;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 2;
+  transition: opacity 0.8s ease-in;
+  opacity: 0;
+}
+
+.home-root-element .text-container h2 {
+  line-height: 1.2;
+  font-size: 80px;
+  margin-bottom: 10px;
+}
+
+.home-root-element .text-container p {
+  line-height: 1.6;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.home-root-element .footer-container {
+  max-width: 1170px;
+  margin: auto;
+}
+.home-root-element .footer-row {
+  gap: 5%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.home-root-element .footer-col ul {
+  margin-bottom: 4vh;
+  list-style: none;
+  padding-left: 0;
+}
+.home-root-element .footer {
+  background-color: #24262b;
+  padding: 70px 0;
+}
+.home-root-element .footer-col {
+  color: #bbbbbb;
+  width: 30%;
+  padding: 0px 15px;
+}
+
+.home-root-element .footer-col ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.home-root-element .footer-col ul li {
+  position: relative;
+}
+
+.home-root-element .footer-col ul li img {
+  width: 20px; /* Set the width of your icon */
+  height: 20px; /* Set the height of your icon */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.home-root-element .footer-col ul li p {
+  margin-left: 4vh;
+}
+.home-root-element .footer-col h4 {
+  font-size: 18px;
+  color: #ffffff;
+  text-transform: capitalize;
+  margin-bottom: 35px;
+  font-weight: 500;
+  position: relative;
+}
+.home-root-element .footer-col h4::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  background-color: #00e1ff;
+  height: 2px;
+  box-sizing: border-box;
+  width: 50px;
+}
+.home-root-element .footer-col ul li:not(:last-child) {
+  margin-bottom: 10px;
+}
+.home-root-element .footer-col ul li a {
+  font-size: 16px;
+  text-transform: capitalize;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 300;
+  color: #bbbbbb;
+  display: block;
+  transition: all 0.3s ease;
+}
+.home-root-element .footer-col ul li a:hover {
+  color: #ffffff;
+  padding-left: 8px;
+}
+.home-root-element .footer-col .social-links a {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  margin: 0 10px 10px 0;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+
+  transition: all 0.5s ease;
+}
+
+.home-root-element .footer-col .social-links a img {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+}
+
+.home-root-element .table td:first-child {
+  font-weight: 600;
+  color: #bbbbbb;
+  border: none;
+  border-collapse: collapse;
+}
+
+.home-root-element .table td:last-child {
+  text-align: right;
+  border: none;
+  border-collapse: collapse;
+}
+.home-root-element .table td {
+  color: #bbbbbb;
+  border: none;
+  border-collapse: collapse;
+}
+
+.home-root-element .table td i {
+  position: absolute;
+  left: 0px;
+  top: 6px;
+  border: none;
+  border-collapse: collapse;
+}
+
+.home-root-element .table td {
+  position: relative;
+  padding: 6px 12px;
+  border: none;
+  font-size: calc(0.5rem + 0.5vw);
+
+  border-collapse: collapse;
+}
+
+
+
+
+
+/*responsive*/
+@media (max-width: 767px) {
+  .footer-col {
+    width: 50%;
+    margin-bottom: 30px;
+  }
+}
+@media (max-width: 574px) {
+  .footer-col {
+    width: 100%;
+  }
+}
+
+.home-root-element .about-us {
+  display: flex;
+  min-height: 95vh;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home-root-element .about-p {
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  width: 50%;
+  margin: 65px auto;
+}
+
+.home-root-element .about-p p {
+  font-size: 20px;
+  line-height: 1.6;
+  margin-top: 12vh;
+  color: #666;
+}
+
+.home-root-element .about-us button {
+  top: 4%;
+  border-radius: 8px;
+  padding: 0.8em 1.8em;
+  border: 2px solid #17c3b2;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 16px;
+  transition: 0.3s;
+  z-index: 1;
+  font-family: inherit;
+  color: #17c3b2;
+}
+
+.home-root-element .about-us button::before {
+  content: "";
+  width: 0;
+  height: 300%;
+  position: absolute;
+  top: 80%;
+  left: 55%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: #17c3b2;
+  transition: 0.5s ease;
+  display: block;
+  z-index: -1;
+}
+
+.home-root-element .about-us button:hover::before {
+  width: 105%;
+}
+
+.home-root-element .about-us button:hover {
+  cursor: pointer;
+  color: #111;
+}
+
+.home-root-element .about-image img {
+  margin-top: 21vh;
+  margin-right: 9vw;
+  display: flex;
+  width: 350px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.home-root-element .custom-map {
+  width: 100%;
+  height: 300px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+}
+
+.home-root-element .image-container-lp {
+  position: relative;
+  overflow: hidden;
+  width: 100%; /* Adjust width as needed */
+  height: 80vh; /* Adjust height as needed */
+  padding: 25px; /* Center the container */
+}
+
+.home-root-element .image-container-lp img {
+  max-width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-in-out; /* Adding a transition effect for smoother animations */
+}
+
+.home-root-element .image-container-lp:hover img {
+  transform: scale(1.1); /* Scale up the image on hover */
+}
+
+.home-root-element .image-container-lp img {
+  filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5)); /* Adding a shadow effect */
+}
+
+.home-root-element table{
+  border: transparent;
+  border-bottom: 2px solid #00cccc;
+
+}
+
+.main-back-text {
+  position: relative;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: 0.1s;
+}
+
+.home-root-element td:hover{
+  background-color: transparent;
+}
+.home-root-element tr:hover{
+  background-color: transparent;
+}
+
+.main-back-button {
+  margin-left: 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 25px;
+  height: 25px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition-duration: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: rgb(184, 244, 255);
+}
+.main-back-button:hover {
+  background-color:rgb(140, 238, 255);
+}
+.main-back-button .main-back-text {
+  background-color: transparent;
+}
+
+/* plus back */
+.main-back {
+  width: 100%;
+  transition-duration: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-back img {
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+}
+
+.main-back-button:hover {
+  width: 8vw;
+  max-width: 120px;
+  border-radius: 40px;
+  transition-duration: 0.3s;
+}
+
+.main-back-button:hover .main-back {
+  width: 16%;
+  transition-duration: 0.1s;
+}
+/* hover effect button's text */
+.main-back-button:hover .main-back-text {
+  opacity: 1;
+  width: 90%;
+  transition-duration: 0.3s;
+  padding-right: -16px;
+}
+/* button click effect*/
+.main-back-button:active {
+  transform: translate(2px, 2px);
+}
+
+.home-root-element .image-container1.active,
+.home-root-element .image-container2.active,
+.home-root-element .image-container3.active,
+.home-root-element .image-container4.active,
+.home-root-element .image-container5.active,
+.home-root-element .image-container6.active,
+.home-root-element .image-container7.active,
+.home-root-element .image-container8.active,
+.home-root-element .image-container9.active {
+  /* Apply styles when the container is active */
+  border: 2px solid #ff0000; /* Red border, adjust color as needed */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Example box shadow */
+  transform: scale(1.05); /* Example scale transformation */
+  /* Add any other styles you want to apply to active containers */
+}

@@ -56,15 +56,7 @@ align-items: center;
     overflow: hidden; /* Hide overflow to prevent page scrolling */
 }
 
-.overlay-content {
-    background-color: white; /* White background for the content */
-    padding: 20px;
-    border-radius: 8px;
-    position: relative;
-    max-width: 90%; /* Adjust max-width as needed */
-    max-height: calc(100% - 40px); /* Adjust max-height to fit the viewport */
-    overflow-y: auto; /* Enable vertical scrolling for the content */
-}
+
 .no-rec-found{
     margin-left: 5vw;
 }

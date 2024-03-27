@@ -21,6 +21,7 @@ const UpdateRecord = () => {
   const [page6, setPage6] = useState(false);
   const [page7, setPage7] = useState(false);
   const [page8, setPage8] = useState(false);
+  const [createRecPressed, setCreateRecPressed] = useState(true);
   const [addRowPressed, setAddRowPressed] = useState(false);
   const [addInvestRowPressed, setAddInvestRowPressed] = useState(false);
   const [selectedRowTotVal, setSelectedRowTotVal] = useState("");
@@ -28,6 +29,12 @@ const UpdateRecord = () => {
   const [showMobNotFillErrorToast, setShowMobNotFillErrorToast] =
     useState(false);
   const [showInvalidMobErrorToast, setShowInvalidMobErrorToast] =
+    useState(false);
+  const [showNetworkErrorToast, setShowNetworkErrorToast] =
+    useState(false);
+  const [showServerNetworkErrorToast, setShowServerNetworkErrorToast] =
+    useState(false);
+  const [showUnexpectedErrorToast, setShowUnexpectedErrorToast] =
     useState(false);
 
   let foundPatientBasicRecord;
@@ -108,9 +115,8 @@ const UpdateRecord = () => {
     }
   }, []);
 
-  const overlayClass = `loading-overlay${
-    loading || isLoading ? " visible" : ""
-  }`;
+  const overlayClass = `loading-overlay${loading || isLoading ? " visible" : ""
+    }`;
   const [patient, setPatient] = useState({
     mobileNo: "",
     painRegion: {
@@ -558,13 +564,22 @@ const UpdateRecord = () => {
   const createPatientRecord = async () => {
     const dateAndTime = new Date().toLocaleString();
 
+    if (!navigator.onLine) {
+      setShowNetworkErrorToast(true);
+      setTimeout(() => {
+        setShowNetworkErrorToast(false);
+      }, 5300);
+      return;
+    }
+
     try {
-      setLoading(true);
+
       setRecordButtonClicked(true);
 
       if (firstRow) {
         if (patient.planTreatment[0].patientType === "choose type") {
           alert("Please select a patient type from plan treament");
+          setLoading(false);
           return;
         } else if (
           !patient.outPatientBill[0].appointmentDate &&
@@ -572,6 +587,7 @@ const UpdateRecord = () => {
             !patient.inPatientBill[0].dischargeDate)
         ) {
           alert("Please select date from plan treament");
+          setLoading(false);
           return;
         }
       }
@@ -603,13 +619,13 @@ const UpdateRecord = () => {
 
         const inBillDetails =
           patient.planTreatment[0].patientType === "inpatient" &&
-          isBillDetailsInPatientFilled()
+            isBillDetailsInPatientFilled()
             ? patient.inPatientBill[0]
             : undefined;
 
         const outBillDetails =
           patient.planTreatment[0].patientType === "outpatient" &&
-          isBillDetailsOutPatientFilled()
+            isBillDetailsOutPatientFilled()
             ? patient.outPatientBill[0]
             : undefined;
 
@@ -626,31 +642,483 @@ const UpdateRecord = () => {
 
           if (!userConfirmation) {
             // User clicked "No", do not continue with the update
+            setLoading(false);
             return;
           }
         }
       }
 
-      await axios.post("https://saai-physio-api.vercel.app/api/create_record", {
+      setLoading(true);
+
+      const response = await axios.post("https://saai-physio-api.vercel.app/api/create_record", {
         patient: {
           ...patient,
         },
       });
 
-      setShowToast(true);
+      const { message, inPatientBill } = response.data;
+      if (response.status === 200) {
+        setShowMobNotFillErrorToast(false);
+        setShowInvalidMobErrorToast(false);
+        setCreateRecPressed(false);
+        setPage1(true);
+        setMobileNo("");
+        setPatient({
+          mobileNo: "",
+          painRegion: {
+            Neck: false,
+            Wrist: false,
+            LowerBack: false,
+            Ankle: false,
+            Shoulder: false,
+            Fingers: false,
+            Hip: false,
+            Toes: false,
+            Elbow: false,
+            UpperBack: false,
+            Knee: false,
+          },
+          postMedicalHistory: {
+            dm: false,
+            htn: false,
+            cad: false,
+            cvd: false,
+            asthma: false,
+            smoking: false,
+            alcohol: false,
+            surgicalHistory: false,
+          },
+          painAssessment: {
+            beforeTreatment: {
+              level: 0, // Initialize with a default value
+            },
+          },
+          aggFactor: "", // Add other properties as needed
+          relFactor: "",
+          duration: "",
+          onset: "",
+          vitalSign: {
+            BP: "",
+            RR: "",
+            HR: "",
+            SPO2: "",
+            TEMP: "",
+          },
+          observation: {
+            onObservation: {
+              SkinColor: false,
+              Deformity: false,
+              Redness: false,
+              ShinySkin: false,
+              OpenWounds: false,
+            },
+            onPalpation: {
+              Tenderness: false,
+              Warmth: false,
+              Swelling: false,
+              Odema: false,
+            },
+          },
+          rangeOfMotion: {
+            cervical: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            shoulder: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            elbow: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            wrist: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            hip: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            knee: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            ankle: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+          },
+          musclePower: {
+            cervicalC1C2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            cervicalC3SideFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            scapulaC4Elevation: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            shoulderC5Abduction: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            elbowC6FlexionWristExtension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            elbowC7ExtensionWristFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            thumbC8Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            hipL1L2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            kneeL3Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            ankleL4Dorsiflexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            bigToeL5Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            ankleS1PlantarFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            kneeS2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            // Add other properties as needed
+          },
+          coordination: {
+            fingerToNose: { normal: false, abnormal: false, remarks: "" },
+            fingerOpposition: { normal: false, abnormal: false, remarks: "" },
+            grip: { normal: false, abnormal: false, remarks: "" },
+            pronationSupination: { normal: false, abnormal: false, remarks: "" },
+            reboundTest: { normal: false, abnormal: false, remarks: "" },
+            tappingHand: { normal: false, abnormal: false, remarks: "" },
+            tappingFoot: { normal: false, abnormal: false, remarks: "" },
+            heelToKnee: { normal: false, abnormal: false, remarks: "" },
+            drawingCircleHand: { normal: false, abnormal: false, remarks: "" },
+            drawingCircleFoot: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          standingWalking: {
+            normalPosture: { normal: false, abnormal: false, remarks: "" },
+            tandonWalking: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          balance: {
+            sitting: { normal: false, abnormal: false, remarks: "" },
+            standing: { normal: false, abnormal: false, remarks: "" },
+            posture: { normal: false, abnormal: false, remarks: "" },
+            gait: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          handFunction: {
+            grip: { normal: false, abnormal: false, remarks: "" },
+            grasp: { normal: false, abnormal: false, remarks: "" },
+            release: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          prehension: {
+            tipToTip: { normal: false, abnormal: false, remarks: "" },
+            padToPad: { normal: false, abnormal: false, remarks: "" },
+            tipToPad: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          subjectiveAssessment: {
+            breathlessness: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            cough: { duration: "", severity: "", pattern: "", associatedFactors: "" },
+            sputumHemoptysis: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+              hemoptysisType: "",
+            },
+            wheeze: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            chestPain: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            // Add other properties as needed
+          },
+          rpe: {
+            point6: false,
+            point7: false,
+            point8: false,
+            point9: false,
+            point10: false,
+            point11: false,
+            point12: false,
+            point13: false,
+            point14: false,
+            point15: false,
+            point16: false,
+            point17: false,
+          },
+          brpe: {
+            rating6: false,
+            rating7: false,
+            rating8: false,
+            rating9: false,
+            rating10: false,
+            rating11: false,
+            rating12: false,
+            rating13: false,
+            rating14: false,
+            rating15: false,
+            rating16: false,
+            rating17: false,
+            rating18: false,
+            rating19: false,
+            rating20: false,
+          },
+          generalObservation: {
+            bodyBuilt: { normal: false, abnormal: false, remarks: "" },
+            handsAndFingertips: { normal: false, abnormal: false, remarks: "" },
+            eyes: { normal: false, abnormal: false, remarks: "" },
+            cyanosis: { normal: false, abnormal: false, remarks: "" },
+            jugularVenousPressure: { normal: false, abnormal: false, remarks: "" },
+          },
+          chestObservation: {
+            breathingPattern: { normal: false, abnormal: false, remarks: "" },
+            chestMovement: { normal: false, abnormal: false, remarks: "" },
+            palpationOfChest: { normal: false, abnormal: false, remarks: "" },
+            chestExpansion: { normal: false, abnormal: false, remarks: "" },
+            // ... other properties
+          },
+          barthelIndex: {
+            feeding: { score: 0, activity: "Feeding", maxScore: 10 },
+            bathing: { score: 0, activity: "Bathing", maxScore: 5 },
+            grooming: { score: 0, activity: "Grooming", maxScore: 5 },
+            dressing: { score: 0, activity: "Dressing", maxScore: 10 },
+            bowels: { score: 0, activity: "Bowels", maxScore: 10 },
+            bladder: { score: 0, activity: "Bladder", maxScore: 10 },
+            toiletUse: { score: 0, activity: "Toilet Use", maxScore: 10 },
+            transfer: {
+              score: 0,
+              activity: "Transfer (Bed to Chair and Back)",
+              maxScore: 15,
+            },
+            mobility: {
+              score: 0,
+              activity: "Mobility (On level surfaces)",
+              maxScore: 15,
+            },
+            stairs: { score: 0, activity: "Stairs", maxScore: 10 },
+          },
+
+          chestShapeObservation: {
+            chestShape: {
+              normal: false,
+              barrelChest: false,
+              kyphosis: false,
+              pectusExcavatum: false,
+              pectusCarinatum: false,
+            },
+          },
+          chestMotionObservation: {
+            middleLobeLingulaMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+            upperLobeMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+            lowerLobeMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+          },
+          planOfTreatment: "",
+
+          planTreatment: [
+            {
+              patientType: "outpatient",
+              startDate: "",
+              endDate: "",
+              days: "",
+              ust: false,
+              ift: false,
+              swd: false,
+              tr: false,
+              wax: false,
+              est: false,
+              sht: false,
+              laser: false,
+              exs: false,
+              rehab: false,
+            },
+          ],
+
+          investigation: [
+            {
+              date: "",
+              xray: "",
+              mri: "",
+              others: "",
+              provisionalDiagnosis: "",
+            },
+          ],
+
+          outPatientBill: [
+            {
+              appointmentDate: "",
+              serviceName: "",
+              paymentMode: "",
+              billAmount: "",
+            },
+          ],
+
+          inPatientBill: [
+            {
+              roomNumber: "",
+              admissionDate: "",
+              dischargeDate: "",
+              totalDays: "",
+              visitingBill: "",
+              physioBill: "",
+              nursingBill: "",
+              otherExpenses: "",
+              paymentMode: "",
+              billAmount: "",
+              amountPerDay: "",
+            },
+          ],
+        });
+        setLoading(false);
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 5300);
+        console.log("messageeeeeeeeeeeeeeeeeeeeeee", message);
+
+      } else if (response.status === 500) {
+        setLoading(false);
+        console.log("eeeeeeeeeeeerrrrrrrrrrrrrrrrr")
+        setShowServerNetworkErrorToast(true);
+        setTimeout(() => {
+          setShowServerNetworkErrorToast(false);
+        }, 5300);
+      }
+    }
+    catch (error) {
+      setLoading(false);
+      setShowUnexpectedErrorToast(true);
       setTimeout(() => {
-        setShowToast(false);
+        setShowUnexpectedErrorToast(false);
       }, 5300);
-      setAppMessage("Record updated successfully!");
-      setTimeout(() => {
-        setAppMessage("");
-      }, 5000);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error creating patient record:", error);
-      setAppMessage("An error occurred while creating the patient record");
-      setLoading(false);
-    } finally {
+    }
+    finally {
       setTimeout(() => {
         setLoading(false);
       }, 3000);
@@ -1184,7 +1652,7 @@ const UpdateRecord = () => {
 
     const outBillDetails =
       nextRowPatientType === "outpatient" &&
-      isBillDetailsInOutOutPatientFilled()
+        isBillDetailsInOutOutPatientFilled()
         ? outPatientBillDetails.outBill[0]
         : undefined;
 
@@ -3056,6 +3524,16 @@ const UpdateRecord = () => {
 
   const handleSearch = async () => {
     setCloseDetails(false);
+
+
+    if (!navigator.onLine) {
+      setShowNetworkErrorToast(true);
+      setTimeout(() => {
+        setShowNetworkErrorToast(false);
+      }, 5300);
+      return;
+    }
+
     if (mobileNo) {
       try {
         setLoading(true);
@@ -3080,18 +3558,35 @@ const UpdateRecord = () => {
         console.log("foundddddddddddddddddd ::::", founded);
 
         setPatient(foundPatientBasicRecord);
+        setPage1(true);
+        setPage7(false);
+        setCreateRecPressed(true);
         // Introduce a delay of 500 milliseconds (adjust as needed)
         await delay(500);
         // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
         setError("");
       } catch (error) {
         setLoading(false);
-
-        setShowInvalidMobErrorToast(true);
-        setPatientBasicRecord(null);
-        setTimeout(() => {
-          setShowInvalidMobErrorToast(false);
-        }, 5300);
+        setMobileNo("");
+        // setShowInvalidMobErrorToast(true);
+        // setPatientBasicRecord(null);
+        // setTimeout(() => {
+        //   setShowInvalidMobErrorToast(false);
+        // }, 5300);
+        if (error.response && error.response.status === 404) {
+          setShowInvalidMobErrorToast(true);
+          setPatientBasicRecord(null);
+          setTimeout(() => {
+            setShowInvalidMobErrorToast(false);
+          }, 5300);
+        }
+        else {
+          setLoading(false);
+          setShowServerNetworkErrorToast(true);
+          setTimeout(() => {
+            setShowServerNetworkErrorToast(false);
+          }, 5300);
+        }
       } finally {
         setTimeout(() => {
           setLoading(false);
@@ -3248,19 +3743,34 @@ const UpdateRecord = () => {
           </div>
         )}
 
-        {(showMobNotFillErrorToast || showInvalidMobErrorToast) && (
+        {(showMobNotFillErrorToast || showInvalidMobErrorToast || showNetworkErrorToast || showServerNetworkErrorToast || showUnexpectedErrorToast) && (
           <div className="toast toast-active">
             <div className="toast-content">
               <img src={errorimg} alt="Error" className="toast-error-check" />
               <div className="toast-message">
                 {showMobNotFillErrorToast && (
                   <span className="toast-text toast-text-1">
-                    Something went Wrong
+                    Something went Wrong!
                   </span>
                 )}
                 {showInvalidMobErrorToast && (
                   <span className="toast-text toast-text-2">
-                    Please enter a mobile number
+                    Please enter valid mobile number
+                  </span>
+                )}
+                {showNetworkErrorToast && (
+                  <span className="toast-text toast-text-2">
+                    Network disconnected. Please check your network!
+                  </span>
+                )}
+                {showServerNetworkErrorToast && (
+                  <span className="toast-text toast-text-2">
+                    Internal Server Error! Try after some time.
+                  </span>
+                )}
+                {showUnexpectedErrorToast && (
+                  <span className="toast-text toast-text-2">
+                    Unexpected Error Occurred.
                   </span>
                 )}
               </div>
@@ -3298,6 +3808,7 @@ const UpdateRecord = () => {
         )}
       </div>
       <div class="update-record-container">
+        {console.log("ppppppppppppagggggggggggggg", page1, !showInvalidMobErrorToast, !showMobNotFillErrorToast)}
         {page1 && !showInvalidMobErrorToast && !showMobNotFillErrorToast && (
           <>
             <header class="update-record-header">
@@ -3319,22 +3830,22 @@ const UpdateRecord = () => {
                 </button>
               </div>
 
-              {founded && page1 && (
+              {founded && page1 && createRecPressed && (
                 <div class="update-record-patient-details">
                   <h3 class="update-record-patient">{patient.name}</h3>
                   <h3 class="update-record-patient">
                     {patient.gender === "male"
                       ? "M"
                       : patient.gender === "female"
-                      ? "F"
-                      : "O"}
+                        ? "F"
+                        : "O"}
                   </h3>
 
                   <h3 class="update-record-patient">{patient.age}</h3>
                 </div>
               )}
             </header>
-            {founded && page1 && (
+            {founded && page1 && createRecPressed && (
               <div class="update-record-checking-checkbox">
                 <div class="update-record-checkbox-container">
                   <div className="update-record-checkbox-group">
@@ -3790,7 +4301,7 @@ const UpdateRecord = () => {
             )}
           </>
         )}
-        {page2 && (
+        {page2 && createRecPressed && (
           <>
             <div class="ur-page2-container">
               <div class="ur-page2-checking-checkbox">
@@ -4006,7 +4517,7 @@ const UpdateRecord = () => {
                                               }
                                               value={
                                                 patient.rangeOfMotion[joint][
-                                                  index
+                                                index
                                                 ][motion][side] || ""
                                               }
                                               onChange={(e) =>
@@ -4050,7 +4561,7 @@ const UpdateRecord = () => {
                                             }
                                           />
                                         )}
-                                      
+
                                       </td>
                                     </React.Fragment>
                                   ))}
@@ -4069,7 +4580,7 @@ const UpdateRecord = () => {
             </div>
           </>
         )}
-        {page3 && (
+        {page3 && createRecPressed && (
           <div className="main-container-page-3">
             <div class="ur-page3-container">
               <div className="ur-page3-left-container">
@@ -4102,7 +4613,7 @@ const UpdateRecord = () => {
                                   type="text"
                                   value={
                                     patient.musclePower[item.name][side][
-                                      category
+                                    category
                                     ]
                                   }
                                   onChange={(e) =>
@@ -4299,7 +4810,7 @@ const UpdateRecord = () => {
             </div>
           </div>
         )}
-        {page4 && (
+        {page4 && createRecPressed && (
           <>
             <div class="page-4-container">
               <div class="page-4-content">
@@ -4420,7 +4931,7 @@ const UpdateRecord = () => {
                                       ...prevPatient.chestObservation,
                                       [item.name]: {
                                         ...prevPatient.chestObservation[
-                                          item.name
+                                        item.name
                                         ],
                                         remarks: e.target.value,
                                       },
@@ -4574,7 +5085,7 @@ const UpdateRecord = () => {
                                     <select
                                       value={
                                         patient.subjectiveAssessment[symptom][
-                                          field
+                                        field
                                         ]
                                       }
                                       onChange={(event) =>
@@ -4622,7 +5133,7 @@ const UpdateRecord = () => {
                                       type="text"
                                       value={
                                         patient.subjectiveAssessment[symptom][
-                                          field
+                                        field
                                         ]
                                       }
                                       onChange={(event) =>
@@ -4644,7 +5155,7 @@ const UpdateRecord = () => {
             </div>
           </>
         )}
-        {page5 && (
+        {page5 && createRecPressed && (
           <div className="ur-page5-main-container">
             <div class="ur-page5-container">
               <div class="ur-page5-left-container">
@@ -4747,7 +5258,7 @@ const UpdateRecord = () => {
             </div>
           </div>
         )}
-        {page6 && (
+        {page6 && createRecPressed && (
           <div className="ur-page6-main-container">
             <div class="ur-page6-container">
               <div className="page-6-upper-container">
@@ -4998,7 +5509,7 @@ const UpdateRecord = () => {
             </div>
           </div>
         )}
-        {page7 && (
+        {page7 && createRecPressed && (
           <div className="page-7-super-container">
             <div className="page-7-main-container">
               <div>
@@ -5018,17 +5529,17 @@ const UpdateRecord = () => {
                               <th>No. of Days</th>
 
                               {patient.planTreatment[0].patientType ===
-                              "inpatient"
+                                "inpatient"
                                 ? Object.keys(patient.planTreatment[0])
-                                    .slice(4)
-                                    .map((category, index) => (
-                                      <th key={index}>{category}</th>
-                                    ))
+                                  .slice(4)
+                                  .map((category, index) => (
+                                    <th key={index}>{category}</th>
+                                  ))
                                 : Object.keys(patient.planTreatment[0])
-                                    .slice(4, -1)
-                                    .map((category, index) => (
-                                      <th key={index}>{category}</th>
-                                    ))}
+                                  .slice(4, -1)
+                                  .map((category, index) => (
+                                    <th key={index}>{category}</th>
+                                  ))}
                               <th>Billing</th>
                             </tr>
                           </thead>
@@ -5120,7 +5631,7 @@ const UpdateRecord = () => {
                                       <input
                                         type="text"
                                         value={1}
-                                        // onChange={(e) => handleInputChange(index, "days", 1)}
+                                      // onChange={(e) => handleInputChange(index, "days", 1)}
                                       />
                                     )}
                                   {plan.patientType === "inpatient" && (
@@ -5133,41 +5644,41 @@ const UpdateRecord = () => {
                                 </td>
 
                                 {patient.planTreatment[0].patientType ===
-                                "inpatient"
+                                  "inpatient"
                                   ? Object.keys(plan)
-                                      .slice(4)
-                                      .map((category, colIndex) => (
-                                        <td key={colIndex}>
-                                          <input
-                                            type="checkbox"
-                                            name={`${category}_${index}`}
-                                            checked={plan[category]}
-                                            onChange={() =>
-                                              handlePlanCheckboxChange(
-                                                index,
-                                                category
-                                              )
-                                            }
-                                          />
-                                        </td>
-                                      ))
+                                    .slice(4)
+                                    .map((category, colIndex) => (
+                                      <td key={colIndex}>
+                                        <input
+                                          type="checkbox"
+                                          name={`${category}_${index}`}
+                                          checked={plan[category]}
+                                          onChange={() =>
+                                            handlePlanCheckboxChange(
+                                              index,
+                                              category
+                                            )
+                                          }
+                                        />
+                                      </td>
+                                    ))
                                   : Object.keys(plan)
-                                      .slice(4, -1)
-                                      .map((category, colIndex) => (
-                                        <td key={colIndex}>
-                                          <input
-                                            type="checkbox"
-                                            name={`${category}_${index}`}
-                                            checked={plan[category]}
-                                            onChange={() =>
-                                              handlePlanCheckboxChange(
-                                                index,
-                                                category
-                                              )
-                                            }
-                                          />
-                                        </td>
-                                      ))}
+                                    .slice(4, -1)
+                                    .map((category, colIndex) => (
+                                      <td key={colIndex}>
+                                        <input
+                                          type="checkbox"
+                                          name={`${category}_${index}`}
+                                          checked={plan[category]}
+                                          onChange={() =>
+                                            handlePlanCheckboxChange(
+                                              index,
+                                              category
+                                            )
+                                          }
+                                        />
+                                      </td>
+                                    ))}
                                 <td>
                                   <div class="icon billings">
                                     <span class="tooltip">Add Bill</span>
@@ -5445,7 +5956,7 @@ const UpdateRecord = () => {
                                         <input
                                           type="text"
                                           value={1}
-                                          // onChange={(e) => handleInOutInputChange(index, "days", 1)}
+                                        // onChange={(e) => handleInOutInputChange(index, "days", 1)}
                                         />
                                       )}
                                     {nextRowPatientType === "inpatient" &&
@@ -5936,19 +6447,20 @@ const UpdateRecord = () => {
           </div>
         )}
 
-        {!page1 && founded && (
+        {!page1 && founded && createRecPressed && (
           <button class="update-record-prev-btn" onClick={handlePrevious}>
             <img src="./uploads/r-arrow-prev.png" alt="" />
             Previous
           </button>
         )}
-        {!page7 && founded && (
+        {console.log("7 f c", page7, founded, createRecPressed)}
+        {!page7 && founded && createRecPressed && (
           <button class="update-record-next-btn" onClick={handleContinue}>
             Continue
             <img src="./uploads/r-arrow.png" alt="" />
           </button>
         )}
-        {page7 && (
+        {page7 && createRecPressed && (
           <button class="update-record-next-btn" onClick={createPatientRecord}>
             Update Record
             <img src="./uploads/r-arrow.png" alt="" />

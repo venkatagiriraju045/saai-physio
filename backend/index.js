@@ -565,6 +565,7 @@ app.post('/api/create_record', async (req, res) => {
             // }
         } else {
             // Create a new patient record
+            console.log("new patient rec")
             const newPatient = new BasicDetails({
                 ...patient,
             });
@@ -727,7 +728,7 @@ app.get('/api/get_patient_details', async (req, res) => {
 
         if (foundPatient) {
             const { name, pid, gender, age } = foundPatient;
-            res.json({ name, pid, gender, age });
+            res.status(400).json({ name, pid, gender, age });
         } else {
             res.status(404).json({ error: 'Patient not found' });
         }
@@ -739,7 +740,7 @@ app.get('/api/get_patient_details', async (req, res) => {
 app.get('/api/get_all_records', async (req, res) => {
     try {
         const allRecords = await BasicDetails.find();
-        res.json(allRecords);
+        res.status(200).json(allRecords);
     } catch (error) {
         console.error('Error fetching all records:', error);
         res.status(500).json({ error: 'Internal server error' });

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import checklist from "./landing-page-imgs/checklist.png";
+import errorimg from "./landing-page-imgs/error.png";
+import "./CSS/patientdetailsoverlay.css";
 
 const OverlayRecord = (mobileNumber) => {
   const [showToast, setShowToast] = useState(false);
@@ -43,6 +45,12 @@ const OverlayRecord = (mobileNumber) => {
   const [selectedPatientType, setSelectedPatientType] = useState("");
   const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
   const [createFreshOverlayVisible, setCreateFreshOverlayVisible] =
+    useState(false);
+  const [showNetworkErrorToast, setShowNetworkErrorToast] =
+    useState(false);
+  const [showServerNetworkErrorToast, setShowServerNetworkErrorToast] =
+    useState(false);
+    const [showUnexpectedErrorToast, setShowUnexpectedErrorToast] =
     useState(false);
   const [firstRow, setFirstRow] = useState(false);
   const overlayClass = `loading-overlay${loading || isLoading ? " visible" : ""
@@ -490,12 +498,22 @@ const OverlayRecord = (mobileNumber) => {
   const createPatientRecord = async () => {
     const dateAndTime = new Date().toLocaleString();
 
+    if (!navigator.onLine) {
+      setShowNetworkErrorToast(true);
+      setTimeout(() => {
+        setShowNetworkErrorToast(false);
+      }, 5300);
+      return;
+    }
+
     try {
+      
       setRecordButtonClicked(true);
 
       if (firstRow) {
         if (patient.planTreatment[0].patientType === "choose type") {
           alert("Please select a patient type from plan treament");
+          setLoading(false);
           return;
         } else if (
           !patient.outPatientBill[0].appointmentDate &&
@@ -503,6 +521,7 @@ const OverlayRecord = (mobileNumber) => {
             !patient.inPatientBill[0].dischargeDate)
         ) {
           alert("Please select date from plan treament");
+          setLoading(false);
           return;
         }
       }
@@ -557,30 +576,483 @@ const OverlayRecord = (mobileNumber) => {
 
           if (!userConfirmation) {
             // User clicked "No", do not continue with the update
+            setLoading(false);
             return;
           }
         }
       }
 
-      await axios.post("https://saai-physio-api.vercel.app/api/create_record", {
+      setLoading(true);
+     
+
+      const response = await axios.post("https://saai-physio-api.vercel.app/api/create_record", {
         patient: {
           ...patient,
         },
       });
 
-      setShowToast(true);
+      const { message, inPatientBill } = response.data;
+      if (response.status === 200) {
+        setMobileNo("");
+        setPatient({
+          mobileNo: "",
+          painRegion: {
+            Neck: false,
+            Wrist: false,
+            LowerBack: false,
+            Ankle: false,
+            Shoulder: false,
+            Fingers: false,
+            Hip: false,
+            Toes: false,
+            Elbow: false,
+            UpperBack: false,
+            Knee: false,
+          },
+          postMedicalHistory: {
+            dm: false,
+            htn: false,
+            cad: false,
+            cvd: false,
+            asthma: false,
+            smoking: false,
+            alcohol: false,
+            surgicalHistory: false,
+          },
+          painAssessment: {
+            beforeTreatment: {
+              level: 0, // Initialize with a default value
+            },
+          },
+          aggFactor: "", // Add other properties as needed
+          relFactor: "",
+          duration: "",
+          onset: "",
+          vitalSign: {
+            BP: "",
+            RR: "",
+            HR: "",
+            SPO2: "",
+            TEMP: "",
+          },
+          observation: {
+            onObservation: {
+              SkinColor: false,
+              Deformity: false,
+              Redness: false,
+              ShinySkin: false,
+              OpenWounds: false,
+            },
+            onPalpation: {
+              Tenderness: false,
+              Warmth: false,
+              Swelling: false,
+              Odema: false,
+            },
+          },
+          rangeOfMotion: {
+            cervical: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            shoulder: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            elbow: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            wrist: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            hip: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            knee: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+            ankle: [
+              { flexion: { rt: 0, lt: 0 } },
+              { extension: { rt: 0, lt: 0 } },
+              { abduction: { rt: 0, lt: 0 } },
+              { adduction: { rt: 0, lt: 0 } },
+              { eversion: { rt: 0, lt: 0 } },
+              { inversion: { rt: 0, lt: 0 } },
+              { externalRotation: { rt: 0, lt: 0 } },
+              { internalRotation: { rt: 0, lt: 0 } },
+              { dorsiFlexion: { rt: 0, lt: 0 } },
+              { plantarFlexion: { rt: 0, lt: 0 } },
+              { supination: { rt: 0, lt: 0 } },
+              { pronation: { rt: 0, lt: 0 } },
+              { lateralRotation: { rt: 0, lt: 0 } },
+            ],
+          },
+          musclePower: {
+            cervicalC1C2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            cervicalC3SideFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            scapulaC4Elevation: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            shoulderC5Abduction: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            elbowC6FlexionWristExtension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            elbowC7ExtensionWristFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            thumbC8Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            hipL1L2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            kneeL3Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            ankleL4Dorsiflexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            bigToeL5Extension: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            ankleS1PlantarFlexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            kneeS2Flexion: {
+              rt: { motor: 0, sensory: 0 },
+              lt: { motor: 0, sensory: 0 },
+            },
+            // Add other properties as needed
+          },
+          coordination: {
+            fingerToNose: { normal: false, abnormal: false, remarks: "" },
+            fingerOpposition: { normal: false, abnormal: false, remarks: "" },
+            grip: { normal: false, abnormal: false, remarks: "" },
+            pronationSupination: { normal: false, abnormal: false, remarks: "" },
+            reboundTest: { normal: false, abnormal: false, remarks: "" },
+            tappingHand: { normal: false, abnormal: false, remarks: "" },
+            tappingFoot: { normal: false, abnormal: false, remarks: "" },
+            heelToKnee: { normal: false, abnormal: false, remarks: "" },
+            drawingCircleHand: { normal: false, abnormal: false, remarks: "" },
+            drawingCircleFoot: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          standingWalking: {
+            normalPosture: { normal: false, abnormal: false, remarks: "" },
+            tandonWalking: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          balance: {
+            sitting: { normal: false, abnormal: false, remarks: "" },
+            standing: { normal: false, abnormal: false, remarks: "" },
+            posture: { normal: false, abnormal: false, remarks: "" },
+            gait: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          handFunction: {
+            grip: { normal: false, abnormal: false, remarks: "" },
+            grasp: { normal: false, abnormal: false, remarks: "" },
+            release: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          prehension: {
+            tipToTip: { normal: false, abnormal: false, remarks: "" },
+            padToPad: { normal: false, abnormal: false, remarks: "" },
+            tipToPad: { normal: false, abnormal: false, remarks: "" },
+            // Add other properties as needed
+          },
+          subjectiveAssessment: {
+            breathlessness: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            cough: { duration: "", severity: "", pattern: "", associatedFactors: "" },
+            sputumHemoptysis: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+              hemoptysisType: "",
+            },
+            wheeze: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            chestPain: {
+              duration: "",
+              severity: "",
+              pattern: "",
+              associatedFactors: "",
+            },
+            // Add other properties as needed
+          },
+          rpe: {
+            point6: false,
+            point7: false,
+            point8: false,
+            point9: false,
+            point10: false,
+            point11: false,
+            point12: false,
+            point13: false,
+            point14: false,
+            point15: false,
+            point16: false,
+            point17: false,
+          },
+          brpe: {
+            rating6: false,
+            rating7: false,
+            rating8: false,
+            rating9: false,
+            rating10: false,
+            rating11: false,
+            rating12: false,
+            rating13: false,
+            rating14: false,
+            rating15: false,
+            rating16: false,
+            rating17: false,
+            rating18: false,
+            rating19: false,
+            rating20: false,
+          },
+          generalObservation: {
+            bodyBuilt: { normal: false, abnormal: false, remarks: "" },
+            handsAndFingertips: { normal: false, abnormal: false, remarks: "" },
+            eyes: { normal: false, abnormal: false, remarks: "" },
+            cyanosis: { normal: false, abnormal: false, remarks: "" },
+            jugularVenousPressure: { normal: false, abnormal: false, remarks: "" },
+          },
+          chestObservation: {
+            breathingPattern: { normal: false, abnormal: false, remarks: "" },
+            chestMovement: { normal: false, abnormal: false, remarks: "" },
+            palpationOfChest: { normal: false, abnormal: false, remarks: "" },
+            chestExpansion: { normal: false, abnormal: false, remarks: "" },
+            // ... other properties
+          },
+          barthelIndex: {
+            feeding: { score: 0, activity: "Feeding", maxScore: 10 },
+            bathing: { score: 0, activity: "Bathing", maxScore: 5 },
+            grooming: { score: 0, activity: "Grooming", maxScore: 5 },
+            dressing: { score: 0, activity: "Dressing", maxScore: 10 },
+            bowels: { score: 0, activity: "Bowels", maxScore: 10 },
+            bladder: { score: 0, activity: "Bladder", maxScore: 10 },
+            toiletUse: { score: 0, activity: "Toilet Use", maxScore: 10 },
+            transfer: {
+              score: 0,
+              activity: "Transfer (Bed to Chair and Back)",
+              maxScore: 15,
+            },
+            mobility: {
+              score: 0,
+              activity: "Mobility (On level surfaces)",
+              maxScore: 15,
+            },
+            stairs: { score: 0, activity: "Stairs", maxScore: 10 },
+          },
+
+          chestShapeObservation: {
+            chestShape: {
+              normal: false,
+              barrelChest: false,
+              kyphosis: false,
+              pectusExcavatum: false,
+              pectusCarinatum: false,
+            },
+          },
+          chestMotionObservation: {
+            middleLobeLingulaMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+            upperLobeMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+            lowerLobeMotion: {
+              valueA: 0,
+              valueB: 0,
+              remarks: "",
+            },
+          },
+          planOfTreatment: "",
+
+          planTreatment: [
+            {
+              patientType: "outpatient",
+              startDate: "",
+              endDate: "",
+              days: "",
+              ust: false,
+              ift: false,
+              swd: false,
+              tr: false,
+              wax: false,
+              est: false,
+              sht: false,
+              laser: false,
+              exs: false,
+              rehab: false,
+            },
+          ],
+
+          investigation: [
+            {
+              date: "",
+              xray: "",
+              mri: "",
+              others: "",
+              provisionalDiagnosis: "",
+            },
+          ],
+
+          outPatientBill: [
+            {
+              appointmentDate: "",
+              serviceName: "",
+              paymentMode: "",
+              billAmount: "",
+            },
+          ],
+
+          inPatientBill: [
+            {
+              roomNumber: "",
+              admissionDate: "",
+              dischargeDate: "",
+              totalDays: "",
+              visitingBill: "",
+              physioBill: "",
+              nursingBill: "",
+              otherExpenses: "",
+              paymentMode: "",
+              billAmount: "",
+              amountPerDay: "",
+            },
+          ],
+        });
+        setLoading(false);
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 5300);
+        console.log("messageeeeeeeeeeeeeeeeeeeeeee", message);
+
+      } else if (response.status === 500) {
+        setLoading(false);
+        console.log("eeeeeeeeeeeerrrrrrrrrrrrrrrrr")
+        setShowServerNetworkErrorToast(true);
+        setTimeout(() => {
+          setShowServerNetworkErrorToast(false);
+        }, 5300);
+      }
+    }
+    catch (error) {
+      setLoading(false);
+      setShowUnexpectedErrorToast(true);
       setTimeout(() => {
-        setShowToast(false);
+        setShowUnexpectedErrorToast(false);
       }, 5300);
-      // setAppMessage('Record updated successfully!');
-      // setTimeout(() => {
-      //     setAppMessage('');
-      // }, 5000);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error creating patient record:", error);
-      setAppMessage("An error occurred while creating the patient record");
-      setLoading(false);
+    }
+    finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
   };
 
@@ -2984,35 +3456,55 @@ const OverlayRecord = (mobileNumber) => {
   const handleSearch = async () => {
     setCloseDetails(false);
 
-    try {
-      // Replace 'https://saai-physio-api.vercel.app/api/find_record' with your actual endpoint
-      // Assuming the backend returns the patient record
-      const response = await axios.get(
-        "https://saai-physio-api.vercel.app/api/find_basic_record",
-        {
-          params: {
-            mobileNo, // Filter by institute_name
-          },
-        }
-      );
-      foundPatientBasicRecord = response.data;
 
-      setFounded(true);
-      patient.mobileNo = foundPatientBasicRecord.mobileNo;
-      setFirstRow(
-        foundPatientBasicRecord.planTreatment[0].patientType === "choose type"
-      );
-      console.log("patient ::::", foundPatientBasicRecord);
-      setPatient(foundPatientBasicRecord);
-      // Introduce a delay of 500 milliseconds (adjust as needed)
-      await delay(500);
-      // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
-      setError("");
-    } catch (error) {
-      // alert("Patient record not found. Please check the mobile number.");
-      setPatientBasicRecord(null);
-      // setError('Patient record not found. Please check the mobile number.');
+    if (!navigator.onLine) {
+      setShowNetworkErrorToast(true);
+      setTimeout(() => {
+        setShowNetworkErrorToast(false);
+      }, 5300);
+      return;
     }
+
+    if (mobileNo) {
+      try {
+        setLoading(true);
+        // Replace 'https://saai-physio-api.vercel.app/api/find_record' with your actual endpoint
+        // Assuming the backend returns the patient record
+        const response = await axios.get(
+          "https://saai-physio-api.vercel.app/api/find_basic_record",
+          {
+            params: {
+              mobileNo, // Filter by institute_name
+            },
+          }
+        );
+        foundPatientBasicRecord = response.data;
+
+        patient.mobileNo = foundPatientBasicRecord.mobileNo;
+        setFirstRow(
+          foundPatientBasicRecord.planTreatment[0].patientType === "choose type"
+        );
+        console.log("patient ::::", foundPatientBasicRecord);
+        setFounded(true);
+        console.log("foundddddddddddddddddd ::::", founded);
+
+        setPatient(foundPatientBasicRecord);
+        
+        // Introduce a delay of 500 milliseconds (adjust as needed)
+        await delay(500);
+        // fetchPatienRecord(foundPatientBasicRecord.mobileNo);
+        setError("");
+      } catch (error) {
+        setLoading(false);
+        setMobileNo("");
+        setPatientBasicRecord(null);
+        
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
+      }
+    } 
   };
 
   // const fetchPatienRecord = async (mobileNo) => {
@@ -3175,6 +3667,37 @@ const OverlayRecord = (mobileNumber) => {
 
   return (
     <div className="update-record-body">
+      <div>
+          {(loading || isLoading) && (
+            <div className={overlayClass}>
+              <div class="adminmenu-wrapper">
+                <div class="adminmenu-box-wrap">
+                  <div class="adminmenu-box one"></div>
+                  <div class="adminmenu-box two"></div>
+                  <div class="adminmenu-box three"></div>
+                  <div class="adminmenu-box four"></div>
+                  <div class="adminmenu-box five"></div>
+                  <div class="adminmenu-box six"></div>
+                </div>
+              </div>
+              <div class="adminmenu-load-wrapp">
+                <div class="adminmenu-load-6">
+                  <div class="adminmenu-letter-holder">
+                    <div class="l-1 letter">L</div>
+                    <div class="l-2 letter">O</div>
+                    <div class="l-3 letter">A</div>
+                    <div class="l-4 letter">D</div>
+                    <div class="l-5 letter">I</div>
+                    <div class="l-6 letter">N</div>
+                    <div class="l-7 letter">G</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+
       {showToast && (
         <div className="toast toast-active">
           <div className="toast-content">
@@ -3187,6 +3710,32 @@ const OverlayRecord = (mobileNumber) => {
             </div>
           </div>
           <div className="toast-progress toast-active"></div>
+        </div>
+      )}
+
+      {(showNetworkErrorToast || showServerNetworkErrorToast || showUnexpectedErrorToast) && (
+        <div className="toast toast-active">
+          <div className="toast-content">
+            <img src={errorimg} alt="Error" className="toast-error-check" />
+            <div className="toast-message">
+              {showNetworkErrorToast && (
+                <span className="toast-text toast-text-2">
+                  Network disconnected. Please check your network!
+                </span>
+              )}
+              {showServerNetworkErrorToast && (
+                <span className="toast-text toast-text-2">
+                  Internal Server Error! Try after some time.
+                </span>
+              )}
+              {showUnexpectedErrorToast && (
+                  <span className="toast-text toast-text-2">
+                    Unexpected Error Occurred.
+                  </span>
+                )}
+            </div>
+          </div>
+          <div className="toast-error-progress toast-active"></div>
         </div>
       )}
 

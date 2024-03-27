@@ -14,14 +14,16 @@ const BasicRecord = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [appMessage, setAppMessage] = useState("");
+  const [showNetworkErrorToast, setShowNetworkErrorToast] =
+    useState(false);
+  const [showServerNetworkErrorToast, setShowServerNetworkErrorToast] =
+    useState(false);
   const [selectedPatientType, setSelectedPatientType] = useState("");
   const [createoverlayVisible, setCreateOverlayVisible] = useState(false);
-  const overlayClass = `loading-overlay${
-    loading || isLoading ? " visible" : ""
-  }`;
-  const msgoverlay = `loading-overlay${
-    !loading && appMessage ? " visible" : ""
-  }`;
+  const overlayClass = `loading-overlay${loading || isLoading ? " visible" : ""
+    }`;
+  const msgoverlay = `loading-overlay${!loading && appMessage ? " visible" : ""
+    }`;
 
   const [inputValidation, setInputValidation] = useState({
     name: true,
@@ -308,8 +310,125 @@ const BasicRecord = () => {
       [fieldName]: isValid,
     }));
   };
+  /*
+    const createPatientRecord = async () => {
+  
+      if (!navigator.onLine) {
+        setShowNetworkErrorToast(true);
+        setTimeout(() => {
+          setShowNetworkErrorToast(false);
+        }, 5300);
+        return;
+      }
+  
+      const dateAndTime = new Date().toLocaleString();
+      patient.doc = dateAndTime;
+  
+      // Check all fields and update input classes
+      setInputClasses("name", !!patient.name.trim());
+      setInputClasses("gender", !!patient.gender.trim());
+      setInputClasses("age", !!patient.age.trim());
+      setInputClasses("mobileNo", !!patient.mobileNo.trim());
+      setInputClasses("occupation", !!patient.occupation.trim());
+      setInputClasses("address", !!patient.address.trim());
+      setInputClasses("complaint", !!patient.complaint.trim());
+      setInputClasses("uhid", !!patient.uhid.trim());
+  
+      // Add similar checks for other fields
+  
+      // // Check if any field is empty and show an alert
+      // if (!Object.values(patient).every(value => !!value.trim())) {
+      //     alert('Please fill all the fields');
+      //     return;
+      // }
+  
+      if (
+        ![
+          "name",
+          "gender",
+          "age",
+          "mobileNo",
+          "occupation",
+          "address",
+          "complaint",
+          "uhid",
+        ].every((key) => !!patient[key].trim())
+      ) {
+        setShowFillDetailsErrorToast(true);
+        setTimeout(() => {
+          setShowFillDetailsErrorToast(false);
+        }, 5300);
+        return;
+      }
+  
+      // Validate the mobile number
+      if (!validateMobileNumber(patient.mobileNo)) {
+        return;
+      }
+  
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:3000/api/create_basic_record",
+          {
+            patient: { ...patient },
+          }
+        );
+  
+        console.log("Server returned status code:", response.status);
+  
+        if (response.status === 201) {
+          console.log("nnnnnnnnnn ffffffffff")
+          setShowToast(true);
+          setTimeout(() => {
+            setShowToast(false);
+          }, 5300);
+          // setAppMessage('Record updated successfully!');
+          setTimeout(() => {
+            setAppMessage("");
+          }, 5000);
+          setLoading(false);
+        } 
+        else if(response.status === 400){
+          console.log("ppppppppppppppppppppp ffffffffff in 400")
+          setShowMobExistErrorToast(true);
+          setTimeout(() => {
+            setShowMobExistErrorToast(false);
+          }, 5300);
+          setLoading(false);
+        }
+        else if (response.status === 500) {
+          console.log("ppppppppppppppppppppp ffffffffff in 500")
+          setShowServerNetworkErrorToast(true);
+          setTimeout(() => {
+            setShowServerNetworkErrorToast(false);
+          }, 5300);
+          setLoading(false);
+        }
+        else {
+          throw new Error("Failed to create record");
+        }
+      } catch (error) {
+        console.error("Error creating patient record:", error);
+          setLoading(false);
+        
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
+      }
+    };
+*/  
 
   const createPatientRecord = async () => {
+    if (!navigator.onLine) {
+      setShowNetworkErrorToast(true);
+      setTimeout(() => {
+        setShowNetworkErrorToast(false);
+      }, 5300);
+      return;
+    }
+
     const dateAndTime = new Date().toLocaleString();
     patient.doc = dateAndTime;
 
@@ -322,14 +441,6 @@ const BasicRecord = () => {
     setInputClasses("address", !!patient.address.trim());
     setInputClasses("complaint", !!patient.complaint.trim());
     setInputClasses("uhid", !!patient.uhid.trim());
-
-    // Add similar checks for other fields
-
-    // // Check if any field is empty and show an alert
-    // if (!Object.values(patient).every(value => !!value.trim())) {
-    //     alert('Please fill all the fields');
-    //     return;
-    // }
 
     if (
       ![
@@ -364,38 +475,41 @@ const BasicRecord = () => {
         }
       );
 
+      console.log("Server returned status code:", response.status);
+
       if (response.status === 201) {
         setShowToast(true);
         setTimeout(() => {
           setShowToast(false);
         }, 5300);
-        // setAppMessage('Record updated successfully!');
         setTimeout(() => {
           setAppMessage("");
         }, 5000);
-        setLoading(false);
       } else {
         throw new Error("Failed to create record");
       }
     } catch (error) {
       console.error("Error creating patient record:", error);
-
       if (error.response && error.response.status === 400) {
-        // Display alert for duplicate mobile number
+        console.log("in 400")
+        setLoading(false);
         setShowMobExistErrorToast(true);
         setTimeout(() => {
           setShowMobExistErrorToast(false);
         }, 5300);
       } else {
-        // Display a general error message
-        setAppMessage("An error occurred while creating the patient record");
         setLoading(false);
+        setShowServerNetworkErrorToast(true);
+        setTimeout(() => {
+          setShowServerNetworkErrorToast(false);
+        }, 5300);
       }
     } finally {
       setLoading(false);
     }
   };
 
+  
   console.log(patient);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -539,9 +653,9 @@ const BasicRecord = () => {
         </div>
       )}
 
-      {ShowMobExistErrorToast ||
-        (showFillDetailsErrorToast && (
+      {(ShowMobExistErrorToast || showFillDetailsErrorToast || showNetworkErrorToast || showServerNetworkErrorToast)&& (
           <div className="toast toast-active">
+            {console.log("in shoe mob er")}
             <div className="toast-content">
               <img src={errorimg} alt="Error" className="toast-error-check" />
               <div className="toast-message">
@@ -556,11 +670,22 @@ const BasicRecord = () => {
                     mobile Number!
                   </span>
                 )}
+                {showNetworkErrorToast && (
+                <span className="toast-text toast-text-2">
+                  Network disconnected. Please check your network!
+                </span>
+              )}
+              {showServerNetworkErrorToast && (
+                <span className="toast-text toast-text-2">
+                  Internal Server Error! Try after some time.
+                </span>
+              )}
               </div>
             </div>
             <div className="toast-error-progress toast-active"></div>
           </div>
-        ))}
+        )}
+      
       {
         <div>
           {(loading || isLoading) && (
@@ -597,15 +722,13 @@ const BasicRecord = () => {
         <div class="create-record-row">
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-name${
-                !inputValidation.name ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-name${!inputValidation.name ? "-abnormal" : ""
+                }`}
             >
               <span>Name&nbsp;&nbsp;&nbsp;</span>
               <input
-                className={`create-record-form-field-name${
-                  !inputValidation.name ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-name${!inputValidation.name ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="name"
                 placeholder="Patient's name"
@@ -617,15 +740,13 @@ const BasicRecord = () => {
           </div>
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-gender${
-                !inputValidation.gender ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-gender${!inputValidation.gender ? "-abnormal" : ""
+                }`}
             >
               <span>Gender</span>
               <select
-                className={`create-record-form-field-gender${
-                  !inputValidation.gender ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-gender${!inputValidation.gender ? "-abnormal" : ""
+                  }`}
                 id="gender"
                 name="gender"
                 value={patient.gender}
@@ -643,15 +764,13 @@ const BasicRecord = () => {
         <div class="create-record-row">
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-age${
-                !inputValidation.age ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-age${!inputValidation.age ? "-abnormal" : ""
+                }`}
             >
               <span>Age</span>
               <input
-                className={`create-record-form-field-age${
-                  !inputValidation.age ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-age${!inputValidation.age ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="age"
                 placeholder="Patient's age"
@@ -663,15 +782,13 @@ const BasicRecord = () => {
           </div>
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-mobileNo${
-                !inputValidation.mobileNo ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-mobileNo${!inputValidation.mobileNo ? "-abnormal" : ""
+                }`}
             >
               <span>Mobile No</span>
               <input
-                className={`create-record-form-field-mobileNo${
-                  !inputValidation.mobileNo ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-mobileNo${!inputValidation.mobileNo ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="mobileNo"
                 placeholder="Patient's mobile no"
@@ -685,15 +802,13 @@ const BasicRecord = () => {
         <div class="create-record-row">
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-occupation${
-                !inputValidation.occupation ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-occupation${!inputValidation.occupation ? "-abnormal" : ""
+                }`}
             >
               <span>Occupation</span>
               <input
-                className={`create-record-form-field-occupation${
-                  !inputValidation.occupation ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-occupation${!inputValidation.occupation ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="occupation"
                 placeholder="Patient's occupation"
@@ -705,15 +820,13 @@ const BasicRecord = () => {
           </div>
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-uhid${
-                !inputValidation.uhid ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-uhid${!inputValidation.uhid ? "-abnormal" : ""
+                }`}
             >
               <span>IP/UHID</span>
               <input
-                className={`create-record-form-field-uhid${
-                  !inputValidation.uhid ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-uhid${!inputValidation.uhid ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="uhid"
                 placeholder="Patient's IP / UHID"
@@ -727,15 +840,13 @@ const BasicRecord = () => {
         <div class="create-record-row">
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-complaint${
-                !inputValidation.complaint ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-complaint${!inputValidation.complaint ? "-abnormal" : ""
+                }`}
             >
               <span>Complaint</span>
               <input
-                className={`create-record-form-field-complaint${
-                  !inputValidation.complaint ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-complaint${!inputValidation.complaint ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="complaint"
                 placeholder="Patient's complaint"
@@ -747,15 +858,13 @@ const BasicRecord = () => {
           </div>
           <div class="create-record-col">
             <div
-              class={`create-record-form-group-address${
-                !inputValidation.address ? "-abnormal" : ""
-              }`}
+              class={`create-record-form-group-address${!inputValidation.address ? "-abnormal" : ""
+                }`}
             >
               <span>Address</span>
               <input
-                className={`create-record-form-field-address${
-                  !inputValidation.address ? "-abnormal" : ""
-                }`}
+                className={`create-record-form-field-address${!inputValidation.address ? "-abnormal" : ""
+                  }`}
                 type="text"
                 name="address"
                 placeholder="Enter your address"

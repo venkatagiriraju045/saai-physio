@@ -721,22 +721,22 @@ app.get('/api/find_record', async (req, res) => {
 });
 
 app.get('/api/get_patient_details', async (req, res) => {
-    const { mobileNumber } = req.query;
-    console.log('Mobile Number:', mobileNumber);
-    try {
-      const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNumber });
-  
-      if (foundPatient) {
-        const { name, pid, gender, age } = foundPatient;
-        res.status(200).json({ name, pid, gender, age }); // Send status 200 for success
-      } else {
-        res.status(404).json({ error: 'Patient not found' }); // Send status 404 if patient not found
-      }
-    } catch (error) {
-      console.error('Error finding patient record:', error);
-      res.status(500).json({ error: 'Internal server error' }); // Send status 500 for internal server error
+  const { mobileNumber } = req.query;
+  console.log('Mobile Number:', mobileNumber);
+  try {
+    const foundPatient = await BasicDetails.findOne({ mobileNo: mobileNumber });
+
+    if (foundPatient) {
+      const { name, pid, gender, age } = foundPatient;
+      res.status(200).json({ name, pid, gender, age }); // Send status 200 for success
+    } else {
+      res.status(404).json({ error: 'Patient not found' }); // Send status 404 if patient not found
     }
-  });
+  } catch (error) {
+    console.error('Error finding patient record:', error);
+    res.status(500).json({ error: 'Internal server error' }); // Send status 500 for internal server error
+  }
+});
 app.get('/api/get_all_records', async (req, res) => {
     try {
         const allRecords = await BasicDetails.find();

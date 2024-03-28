@@ -279,12 +279,15 @@ const OutPatientBill = () => {
 
   const validateMobileNumber = async () => {
     if (!navigator.onLine) {
+
       setShowNetworkErrorToast(true);
+      
       setTimeout(() => {
         setShowNetworkErrorToast(false);
       }, 5300);
       return;
-    }
+    } else { 
+
     const digitCount = patient.mobileNumber.replace(/\D/g, "").length; // Count only digits
 
     // Check if the number of digits is between 6 and 11
@@ -299,306 +302,322 @@ const OutPatientBill = () => {
             },
           }
         );
-        const foundPatientRecord = response.data;
-        console.log("fo", foundPatientRecord);
-        setPatientDetails(foundPatientRecord);
-        setMobileNo(true);
-        setShowBill(true);
-      } catch (error) {
-        setShowBill(false);
-        setLoading(false);
-        console.error("Error fetching patient details:", error);
-        setMobileNo(false);
-        setPatientDetails({ name: "", pid: "" }); // Clear patient details on error
-        if (error.response && error.response.status === 404) {
+        if (response.status === 200) {
+          const foundPatientRecord = response.data;
+          console.log("fo", foundPatientRecord);
+          setPatientDetails(foundPatientRecord);
+          setMobileNo(true);
+          setShowBill(true);
+        } else if (response.status === 404) {
           setShowInvalidMobErrorToast(true);
           setTimeout(() => {
             setShowInvalidMobErrorToast(false);
           }, 5000);
-        }
-        else {
+        } else if (response.status === 500) {
           setShowServerNetworkErrorToast(true);
           setTimeout(() => {
             setShowServerNetworkErrorToast(false);
           }, 5300);
+        } 
+      }
+      catch (error) {
+          setShowBill(false);
+          setLoading(false);
+          console.error("Error fetching patient details:", error);
+          setMobileNo(false);
+          setPatientDetails({ name: "", pid: "" }); // Clear patient details on error
+          if (error.response && error.response.status === 404) {
+            setShowInvalidMobErrorToast(true);
+            setTimeout(() => {
+              setShowInvalidMobErrorToast(false);
+            }, 5000);
+          }
+          else {
+            setShowServerNetworkErrorToast(true);
+            setTimeout(() => {
+              setShowServerNetworkErrorToast(false);
+            }, 5300);
+          }
+          setAppMessage("Error fetching patient details. Please try again.");
+          setTimeout(() => {
+            setAppMessage("");
+          }, 5000);
+        } finally {
+          setTimeout(() => {
+            setLoading(false);
+          }, 5000);
+
         }
-        // setAppMessage("Error fetching patient details. Please try again.");
+      } else {
+        setMobileNo(false);
+        setShowBill(false);
+        setPatientDetails({ name: "", pid: "" }); // Clear patient details if mobile number is not valid
+        setShowMobNotFillErrorToast(true);
+        setTimeout(() => {
+          setShowMobNotFillErrorToast(false);
+        }, 5300);
+        // setAppMessage("Please enter a valid mobile number and create a record.");
         // setTimeout(() => {
         //   setAppMessage("");
         // }, 5000);
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 5000);
-
       }
-    } else {
-      setMobileNo(false);
-      setShowBill(false);
-      setPatientDetails({ name: "", pid: "" }); // Clear patient details if mobile number is not valid
-      setShowMobNotFillErrorToast(true);
-      setTimeout(() => {
-        setShowMobNotFillErrorToast(false);
-      }, 5300);
-      // setAppMessage("Please enter a valid mobile number and create a record.");
-      // setTimeout(() => {
-      //   setAppMessage("");
-      // }, 5000);
-    }
-  };
 
-  return (
-    <div className="main-container-in-bill">
-      <div className="sub-main-container-in-bill">
-        <div>
+    }
+
+    };
+
+    return (
+      <div className="main-container-in-bill">
+        <div className="sub-main-container-in-bill">
           <div>
-            {(loading || isLoading) && (
-              <div className={overlayClass}>
-                <div class="out-patient-wrapper">
-                  <div class="out-patient-box-wrap">
-                    <div class="out-patient-box one"></div>
-                    <div class="out-patient-box two"></div>
-                    <div class="out-patient-box three"></div>
-                    <div class="out-patient-box four"></div>
-                    <div class="out-patient-box five"></div>
-                    <div class="out-patient-box six"></div>
+            <div>
+              {(loading || isLoading) && (
+                <div className={overlayClass}>
+                  <div class="out-patient-wrapper">
+                    <div class="out-patient-box-wrap">
+                      <div class="out-patient-box one"></div>
+                      <div class="out-patient-box two"></div>
+                      <div class="out-patient-box three"></div>
+                      <div class="out-patient-box four"></div>
+                      <div class="out-patient-box five"></div>
+                      <div class="out-patient-box six"></div>
+                    </div>
                   </div>
-                </div>
-                <div class="out-patient-load-wrapp">
-                  <div class="out-patient-load-6">
-                    <div class="out-patient-letter-holder">
-                      <div class="l-1 letter">L</div>
-                      <div class="l-2 letter">O</div>
-                      <div class="l-3 letter">A</div>
-                      <div class="l-4 letter">D</div>
-                      <div class="l-5 letter">I</div>
-                      <div class="l-6 letter">N</div>
-                      <div class="l-7 letter">G</div>
+                  <div class="out-patient-load-wrapp">
+                    <div class="out-patient-load-6">
+                      <div class="out-patient-letter-holder">
+                        <div class="l-1 letter">L</div>
+                        <div class="l-2 letter">O</div>
+                        <div class="l-3 letter">A</div>
+                        <div class="l-4 letter">D</div>
+                        <div class="l-5 letter">I</div>
+                        <div class="l-6 letter">N</div>
+                        <div class="l-7 letter">G</div>
+                      </div>
                     </div>
                   </div>
                 </div>
+              )}
+            </div>
+            {showToast && (
+              <div className="toast toast-active">
+                <div className="toast-content">
+                  <img src={checklist} alt="Success" className="toast-check" />
+                  <div className="toast-message">
+                    <span className="toast-text toast-text-1">
+                      Success
+                    </span>
+                    <span className="toast-text toast-text-2">
+                      Out patient bill created successfully!
+                    </span>
+                  </div>
+                </div>
+                <div className="toast-progress toast-active"></div>
               </div>
             )}
-          </div>
-          {showToast && (
-            <div className="toast toast-active">
-              <div className="toast-content">
-                <img src={checklist} alt="Success" className="toast-check" />
-                <div className="toast-message">
-                  <span className="toast-text toast-text-1">
-                    Success
-                  </span>
-                  <span className="toast-text toast-text-2">
-                    Out patient bill created successfully!
-                  </span>
-                </div>
-              </div>
-              <div className="toast-progress toast-active"></div>
-            </div>
-          )}
 
-          {(showMobNotFillErrorToast || showInvalidMobErrorToast || showBillFillErrorToast || showNetworkErrorToast || showServerNetworkErrorToast || showUnexpectedErrorToast) && (
-            <div className="toast toast-active">
-              <div className="toast-content">
-                <img src={errorimg} alt="Error" className="toast-error-check" />
-                <div className="toast-message">
-                  {showMobNotFillErrorToast && (
-                    <span className="toast-text toast-text-1">
-                      Please enter a valid mobile number!
-                    </span>
-                  )}
-                  {showInvalidMobErrorToast && (
-                    <span className="toast-text toast-text-2">
-                      Patient not found. Enter a valid mobile number!
-                    </span>
-                  )}
-                  {showBillFillErrorToast && (
-                    <span className="toast-text toast-text-2">
-                      Please fill all the bill details
-                    </span>
-                  )}
-                  {showNetworkErrorToast && (
-                    <span className="toast-text toast-text-2">
-                      Network disconnected. Please check your network!
-                    </span>
-                  )}
-                  {showServerNetworkErrorToast && (
-                    <span className="toast-text toast-text-2">
-                      Internal Server Error! Try after some time.
-                    </span>
-                  )}
-                  {showUnexpectedErrorToast && (
-                    <span className="toast-text toast-text-2">
-                      Unexpected Error Occurred.
-                    </span>
-                  )}
+            {(showMobNotFillErrorToast || showInvalidMobErrorToast || showBillFillErrorToast || showNetworkErrorToast || showServerNetworkErrorToast || showUnexpectedErrorToast) && (
+              <div className="toast toast-active">
+                <div className="toast-content">
+                  <img src={errorimg} alt="Error" className="toast-error-check" />
+                  <div className="toast-message">
+                    {showMobNotFillErrorToast && (
+                      <span className="toast-text toast-text-1">
+                        Please enter a valid mobile number!
+                      </span>
+                    )}
+                    {showInvalidMobErrorToast && (
+                      <span className="toast-text toast-text-2">
+                        Patient not found. Enter a valid mobile number!
+                      </span>
+                    )}
+                    {showBillFillErrorToast && (
+                      <span className="toast-text toast-text-2">
+                        Please fill all the bill details
+                      </span>
+                    )}
+                    {showNetworkErrorToast && (
+                      <span className="toast-text toast-text-2">
+                        Network disconnected. Please check your network!
+                      </span>
+                    )}
+                    {showServerNetworkErrorToast && (
+                      <span className="toast-text toast-text-2">
+                        Internal Server Error! Try after some time.
+                      </span>
+                    )}
+                    {showUnexpectedErrorToast && (
+                      <span className="toast-text toast-text-2">
+                        Unexpected Error Occurred.
+                      </span>
+                    )}
+                  </div>
                 </div>
+                <div className="toast-error-progress toast-active"></div>
               </div>
-              <div className="toast-error-progress toast-active"></div>
-            </div>
-          )}
-          {/* <div>
+            )}
+            {/* <div>
         {!loading && appMessage && (
           <div className={msgoverlay}>
             <div>{appMessage}</div>
           </div>
         )}
       </div> */}
-          <div class="out-patient-billing-container">
-            <div class="out-patient-billing-form-container">
-              <div class="out-patient-billing-row">
-                <div class="out-patient-billing-col">
-                  <h3 class="out-patient-billing-title">Out-Patient Billing</h3>
-                  {(patientDetails.name === "" && !showbill) && (
-                    <>
-                      <div class="out-patient-billing-input-box mobile-number">
-                        <span>Mobile Number</span>
-                        <input
-                          ref={searchInputRef}
-                          type="text"
-                          name="mobileNumber"
-                          pattern="[0-9]{10}"
-                          value={patient.mobileNumber}
-                          onChange={handleInputChange}
-                          className="out-patient-billing-input mobile-input"
-                        />
-                        <input
-                          type="button"
-                          value="Search"
-                          className="out-patient-billing-btn-search"
-                          onClick={validateMobileNumber}
-                          disabled={loading}
-                        />
-                      </div>
-                    </>
-                  )}
-                  {console.log("shhoooooooooww", showbill)}
-                  {showbill && (
-                    <>
-                      {patientDetails.name !== "" && (
-                        <>
-                          <p className="in-patient-billing-patient-details">
-                            <span className="in-patient-billing-patient-name">
-                              {patientDetails.name}-{patientDetails.age}
-                            </span>{" "}
-                            <span className="in-patient-billing-patient-status">
-                              Out-Patient
-                            </span>
-                          </p>
+            <div class="out-patient-billing-container">
+              <div class="out-patient-billing-form-container">
+                <div class="out-patient-billing-row">
+                  <div class="out-patient-billing-col">
+                    <h3 class="out-patient-billing-title">Out-Patient Billing</h3>
+                    {(patientDetails.name === "" && !showbill) && (
+                      <>
+                        <div class="out-patient-billing-input-box mobile-number">
+                          <span>Mobile Number</span>
+                          <input
+                            ref={searchInputRef}
+                            type="text"
+                            name="mobileNumber"
+                            pattern="[0-9]{10}"
+                            value={patient.mobileNumber}
+                            onChange={handleInputChange}
+                            className="out-patient-billing-input mobile-input"
+                          />
+                          <input
+                            type="button"
+                            value="Search"
+                            className="out-patient-billing-btn-search"
+                            onClick={validateMobileNumber}
+                            disabled={loading}
+                          />
+                        </div>
+                      </>
+                    )}
+                    {console.log("shhoooooooooww", showbill)}
+                    {showbill && (
+                      <>
+                        {patientDetails.name !== "" && (
+                          <>
+                            <p className="in-patient-billing-patient-details">
+                              <span className="in-patient-billing-patient-name">
+                                {patientDetails.name}-{patientDetails.age}
+                              </span>{" "}
+                              <span className="in-patient-billing-patient-status">
+                                Out-Patient
+                              </span>
+                            </p>
 
-                          <div class="out-patient-billing-input-box">
-                            <span>Appointment Date</span>
-                            <input
-                              type="date"
-                              class="out-patient-billing-input"
-                              name="appointmentDate"
-                              value={patient.appointmentDate}
-                              onChange={handleInputChange}
-                            />
-                          </div>
-                          <div class="out-patient-billing-flex">
                             <div class="out-patient-billing-input-box">
-                              <span>Service Name</span>
+                              <span>Appointment Date</span>
                               <input
-                                type="text"
-                                placeholder="check-up"
+                                type="date"
                                 class="out-patient-billing-input"
-                                name="serviceName"
-                                value={patient.serviceName}
+                                name="appointmentDate"
+                                value={patient.appointmentDate}
                                 onChange={handleInputChange}
                               />
                             </div>
-                            <div class="in-patient-billing-inputBox">
-                              <span>Payment Option</span>
-                              <div class="in-patient-billing-dropdown">
-                                <div class="in-patient-billing-input-box">
-                                  <ul class="in-patient-billing-nav">
-                                    <li class="in-patient-billing-button-dropdown">
-                                      <select
-                                        class="in-patient-billing-dropdown-menu"
-                                        name="paymentMode"
-                                        value={patient.paymentMode}
-                                        onChange={handleInputChange}
-                                      >
-                                        <option
-                                          class="in-patient-billing-dropdown-toggle"
-                                          value=""
+                            <div class="out-patient-billing-flex">
+                              <div class="out-patient-billing-input-box">
+                                <span>Service Name</span>
+                                <input
+                                  type="text"
+                                  placeholder="check-up"
+                                  class="out-patient-billing-input"
+                                  name="serviceName"
+                                  value={patient.serviceName}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
+                              <div class="in-patient-billing-inputBox">
+                                <span>Payment Option</span>
+                                <div class="in-patient-billing-dropdown">
+                                  <div class="in-patient-billing-input-box">
+                                    <ul class="in-patient-billing-nav">
+                                      <li class="in-patient-billing-button-dropdown">
+                                        <select
+                                          class="in-patient-billing-dropdown-menu"
+                                          name="paymentMode"
+                                          value={patient.paymentMode}
+                                          onChange={handleInputChange}
                                         >
-                                          Select Payment Mode
-                                        </option>
-                                        <option class="dropdown-item" value="Cash">
-                                          Cash
-                                        </option>
-                                        <option class="dropdown-item" value="UPI">
-                                          UPI
-                                        </option>
-                                        <option
-                                          class="dropdown-item"
-                                          value="Credit Card"
-                                        >
-                                          Credit Card
-                                        </option>
-                                        <option
-                                          class="dropdown-item"
-                                          value="Debit Card"
-                                        >
-                                          Debit Card
-                                        </option>
-                                        <option
-                                          class="dropdown-item"
-                                          value="Net Banking"
-                                        >
-                                          Net Banking
-                                        </option>
-                                      </select>
-                                    </li>
-                                  </ul>
+                                          <option
+                                            class="in-patient-billing-dropdown-toggle"
+                                            value=""
+                                          >
+                                            Select Payment Mode
+                                          </option>
+                                          <option class="dropdown-item" value="Cash">
+                                            Cash
+                                          </option>
+                                          <option class="dropdown-item" value="UPI">
+                                            UPI
+                                          </option>
+                                          <option
+                                            class="dropdown-item"
+                                            value="Credit Card"
+                                          >
+                                            Credit Card
+                                          </option>
+                                          <option
+                                            class="dropdown-item"
+                                            value="Debit Card"
+                                          >
+                                            Debit Card
+                                          </option>
+                                          <option
+                                            class="dropdown-item"
+                                            value="Net Banking"
+                                          >
+                                            Net Banking
+                                          </option>
+                                        </select>
+                                      </li>
+                                    </ul>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div class="out-patient-billing-input-box">
-                              <span>Bill Amount</span>
-                              <input
-                                type="text"
-                                placeholder="0"
-                                class="out-patient-billing-input"
-                                name="billAmount"
-                                value={patient.billAmount}
-                                onChange={handleInputChange}
-                              />
+                              <div class="out-patient-billing-input-box">
+                                <span>Bill Amount</span>
+                                <input
+                                  type="text"
+                                  placeholder="0"
+                                  class="out-patient-billing-input"
+                                  name="billAmount"
+                                  value={patient.billAmount}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
+                {showbill && (
+                  <>
+                    {patientDetails.name !== "" && (
+                      <>
+                        <br />
+                        <button
+                          onClick={continueToBill}
+                          disabled={loading}
+                          class="out-patient-billing-submit-btn"
+                        >
+                          {loading ? "Creating Bill..." : "Create Out-Patient Bill"}
+                        </button>
+                        {/* Display Application Messages */}
+                        {/* {appMessage && <div className="app-message">{appMessage}</div>} */}
+                      </>
+                    )}
+                  </>
+                )}
               </div>
-              {showbill && (
-                <>
-                  {patientDetails.name !== "" && (
-                    <>
-                      <br />
-                      <button
-                        onClick={continueToBill}
-                        disabled={loading}
-                        class="out-patient-billing-submit-btn"
-                      >
-                        {loading ? "Creating Bill..." : "Create Out-Patient Bill"}
-                      </button>
-                      {/* Display Application Messages */}
-                      {/* {appMessage && <div className="app-message">{appMessage}</div>} */}
-                    </>
-                  )}
-                </>
-              )}
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-export default OutPatientBill;
+  export default OutPatientBill;

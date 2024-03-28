@@ -239,16 +239,16 @@ align-items: center;
   top: 0;
 }
 
-.download-button:hover:before,.download-button:hover:after {
+.download-button:hover::before,.download-button:hover::after {
   opacity: 1;
   visibility: visible;
 }
 
-.download-button:hover:after {
+.download-button:hover::after {
   bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 20px);
 }
 
-.download-button:hover:before {
+.download-button:hover::before {
   bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
 }
 

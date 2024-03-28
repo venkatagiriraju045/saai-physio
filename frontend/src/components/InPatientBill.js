@@ -131,7 +131,10 @@ const InPatientBill = () => {
     }
   };
 
+
   const validateMobileNumber = async () => {
+    setLoading(false);
+  
     if (!navigator.onLine) {
       setShowNetworkErrorToast(true);
       setTimeout(() => {
@@ -139,9 +142,9 @@ const InPatientBill = () => {
       }, 5300);
       return;
     }
-
+  
     const digitCount = patient.mobileNumber.replace(/\D/g, "").length; // Count only digits
-
+  
     // Check if the number of digits is between 6 and 11
     if (digitCount > 5 && digitCount < 12) {
       try {
@@ -154,41 +157,55 @@ const InPatientBill = () => {
             },
           }
         );
-        const foundPatientRecord = response.data;
-        console.log("fo", foundPatientRecord);
-        setPatientDetails(foundPatientRecord);
-        setMobileNo(true);
-        setShowBill(true);
+        if (response.status === 200) {
+          const foundPatientRecord = response.data;
+          console.log("Found Patient Record:", foundPatientRecord);
+          setPatientDetails(foundPatientRecord);
+          setMobileNo(true);
+          setShowBill(true);
+        } else if (response.status === 404) {
+          setShowInvalidMobErrorToast(true);
+          setTimeout(() => {
+            setShowInvalidMobErrorToast(false);
+          }, 5000);
+        } else if (response.status === 500) {
+          setShowServerNetworkErrorToast(true);
+          setTimeout(() => {
+            setShowServerNetworkErrorToast(false);
+          }, 5300);
+        }
       } catch (error) {
         setShowBill(false);
         setLoading(false);
         console.error("Error fetching patient details:", error);
         setMobileNo(false);
         setPatientDetails({ name: "", pid: "" }); // Clear patient details on error
-        // setShowInvalidMobErrorToast(true);
-        // setTimeout(() => {
-        //   setShowInvalidMobErrorToast(false);
-        // }, 5000);
+  
         if (error.response && error.response.status === 404) {
           setShowInvalidMobErrorToast(true);
           setTimeout(() => {
             setShowInvalidMobErrorToast(false);
           }, 5000);
-        }
-        else {
+        } else if (error.message === "Network Error") { // Handle network errors separately
+          setShowNetworkErrorToast(true);
+          setTimeout(() => {
+            setShowNetworkErrorToast(false);
+          }, 5300);
+        } else {
           setShowServerNetworkErrorToast(true);
           setTimeout(() => {
             setShowServerNetworkErrorToast(false);
           }, 5300);
         }
-        // setAppMessage("Error fetching patient details. Please try again.");
-        // setTimeout(() => {
-        //   setAppMessage("");
-        // }, 5000);
+  
+        setAppMessage("Error fetching patient details. Please try again.");
+        setTimeout(() => {
+          setAppMessage("");
+        }, 5000);
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 3000);
+        }, 5000);
       }
     } else {
       setMobileNo(false);
@@ -198,13 +215,9 @@ const InPatientBill = () => {
       setTimeout(() => {
         setShowMobNotFillErrorToast(false);
       }, 5300);
-      // setAppMessage("Please enter a valid mobile number and create a record.");
-      // setTimeout(() => {
-      //   setAppMessage("");
-      // }, 5000);
     }
   };
-
+  
   console.log("pa", patientDetails);
 
   const createInPatientBill = async () => {
@@ -596,7 +609,7 @@ const InPatientBill = () => {
                             {patientDetails.name}-{patientDetails.age}
                           </span>{" "}
                           <span className="in-patient-billing-patient-status">
-                            In-Patient
+                            IP
                           </span>
                         </p>
                         <div className="in-patient-billing-inputBox">

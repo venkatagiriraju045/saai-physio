@@ -472,7 +472,7 @@ header .navigation .navigation-items .nav-link:hover:before {
 }
 
 .navigation .dropdown-content a:hover {
-  background-color: #fff;
+  background-color: #00cccc;
   color: white;
 }
 

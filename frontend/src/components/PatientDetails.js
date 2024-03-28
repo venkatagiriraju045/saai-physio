@@ -261,9 +261,9 @@ const PatientDetails = () => {
               onChange={(e) => setFilterMobileNumber(e.target.value)}
             />
           </div>
-          <div class="download-button" >
+          <div class="download-button" onClick={handleDownloadPDF}>
             <div class="download-button-wrapper">
-              <button className="download-text" onClick={handleDownloadPDF}>Download as PDF</button>
+              <button className="download-text" >Download as PDF</button>
               <span class="download-icon">
                 <img src="./uploads/download.png" />
               </span>

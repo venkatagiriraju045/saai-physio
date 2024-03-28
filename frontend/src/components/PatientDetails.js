@@ -48,13 +48,13 @@ const PatientDetails = () => {
         }
       } catch (error) {
         //console.error("Error fetching records:", error.message);
-        setPatientData([]);
-        setFilteredData([]);
-        setLoading(false);
-        setShowUnexpectedErrorToast(true);
-        setTimeout(() => {
-          setShowUnexpectedErrorToast(false);
-        }, 5300);
+          // setPatientData([]);
+          // setFilteredData([]);
+          // setLoading(false);
+          // setShowUnexpectedErrorToast(true);
+          // setTimeout(() => {
+          //   setShowUnexpectedErrorToast(false);
+          // }, 5300);
 
       } finally {
         setLoading(false);

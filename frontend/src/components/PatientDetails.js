@@ -51,10 +51,10 @@ const PatientDetails = () => {
         setPatientData([]);
         setFilteredData([]);
         setLoading(false);
-        // setShowUnexpectedErrorToast(true);
-        // setTimeout(() => {
-        //   setShowUnexpectedErrorToast(false);
-        // }, 5300);
+        setShowUnexpectedErrorToast(true);
+        setTimeout(() => {
+          setShowUnexpectedErrorToast(false);
+        }, 5300);
 
       } finally {
         setLoading(false);

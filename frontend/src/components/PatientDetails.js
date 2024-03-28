@@ -30,7 +30,7 @@ const PatientDetails = () => {
     const fetchAllRecords = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/get_all_records"
+          "https://saai-physio-api.vercel.app/api/get_all_records"
         );
 
         if (response.status === 200) {
@@ -55,6 +55,7 @@ const PatientDetails = () => {
         // setTimeout(() => {
         //   setShowUnexpectedErrorToast(false);
         // }, 5300);
+
       } finally {
         setLoading(false);
       }
